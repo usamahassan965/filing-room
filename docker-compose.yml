@@ -1,7 +1,9 @@
 # Two services, both stateful, both needed from M0 onward.
 #   phoenix -> trace collector + UI at http://localhost:6006
-#   qdrant  -> vector store, unused until M3 but pinned now so the version
-#              that produced a result is the version recorded in the result.
+#   qdrant  -> vector store, pinned so the version that produced a result is the
+#              version recorded in the result. Kept in step with qdrant-client:
+#              the client refuses a server more than a minor version away, and
+#              a warning that says "incompatible" is not a thing to live with.
 services:
   phoenix:
     image: arizephoenix/phoenix:version-11.9.0
@@ -16,7 +18,7 @@ services:
     restart: unless-stopped
 
   qdrant:
-    image: qdrant/qdrant:v1.12.4
+    image: qdrant/qdrant:v1.19.1
     container_name: filing-qdrant
     ports:
       - "6333:6333"   # REST

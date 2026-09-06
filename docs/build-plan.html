@@ -393,7 +393,7 @@ footer a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
 
   <!-- M3 -->
   <div class="gate">
-    <div class="rail"><div class="gid">M3</div><p class="days">DAYS 9–13</p></div>
+    <div class="rail"><div class="gid shipped">M3</div><p class="days">DAYS 9–13</p><p class="stamp">Shipped</p></div>
     <div class="card">
       <h3>Unstructured store</h3>
       <p class="goal">The narrative half: section-aware chunks that never lose their character offsets, indexed twice and fused.</p>
@@ -413,16 +413,17 @@ footer a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
         <div class="blk">
           <h4>Definition of done</h4>
           <ul class="dod">
-            <li>100% of filings parsed or explicitly quarantined with a written reason</li>
-            <li>200 random chunks: offsets resolve back to identical source text</li>
-            <li>Re-indexing an unchanged corpus costs <b>zero</b> embedding calls</li>
-            <li>recall@50 ≥ 0.85 on a 30-question smoke set</li>
-            <li>Reranking measurably improves precision@5 on that same set</li>
+            <li class="done">100% of filings parsed or explicitly quarantined with a written reason — <b>407/407</b>, zero quarantined</li>
+            <li class="done">200 random chunks: offsets resolve back to identical source text — <b>200 across 149 filings, zero differ</b></li>
+            <li class="done">Re-indexing an unchanged corpus costs <b>zero</b> embedding calls — 32,218 already present, <b>0 HTTP calls</b></li>
+            <li class="done">recall@50 ≥ 0.85 on a 30-question smoke set — <b>100%</b>, and see below for why that is a weaker result than it looks</li>
+            <li class="done">Reranking measurably improves precision@5 on that same set — <b>0.687 → 0.693</b>, a pass that is inside the noise</li>
           </ul>
         </div>
       </div>
       <div class="pk"><span class="tag">docling</span><span class="tag">qdrant-client</span><span class="tag">bm25s</span><span class="tag">networkx</span><span class="tag">pyarrow</span></div>
       <p class="bail"><b>If it breaks</b>Docling is slow on 300-page filings — that is expected, parse once and cache. If Docker is painful on Windows, swap Qdrant for embedded LanceDB behind the same store interface; the rest of the codebase should not notice.</p>
+      <p class="ship"><b>What actually happened</b>The bail-out that fired was one the register never listed. <strong>The free tier's wall is documents per day, not requests per minute.</strong> <code>batchEmbedContents</code> bills <i>each text in the batch</i> as its own <code>embed_content</code> request against a 1,000/day cap — a 32-chunk batch spends 32 of the day's thousand — so the first build died at exactly 997 cached rows. Rate limits have pacing solutions; a daily cap does not, and at 1,000/day this corpus indexes once every 33 days, which means the chunker could never be changed again. So the vector space moved onto the CPU: <code>bge-small-en-v1.5</code>, <b>32,218 chunks in 140.6 minutes</b> at 230 chunks/min, no key and no quota. Generation stayed hosted, because that is one call per <i>answer</i> while embedding is one call per <i>chunk</i> — and only one of those scales with the corpus. <code>EMBED_BACKEND</code> is now a separate setting from <code>LLM_BACKEND</code> for exactly that reason, and the <code>local</code> backend has no <code>chat</code> role at all, so asking for one is a <code>KeyError</code> naming the roles it does have rather than a silent downgrade.<br><br>Two of the five checks passed in a way worth reading rather than celebrating. <strong>recall@50 of 100% is a weak result wearing a strong number:</strong> gold sets here run 21–318 chunks, so landing one of them inside a fifty-candidate window is not a hard task. The statistic with signal is where the <i>first</i> gold chunk lands — rank 1 for 19 of 30 questions, inside the top 5 for 26, worst case 24 — and that is the distribution the floor should have been written against. <strong>And the cross-encoder did not earn its latency:</strong> 0.687 → 0.693 clears a <code>&gt; 0</code> gate and means nothing, because the split is <b>8 questions better, 7 worse, 15 unchanged</b>. The pattern underneath is real though — it gains where fusion did badly and loses where fusion did well. The threshold stays where it was written; moving it after seeing 8–7–15 would be choosing a gate this run happens to pass, which is the one thing a pre-registered criterion exists to prevent. M4's 150 questions are where a delta that size becomes legible.<br><br>One process finding, cheaply learned. <strong>A gate command nobody has run is not a gate.</strong> <code>filing text</code> had two crashing bugs on first execution — a missing constructor argument, and a manifest path joined against the project root instead of the data directory — in code that reads perfectly well and had passed review. Three of its six checks need no index, so they now get run <i>while</i> the two-hour build is still going, which is how both were found with time left to fix them.</p>
     </div>
   </div>
 

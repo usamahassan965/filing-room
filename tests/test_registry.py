@@ -12,12 +12,31 @@ from filing.config import MODEL_REGISTRY, model_for
 
 ROLES = ("chat", "chat_fast", "embed", "rerank")
 
+# The one backend that is deliberately not a chat backend. It exists because
+# Gemini's free embedding tier serves 1,000 documents a day and this corpus has
+# 32,218 chunks, so the vector space runs on this machine; generation still does
+# not. A missing chat role here is the design, and ``LocalBackend.chat`` says so
+# rather than returning something.
+RETRIEVAL_ONLY = frozenset({"local"})
+
 
 @pytest.mark.parametrize("backend", sorted(MODEL_REGISTRY))
-@pytest.mark.parametrize("role", ROLES)
-def test_every_backend_covers_every_role(backend, role):
-    spec = model_for(role, backend)
-    assert spec.id
+@pytest.mark.parametrize("role", ("embed", "rerank"))
+def test_every_backend_can_retrieve(backend, role):
+    assert model_for(role, backend).id
+
+
+@pytest.mark.parametrize("backend", sorted(set(MODEL_REGISTRY) - RETRIEVAL_ONLY))
+@pytest.mark.parametrize("role", ("chat", "chat_fast"))
+def test_every_chat_backend_covers_both_chat_roles(backend, role):
+    assert model_for(role, backend).id
+
+
+@pytest.mark.parametrize("backend", sorted(RETRIEVAL_ONLY))
+def test_a_retrieval_only_backend_names_the_roles_it_does_have(backend):
+    """Asking it for chat is a configuration error, and the error has to say so."""
+    with pytest.raises(KeyError, match="embed, rerank"):
+        model_for("chat", backend)
 
 
 @pytest.mark.parametrize("backend", sorted(MODEL_REGISTRY))

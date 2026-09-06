@@ -23,7 +23,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-Backend = Literal["gemini", "nvidia", "ollama"]
+Backend = Literal["gemini", "nvidia", "ollama", "local"]
 Role = Literal["chat", "chat_fast", "embed", "rerank"]
 
 
@@ -158,6 +158,27 @@ MODEL_REGISTRY: dict[Backend, dict[str, ModelSpec]] = {
             id="nomic-embed-text", dim=768, note="cosine stand-in, not a cross-encoder"
         ),
     },
+    # Retrieval only, and on purpose -- see filing.llm.local. Gemini's free
+    # embedding tier is 1,000 documents a day and this corpus is 32,218
+    # narrative chunks, so the vector space is built here and generation stays
+    # hosted. No chat entry: the backend raises rather than pretend a 33M
+    # parameter encoder can answer a question.
+    "local": {
+        "embed": ModelSpec(
+            id="BAAI/bge-small-en-v1.5",
+            alternates=("BAAI/bge-base-en-v1.5", "intfloat/e5-small-v2"),
+            dim=384,
+            asymmetric=True,
+            local=True,
+            note="bi-encoder; query side takes BGE's instruction prefix",
+        ),
+        "rerank": ModelSpec(
+            id="cross-encoder/ms-marco-MiniLM-L-6-v2",
+            alternates=("cross-encoder/ms-marco-MiniLM-L-12-v2", "BAAI/bge-reranker-base"),
+            local=True,
+            note="the same cross-encoder the hosted backends borrow",
+        ),
+    },
 }
 
 
@@ -170,7 +191,14 @@ class Settings(BaseSettings):
     )
 
     # --- providers ---
+    # Two backends, because generation and retrieval buy different things.
+    # ``llm_backend`` answers questions: one hosted call per answer, where a
+    # frontier model is worth the quota. ``embed_backend`` owns the vector
+    # space: one call per *chunk*, 32,218 of them, which no free tier serves --
+    # Gemini's caps embeddings at 1,000 documents a day. Splitting them is what
+    # lets the index be rebuilt on a whim; see docs/retrieval.md.
     llm_backend: Backend = "gemini"
+    embed_backend: Backend = "local"
 
     gemini_api_key: str = ""
     # Two base URLs on purpose. Chat goes through Google's OpenAI-compatible
@@ -188,6 +216,29 @@ class Settings(BaseSettings):
     # --- local models ---
     rerank_device: str = "cpu"
     rerank_batch_size: int = 16
+    embed_device: str = "cpu"
+    # bge-small's trained context. Chunks are cut to fit under it, so this is
+    # the ceiling that keeps a truncated tail from being embedded as if it were
+    # the whole passage.
+    embed_max_tokens: int = 512
+
+    # --- text index (M3) ---
+    qdrant_url: str = "http://localhost:6333"
+    qdrant_timeout_s: float = 60.0
+    # Measured, not chosen. On Gemini's free tier a batch of 32 chunks (~13.5k
+    # tokens) is served in about two seconds; a batch of 100 (~42k tokens) is
+    # answered 429 every time, and the retry costs more than the batch saved.
+    # It is also a sensible forward-pass width on eight CPU cores, so the local
+    # backend uses the same number. See docs/retrieval.md.
+    embed_batch_size: int = 32
+    # Only the hosted backends read this. Gemini meters embeddings in tokens
+    # per minute as well as documents per day, so ``TokenPacer`` spends the
+    # budget forwards rather than discovering it one 429 at a time -- reactive
+    # backoff measured 40 chunks a minute against a ceiling that permits about
+    # 60. Set below the published 30k so a bad token estimate has somewhere to
+    # be wrong. The daily cap is the one that made the local backend the
+    # default; no pacing survives 1,000 documents a day.
+    embed_tokens_per_minute: int = 27_000
 
     # --- budget ---
     # Fallback only: a model whose registry entry sets ``rpm`` uses that
@@ -250,6 +301,32 @@ class Settings(BaseSettings):
         on the irreplaceable one.
         """
         return self.data_dir / "facts.duckdb"
+
+    @property
+    def chunks_dir(self) -> Path:
+        """The chunk cache: parquet, derived, and safe to delete.
+
+        Parquet rather than DuckDB because nothing here is queried while it is
+        written -- it is read once per index build, whole -- and because a
+        columnar file the size of the corpus text compresses to something a
+        person can copy between machines.
+        """
+        return self.data_dir / "chunks"
+
+    @property
+    def index_dir(self) -> Path:
+        """Where the BM25 index lives. The dense half lives in Qdrant."""
+        return self.data_dir / "index"
+
+    @property
+    def graph_dir(self) -> Path:
+        """The entity graph, stored as its edge list.
+
+        NetworkX is an in-memory structure with no file format worth committing
+        to, so the durable artefact is the edges -- each with the sentence and
+        the offsets that justify it -- and the graph is rebuilt from them.
+        """
+        return self.data_dir / "graph"
 
     @property
     def registry(self) -> dict[str, ModelSpec]:

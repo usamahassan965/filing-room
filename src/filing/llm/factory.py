@@ -25,7 +25,22 @@ def build_backend(cfg: Settings | None = None, backend: Backend | None = None) -
         from filing.llm.fallback_ollama import OllamaBackend
 
         return OllamaBackend(cfg)
+    if choice == "local":
+        from filing.llm.local import LocalBackend
+
+        return LocalBackend(cfg)
     raise ValueError(f"unknown backend {choice!r}")
+
+
+def build_embed_backend(cfg: Settings | None = None) -> LLMBackend:
+    """The backend that owns the vector space -- see Settings.embed_backend.
+
+    Separate from ``build_backend`` because retrieval and generation are
+    separate purchases here, and because everything that touches the index has
+    to agree on which one it is: the Qdrant collection is named after it.
+    """
+    cfg = cfg or settings()
+    return build_backend(cfg, cfg.embed_backend)
 
 
 @lru_cache(maxsize=2)

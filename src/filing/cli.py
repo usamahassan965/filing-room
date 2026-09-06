@@ -7,6 +7,10 @@
     filing corpus   the M1 gate -- five checks, exit code 0 or 1
     filing facts    build the structured store from the filings already on disk
     filing numbers  the M2 gate -- five checks, exit code 0 or 1
+    filing chunks   parse and chunk the filings already on disk
+    filing index    embed the narrative chunks and build the BM25 index
+    filing graph    extract the entity graph from those same chunks
+    filing text     the M3 gate -- six checks, exit code 0 or 1
 
 No gate in this project advances on a claim, so the gate commands assert rather
 than print: ``smoke`` fails loudly if the cache is not deduplicating requests or
@@ -608,6 +612,279 @@ def numbers(
                 )
             )
 
+    passed = sum(results)
+    console.rule(
+        f"[bold green]{passed}/{len(results)} passed[/bold green]"
+        if all(results)
+        else f"[bold red]{passed}/{len(results)} passed[/bold red]"
+    )
+    raise typer.Exit(0 if all(results) else 1)
+
+
+# --------------------------------------------------------------------------
+# M3 -- text
+# --------------------------------------------------------------------------
+
+OFFSET_SAMPLE = 200
+MIN_RECALL_AT_50 = 0.85
+
+
+@app.command()
+def chunks(
+    rebuild: Annotated[
+        bool, typer.Option("--rebuild/--no-rebuild", help="Re-parse every filing.")
+    ] = False,
+) -> None:
+    """Parse the corpus into sections and cut it into chunks.
+
+    Cached against the source hash and the chunker version, so a second run
+    with neither changed re-reads parquet and parses nothing.
+    """
+    from filing.stores.chunks import build_chunks
+
+    cfg = settings()
+    if not cfg.manifest_path.exists():
+        console.print(f"[red]no manifest at {cfg.manifest_path} -- run `filing ingest`[/red]")
+        raise typer.Exit(1)
+
+    console.rule("[bold]filing chunks[/bold]")
+    report = build_chunks(cfg, rebuild=rebuild)
+    _print_chunk_report(report)
+
+
+def _print_chunk_report(report) -> None:  # noqa: ANN001
+    console.print(
+        f"  {report.filings:,} filings  "
+        f"[dim]{report.parsed:,} parsed, {report.reused:,} reused from cache[/dim]"
+    )
+    console.print(
+        f"  {report.split:,} split into items  {report.degraded:,} whole-document  "
+        f"{len(report.quarantined):,} quarantined"
+    )
+    for accn, reason in report.quarantined:
+        console.print(f"        [yellow]quarantined[/yellow] {accn}: {reason}")
+    console.print(
+        f"  {report.chunks:,} chunks  {report.chars:,} characters  "
+        f"{report.stub_sections:,} sections too short to chunk"
+    )
+    table = Table(box=None, pad_edge=False)
+    table.add_column("item", style="cyan")
+    table.add_column("chunks", justify="right")
+    for item, n in sorted(report.by_item.items(), key=lambda kv: -kv[1])[:12]:
+        table.add_row(item, f"{n:,}")
+    console.print(table)
+    console.print(f"  [dim]{report.seconds / 60:.1f} minutes[/dim]")
+
+
+@app.command()
+def index(
+    rebuild: Annotated[
+        bool, typer.Option("--rebuild/--no-rebuild", help="Drop the collection first.")
+    ] = False,
+    all_items: Annotated[
+        bool, typer.Option("--all-items", help="Index the financial statements too.")
+    ] = False,
+    limit: Annotated[
+        int, typer.Option("--limit", help="Stop after this many chunks (a dry run).")
+    ] = 0,
+) -> None:
+    """Embed the narrative chunks into Qdrant and build the BM25 index."""
+    from filing.stores.index import build_index
+
+    cfg = settings()
+    console.rule("[bold]filing index[/bold]")
+    report = build_index(cfg, rebuild=rebuild, all_items=all_items, limit=limit or None)
+    console.print(f"  collection [cyan]{report.collection}[/cyan]  {report.model} {report.dim}d")
+    console.print(
+        f"  {report.selected:,} of {report.candidates:,} chunks selected  "
+        f"[dim]{'every item' if all_items else 'narrative items only'}[/dim]"
+    )
+    console.print(
+        f"  {report.upserted:,} upserted  {report.already_indexed:,} already present  "
+        f"{report.sparse_documents:,} in the BM25 index"
+    )
+    console.print(
+        f"  {report.embed_http_calls:,} embedding HTTP calls  "
+        f"{report.cache_hits:,} cache hits  [dim]{report.seconds / 60:.1f} minutes[/dim]"
+    )
+
+
+@app.command()
+def graph(
+    all_items: Annotated[
+        bool, typer.Option("--all-items", help="Extract from the financial statements too.")
+    ] = False,
+) -> None:
+    """Extract the entity graph from the same chunks the index covers."""
+    from filing.stores.graph import build_graph
+
+    console.rule("[bold]filing graph[/bold]")
+    report = build_graph(settings(), all_items=all_items)
+    console.print(
+        f"  {report.sentences:,} sentences over {report.chunks:,} chunks  "
+        f"[dim]{report.organizations:,} organisations discovered[/dim]"
+    )
+    console.print(f"  {report.edges:,} edges over {report.nodes:,} nodes")
+    table = Table(box=None, pad_edge=False)
+    table.add_column("relation", style="cyan")
+    table.add_column("edges", justify="right")
+    for kind, n in (report.by_kind or {}).items():
+        table.add_row(kind, f"{n:,}")
+    console.print(table)
+    console.print("  most connected: " + ", ".join(f"{n} ({d})" for n, d in report.top_nodes[:8]))
+    console.print(f"  [dim]{report.seconds / 60:.1f} minutes[/dim]")
+
+
+@app.command()
+def text(
+    sample: Annotated[
+        int, typer.Option("--sample", help="Chunks to resolve back to source text.")
+    ] = OFFSET_SAMPLE,
+) -> None:
+    """M3 gate: six checks over the chunks, the indexes and the graph.
+
+    Nothing here is rebuilt first. Unlike the M2 gate, whose store takes a
+    minute, the artefacts under test cost four hours of rate-limited embedding
+    calls -- so this asserts against what is on disk, and check 3 is what makes
+    that safe: it proves a rebuild would be free.
+    """
+    import random
+
+    from filing.stores.chunks import CHUNKER, ChunkStore
+    from filing.stores.evalset import SMOKE_QUESTIONS, evaluate
+    from filing.stores.graph import GraphStore
+    from filing.stores.index import build_index, select
+    from filing.stores.parse import flatten
+    from filing.stores.retrieve import Retriever
+
+    cfg = settings()
+    store = ChunkStore(cfg.chunks_dir)
+    if not store.exists:
+        console.print(f"[red]no chunks at {cfg.chunks_dir} -- run `filing chunks`[/red]")
+        raise typer.Exit(1)
+
+    console.rule("[bold]filing text[/bold]")
+    results: list[bool] = []
+    outcomes = store.outcomes()
+    all_chunks = store.chunks()
+    with Manifest(cfg.manifest_path, cfg.data_dir) as m:
+        rows = m.con.execute("SELECT accn, path FROM filings").fetchall()
+        # Resolved here, once: a manifest path is relative to the data
+        # directory, and the manifest is the only thing that knows that.
+        paths = {accn: m.resolve(rel) for accn, rel in rows}
+
+    # 1 -- every filing in the manifest has a written outcome, and every
+    # quarantine says why. A filing that is simply absent from the chunk store
+    # is the failure this catches: it would show up nowhere else.
+    missing = [a for a in paths if a not in outcomes]
+    silent = [o.accn for o in outcomes.values() if o.outcome == "quarantined" and not o.reason]
+    results.append(
+        _check(
+            not missing and not silent,
+            "every filing parsed or quarantined with a reason",
+            f"{len(outcomes):,}/{len(paths):,} accounted for, "
+            f"{sum(1 for o in outcomes.values() if o.outcome == 'quarantined')} quarantined",
+        )
+    )
+    for accn in missing[:5]:
+        console.print(f"        [red]no outcome[/red] {accn}")
+
+    # 2 -- the offsets are real. Re-flatten the filing and compare the slice
+    # against the stored text, character for character. This is the check that
+    # makes a citation checkable rather than decorative.
+    rng = random.Random(20240301)
+    picked = rng.sample(all_chunks, min(sample, len(all_chunks)))
+    by_accn: dict[str, list] = {}
+    for c in picked:
+        by_accn.setdefault(c.accn, []).append(c)
+    bad: list[str] = []
+    for accn, group in by_accn.items():
+        source, _blocks = flatten(paths[accn].read_text(encoding="utf-8"))
+        for c in group:
+            if source[c.char_start : c.char_end] != c.text:
+                bad.append(f"{c.ticker} {accn} {c.char_start}:{c.char_end}")
+    results.append(
+        _check(
+            not bad,
+            "chunk offsets resolve to identical source text",
+            f"{len(picked)} chunks across {len(by_accn)} filings, chunker {CHUNKER}",
+        )
+    )
+    for b in bad[:5]:
+        console.print(f"        [red]differs[/red] {b}")
+
+    # 3 -- re-indexing an unchanged corpus is free. Two mechanisms have to
+    # agree for this: Qdrant reports the ids it already holds, and the backend
+    # caches every vector by text. Zero HTTP calls means neither was needed.
+    again = build_index(cfg)
+    results.append(
+        _check(
+            again.embed_http_calls == 0 and again.upserted == 0,
+            "re-indexing an unchanged corpus costs zero embedding calls",
+            f"{again.upserted:,} upserted, {again.already_indexed:,} already present, "
+            f"{again.embed_http_calls:,} HTTP calls",
+        )
+    )
+
+    # 4 and 5 -- the smoke set. One retrieval per question, scored twice: the
+    # RRF order and the cross-encoder's reordering of the same fifty.
+    retriever = Retriever(cfg)
+    retriever.require()
+    report = evaluate(retriever)
+    results.append(
+        _check(
+            report.recall_at_50 >= MIN_RECALL_AT_50 and not report.missing_gold,
+            "recall@50 on the smoke set",
+            f"{report.recall_at_50:.0%} over {report.n} questions (floor {MIN_RECALL_AT_50:.0%})",
+        )
+    )
+    for miss in report.misses:
+        console.print(f"        [yellow]no gold in top 50[/yellow] {miss.question.id}")
+    for gone in report.missing_gold:
+        console.print(f"        [red]no gold anywhere in the index[/red] {gone}")
+
+    results.append(
+        _check(
+            report.rerank_delta > 0,
+            "reranking improves precision@5",
+            f"{report.precision_at_5_fused:.3f} fused -> "
+            f"{report.precision_at_5_reranked:.3f} reranked "
+            f"({report.rerank_delta:+.3f})",
+        )
+    )
+
+    # 6 -- every graph edge quotes text that is really there. The graph's whole
+    # claim is auditability, and an edge whose sentence does not appear at its
+    # own offsets is an assertion with a fabricated citation attached.
+    edges = GraphStore(cfg.graph_dir).edges()
+    if edges:
+        picked_edges = random.Random(20240302).sample(edges, min(sample, len(edges)))
+        by_accn.clear()
+        for e in picked_edges:
+            by_accn.setdefault(e.accn, []).append(e)
+        wrong = []
+        for accn, group in by_accn.items():
+            source, _blocks = flatten(paths[accn].read_text(encoding="utf-8"))
+            for e in group:
+                if " ".join(source[e.char_start : e.char_end].split()) != e.sentence:
+                    wrong.append(f"{e.source} -> {e.target} {accn} {e.char_start}")
+        results.append(
+            _check(
+                not wrong,
+                "graph edges quote their source sentence",
+                f"{len(picked_edges)} of {len(edges):,} edges checked",
+            )
+        )
+        for w in wrong[:5]:
+            console.print(f"        [red]not at those offsets[/red] {w}")
+    else:
+        results.append(_check(False, "graph edges quote their source sentence", "no graph built"))
+
+    console.print()
+    console.print(
+        f"  [dim]{len(all_chunks):,} chunks, {len(select(all_chunks)):,} indexed, "
+        f"{len(edges):,} edges, {len(SMOKE_QUESTIONS)} questions[/dim]"
+    )
     passed = sum(results)
     console.rule(
         f"[bold green]{passed}/{len(results)} passed[/bold green]"

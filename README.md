@@ -6,16 +6,19 @@ against the source, and every answer traceable to the filing it came from.
 
 Runs on free API tiers. Full build plan: [`docs/build-plan.html`](docs/build-plan.html).
 
-**Status: M2 shipped — the numbers are queryable and checked.**
-M0 the rig, M1 the corpus, M2 the fact store. M3 (filing text) is next.
+**Status: M3 shipped — the filing text is retrievable, and the retrieval is
+measured rather than asserted.**
+M0 the rig, M1 the corpus, M2 the fact store, M3 the text index and the entity
+graph. M4 (baseline + eval harness) is next.
 
 | Gate | What it produced | Check |
 |---|---|---|
 | **M0** the rig | one model interface, three backends, limiter, cache, tracing | `filing smoke` — 5/5 |
 | **M1** the corpus | 20 companies, 407 filings, 1,044 MB, every hash verified | `filing corpus --check` — 6/6 |
 | **M2** the numbers | 514,649 facts, 25 metrics, 0 duplicate keys | `filing numbers` — 5/5 |
+| **M3** the text | 58,844 chunks, 32,218 indexed, 2,986 graph edges | `filing text` — 6/6 |
 
-192 tests, `ruff` clean.
+419 tests, `ruff` clean.
 
 ---
 
@@ -51,10 +54,15 @@ filing ingest     # download the corpus (SEC, rate-limited to 8 req/s)
 filing corpus     # M1 gate: what was fetched, --check re-verifies every hash
 filing facts      # build data/facts.duckdb from the downloaded XBRL
 filing numbers    # M2 gate: 5 checks over the fact store
+filing chunks     # parse + split + chunk the filing text, cached to parquet
+filing index      # embed the narrative chunks into Qdrant, build BM25 beside
+filing graph      # entity/relation extraction into a NetworkX graph
+filing text       # M3 gate: 6 checks over the chunks, indexes and graph
 ```
 
-`ingest` is the only one that takes hours. Everything downstream of it is
-rebuildable in under a minute.
+`ingest` takes hours, and `index` takes two and a half on CPU. Everything else
+is rebuildable in under a minute — and a re-run of `index` over an unchanged
+corpus costs nothing at all, which is what the M3 gate's third check proves.
 
 ## What is in the repo, and what is not
 
@@ -197,6 +205,45 @@ window are real and correct, they simply have no local document to be read out
 of. This constrains M6 — an answer resting on a pre-2020 fact cannot cite a
 locator — and the retriever will be scoped accordingly.
 
+## M3 — the filing text
+
+407 filings parsed into 58,844 chunks that never lose their character offsets,
+32,218 of them indexed into Qdrant and BM25, and 2,986 entity relations in a
+NetworkX graph with the source sentence on every edge. `filing text` runs six
+checks; the details are in [`docs/parsing.md`](docs/parsing.md) and
+[`docs/retrieval.md`](docs/retrieval.md).
+
+**The free tier's wall is documents per day, not requests per minute.**
+`batchEmbedContents` bills *each text in the batch* as its own `embed_content`
+request against a 1,000/day free-tier cap — so a 32-chunk batch spends 32 of
+the day's thousand, and this corpus would take **33 days** to index once. Rate
+limits you can pace around; a daily cap you cannot. The vector space moved onto
+the CPU in this machine: `bge-small-en-v1.5`, **32,218 chunks in 140.6 minutes**
+at 230 chunks/min, no key and no quota. Generation stays hosted, because that is
+one call per *answer*; embedding is one call per *chunk*, and only one of those
+scales with the corpus.
+
+Four things this gate taught:
+
+- **A bi-encoder's asymmetry is a prompt, not a parameter.** BGE wants an
+  instruction on the query and nothing on the passage; E5 wants a prefix on
+  both. Get it backwards and nothing raises — every vector is still 384
+  numbers and retrieval is merely worse. The prefix table is unit-tested per
+  family for exactly that reason.
+- **Recall@50 of 100% is a weak result wearing a strong number.** Gold sets run
+  21–318 chunks, so landing one of them in a 50-candidate window is easy. The
+  informative statistic is where the *first* gold chunk lands: rank 1 for 19 of
+  30 questions, inside the top 5 for 26, worst case 24.
+- **The cross-encoder did not earn its latency here.** p@5 went 0.687 → 0.693,
+  which passes a `> 0` gate and means nothing: 8 questions better, 7 worse, 15
+  unchanged. The threshold stays where it was written — moving it after seeing
+  the split would be picking a gate this run happens to pass — and M4's 150
+  questions are where a delta that size becomes legible.
+- **A gate command nobody has run is not a gate.** `filing text` had two
+  crashing bugs on first execution: a missing constructor argument and a path
+  joined against the project root instead of the data directory. Both were in
+  code that reads perfectly well.
+
 ---
 
 ## Layout
@@ -224,8 +271,14 @@ src/filing/
     ├── facts.py           XBRL payloads -> facts.duckdb
     ├── metrics.py         the metric registry: tags, spans, derivations
     ├── questions.py       50 questions with answers read from filings
-    └── verify.py          finds a stored number in its own source document
-tests/               192 tests, no network and no API key
+    ├── verify.py          finds a stored number in its own source document
+    ├── parse.py           filing HTML -> flat text + blocks + item sections
+    ├── chunks.py          sections -> chunks that keep their character offsets
+    ├── index.py           Qdrant collection + bm25s index, and what to index
+    ├── retrieve.py        RRF fusion, filtering, reranking, citation
+    ├── graph.py           entity/relation extraction over sentences
+    └── evalset.py         30 smoke questions, gold by predicate, the metrics
+tests/               419 tests, no network and no API key
 results/             one committed JSON per config, from M4 onward
 docs/                build plan, corpus notes
 ```
