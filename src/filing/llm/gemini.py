@@ -72,13 +72,13 @@ class GeminiBackend:
         # limiter. The SDK retrying behind our back would spend unbudgeted quota.
         self._client = OpenAI(
             base_url=self.cfg.gemini_openai_base_url,
-            api_key=self.cfg.gemini_api_key,
+            api_key=self.cfg.gemini_api_key.get_secret_value(),
             timeout=self.cfg.request_timeout_s,
             max_retries=0,
         )
         self._http = httpx.Client(
             timeout=self.cfg.request_timeout_s,
-            headers={"x-goog-api-key": self.cfg.gemini_api_key},
+            headers={"x-goog-api-key": self.cfg.gemini_api_key.get_secret_value()},
         )
         self._limiters: dict[str, RateLimiter] = {}
         self.cache = CallCache(self.cfg.cache_dir, enabled=self.cfg.cache_enabled)

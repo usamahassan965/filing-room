@@ -46,7 +46,7 @@ class NvidiaBackend:
         # would spend budget we never accounted for.
         self._client = OpenAI(
             base_url=self.cfg.nvidia_base_url,
-            api_key=self.cfg.nvidia_api_key,
+            api_key=self.cfg.nvidia_api_key.get_secret_value(),
             timeout=self.cfg.request_timeout_s,
             max_retries=0,
         )
@@ -228,7 +228,7 @@ class NvidiaBackend:
         resp = self._http.post(
             endpoint,
             headers={
-                "Authorization": f"Bearer {self.cfg.nvidia_api_key}",
+                "Authorization": f"Bearer {self.cfg.nvidia_api_key.get_secret_value()}",
                 "Accept": "application/json",
             },
             json={

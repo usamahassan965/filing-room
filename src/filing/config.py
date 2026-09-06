@@ -19,6 +19,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -200,7 +201,13 @@ class Settings(BaseSettings):
     llm_backend: Backend = "gemini"
     embed_backend: Backend = "local"
 
-    gemini_api_key: str = ""
+    # SecretStr, not str, and not merely ``Field(repr=False)``. The key leaked
+    # once already -- through the settings repr in a pytest failure, printed by
+    # nothing that meant to print it. repr=False would close that one path;
+    # this closes str(), f-strings, logging and span attributes too, because
+    # the value is only readable through .get_secret_value(). Empty still reads
+    # as falsey, so the "no credentials" guards below are unchanged.
+    gemini_api_key: SecretStr = SecretStr("")
     # Two base URLs on purpose. Chat goes through Google's OpenAI-compatible
     # shim so the SDK code is shared with NIM; embeddings go through the native
     # API, because taskType (query vs passage) is not an OpenAI parameter and
@@ -209,7 +216,7 @@ class Settings(BaseSettings):
     gemini_base_url: str = "https://generativelanguage.googleapis.com/v1beta"
     gemini_openai_base_url: str = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
-    nvidia_api_key: str = ""
+    nvidia_api_key: SecretStr = SecretStr("")
     nvidia_base_url: str = "https://integrate.api.nvidia.com/v1"
     ollama_base_url: str = "http://localhost:11434"
 

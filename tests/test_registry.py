@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import pytest
 
-from filing.config import MODEL_REGISTRY, model_for
+from filing.config import MODEL_REGISTRY, Settings, model_for
 
 ROLES = ("chat", "chat_fast", "embed", "rerank")
 
@@ -79,3 +79,42 @@ def test_embed_specs_declare_their_width():
     """`filing smoke` asserts the vector width, so an undeclared dim is untestable."""
     for backend in MODEL_REGISTRY:
         assert MODEL_REGISTRY[backend]["embed"].dim, backend
+
+
+# --------------------------------------------------------------------------
+# credentials
+# --------------------------------------------------------------------------
+
+SECRET_FIELDS = ("gemini_api_key", "nvidia_api_key")
+
+
+@pytest.mark.parametrize("field", SECRET_FIELDS)
+def test_a_key_is_never_rendered_by_accident(field):
+    """The key must survive being printed by code that never meant to print it.
+
+    This is not hypothetical. A pytest failure once rendered the settings
+    object and put a live Gemini key in the run log -- not through a logging
+    call, but through the default repr of an object that happened to be an
+    argument to a failing test. Every path below is one something else calls
+    on your behalf: repr in a traceback, str in an f-string, format in a log
+    line, and the span attributes tracing writes. Only .get_secret_value()
+    returns the real thing, which makes reading the key a visible act.
+    """
+    marker = "sk-live-DO-NOT-LEAK-4d3f2a"
+    cfg = Settings(**{field: marker})
+    rendered = [repr(cfg), str(cfg), f"{cfg}", format(cfg), repr(getattr(cfg, field))]
+    for text in rendered:
+        assert marker not in text
+    assert getattr(cfg, field).get_secret_value() == marker
+
+
+@pytest.mark.parametrize("field", SECRET_FIELDS)
+def test_an_absent_key_still_reads_as_absent(field):
+    """The backends guard on `if not cfg.<key>`, and SecretStr must not break it.
+
+    A secret wrapper that were always truthy would turn "no credentials
+    configured" into an authenticated request carrying an empty key -- a 401
+    from the provider instead of the local error that names what to set.
+    """
+    assert not getattr(Settings(**{field: ""}), field)
+    assert getattr(Settings(**{field: "x"}), field)
