@@ -1,0 +1,676 @@
+<title>Filing Room Build Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#F2F1EC; --surface:#FBFAF7; --surface-2:#EDECE6;
+  --ink:#14171A; --ink-2:#3C4348; --muted:#6E7378;
+  --rule:#D6D3CB; --rule-2:#E5E2DA;
+  --accent:#166F5B; --accent-soft:#DCEAE4; --accent-line:#8FBCAE;
+  --risk:#9C4221; --risk-soft:#F4E5DC;
+  --grid:#E0DDD4;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1211; --surface:#171B1A; --surface-2:#1E2321;
+    --ink:#E9EDEA; --ink-2:#B6BEBA; --muted:#7F8884;
+    --rule:#2B322F; --rule-2:#232927;
+    --accent:#5FBFA3; --accent-soft:#14302A; --accent-line:#2F6455;
+    --risk:#D98A5F; --risk-soft:#2E211A;
+    --grid:#242A28;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1211; --surface:#171B1A; --surface-2:#1E2321;
+  --ink:#E9EDEA; --ink-2:#B6BEBA; --muted:#7F8884;
+  --rule:#2B322F; --rule-2:#232927;
+  --accent:#5FBFA3; --accent-soft:#14302A; --accent-line:#2F6455;
+  --risk:#D98A5F; --risk-soft:#2E211A;
+  --grid:#242A28;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Public Sans",-apple-system,"Segoe UI",sans-serif; font-size:15.5px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px; margin:0 auto; padding:0 24px 90px}
+h1,h2,h3{font-family:Fraunces,Georgia,serif; font-weight:600; letter-spacing:-.012em}
+.mono,code,pre,.gid,.days,.tag,th,.kick{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+
+header.top{padding:56px 0 32px; border-bottom:2px solid var(--ink); margin-bottom:0}
+.kick{font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--accent); margin:0 0 16px}
+h1{font-size:clamp(34px,5vw,56px); line-height:1.02; margin:0 0 18px; max-width:17ch; text-wrap:balance}
+.lede{font-size:18px; color:var(--ink-2); max-width:66ch; margin:0 0 8px}
+.lede b{color:var(--ink); font-weight:600}
+
+.strip{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); border-bottom:1px solid var(--rule); margin-bottom:46px}
+.strip div{padding:18px 22px 18px 0; border-right:1px solid var(--rule-2)}
+.strip div:last-child{border-right:0}
+.strip dt{font-family:"JetBrains Mono",monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:0 0 6px}
+.strip dd{margin:0; font-size:20px; font-family:Fraunces,serif; font-weight:600; color:var(--ink)}
+.strip dd small{display:block; font-family:"Public Sans",sans-serif; font-size:13px; font-weight:400; color:var(--muted); margin-top:2px; line-height:1.4}
+
+section{margin:0 0 54px}
+h2{font-size:clamp(22px,2.7vw,30px); margin:0 0 6px}
+.sub{color:var(--muted); max-width:70ch; margin:0 0 24px; font-size:15.5px}
+
+.panel{border:1px solid var(--rule); background:var(--surface); padding:26px 28px}
+.panel.risk{border-left:3px solid var(--risk)}
+.panel h3{font-size:19px; margin:0 0 10px}
+.numbered{list-style:none; counter-reset:n; padding:0; margin:14px 0 0; display:grid; gap:12px}
+.numbered li{counter-increment:n; padding-left:32px; position:relative; color:var(--ink-2)}
+.numbered li::before{
+  content:counter(n,decimal-leading-zero); position:absolute; left:0; top:1px;
+  font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--accent); letter-spacing:.04em;
+}
+.numbered li b{color:var(--ink); font-weight:600}
+
+.tablewrap{overflow-x:auto; border:1px solid var(--rule); background:var(--surface)}
+table{border-collapse:collapse; width:100%; min-width:760px; font-size:14px}
+th{
+  font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:500;
+  text-align:left; padding:12px 16px; background:var(--surface-2); border-bottom:1px solid var(--rule); white-space:nowrap;
+}
+td{padding:12px 16px; border-bottom:1px solid var(--rule-2); vertical-align:top; color:var(--ink-2)}
+tr:last-child td{border-bottom:0}
+td.role{color:var(--ink); font-weight:600; white-space:nowrap}
+td code{font-size:12.5px}
+code{background:var(--surface-2); border:1px solid var(--rule-2); padding:1px 5px; border-radius:2px; font-size:13px; color:var(--ink-2)}
+
+figure.chart{margin:0; border:1px solid var(--rule); background:var(--surface)}
+figure.chart .scroll{overflow-x:auto; padding:20px 18px 8px}
+figure.chart figcaption{font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--muted); padding:10px 20px 14px; border-top:1px solid var(--rule-2)}
+svg.gantt{display:block; width:100%; height:auto; min-width:620px}
+.gantt .grid{stroke:var(--grid); stroke-width:1}
+.gantt .bar{fill:var(--accent); rx:2}
+.gantt .bar:hover{fill:var(--ink)}
+.gantt text{font-family:"JetBrains Mono",monospace; font-size:10px; fill:var(--ink-2)}
+.gantt .wk{fill:var(--muted); font-size:9.5px; letter-spacing:.1em}
+.gantt .dur{fill:var(--muted); font-size:9.5px}
+.gantt .mk{stroke:var(--risk); stroke-width:1.2; stroke-dasharray:4 3}
+.gantt .mkt{fill:var(--risk); font-size:9.5px}
+
+/* milestone rail */
+.gate{display:grid; grid-template-columns:104px minmax(0,1fr); gap:26px; margin:0 0 4px}
+.gate .rail{position:relative; padding-top:4px}
+.gate .rail::after{
+  content:""; position:absolute; left:17px; top:44px; bottom:-30px; width:1px; background:var(--rule);
+}
+.gate:last-of-type .rail::after{display:none}
+.gid{
+  display:flex; align-items:center; justify-content:center; width:36px; height:36px;
+  border:1.5px solid var(--accent); color:var(--accent); border-radius:50%;
+  font-size:12px; font-weight:500; background:var(--surface);
+}
+.days{font-size:10.5px; color:var(--muted); margin:10px 0 0; letter-spacing:.04em}
+.card{border:1px solid var(--rule); background:var(--surface); padding:24px 26px 26px; margin:0 0 30px}
+.card h3{font-size:22px; margin:0 0 4px}
+.card .goal{color:var(--muted); margin:0 0 20px; font-size:15px}
+.cols{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:26px}
+.blk h4{
+  font-family:"JetBrains Mono",monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--muted); margin:0 0 10px; font-weight:500;
+}
+.blk ul{margin:0; padding-left:18px; display:grid; gap:7px}
+.blk li{color:var(--ink-2); font-size:14.5px}
+.dod{list-style:none; padding:0; display:grid; gap:8px}
+.dod li{padding-left:24px; position:relative; font-size:14.5px; color:var(--ink-2)}
+.dod li::before{
+  content:"□"; position:absolute; left:0; top:-1px; color:var(--accent);
+  font-family:"JetBrains Mono",monospace; font-size:14px;
+}
+/* A gate that is actually done, encoded rather than asserted in prose. */
+.dod li.done::before{content:"■"}
+.dod li.done{color:var(--ink)}
+.dod li.pending::before{content:"□"; color:var(--muted)}
+.dod li.pending{color:var(--muted)}
+.gid.shipped{background:var(--accent); color:var(--surface); border-color:var(--accent)}
+.stamp{
+  font-family:"JetBrains Mono",monospace; font-size:9.5px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--accent); margin:8px 0 0; font-weight:500;
+}
+.ship{margin:16px 0 0; padding:12px 16px; background:var(--accent-soft); border-left:2px solid var(--accent); font-size:14px; color:var(--ink-2)}
+.ship b{color:var(--accent); font-weight:600; font-family:"JetBrains Mono",monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; display:block; margin-bottom:3px}
+.pk{display:flex; flex-wrap:wrap; gap:5px; margin:18px 0 0; padding:14px 0 0; border-top:1px solid var(--rule-2)}
+.tag{font-size:11px; color:var(--muted); border:1px solid var(--rule); padding:3px 8px; border-radius:2px; white-space:nowrap}
+.bail{margin:16px 0 0; padding:12px 16px; background:var(--risk-soft); border-left:2px solid var(--risk); font-size:14px; color:var(--ink-2)}
+.bail b{color:var(--risk); font-weight:600; font-family:"JetBrains Mono",monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; display:block; margin-bottom:3px}
+
+pre{
+  background:var(--surface); border:1px solid var(--rule); padding:20px 22px; overflow-x:auto;
+  font-size:12.5px; line-height:1.65; color:var(--ink-2); margin:0;
+}
+pre b{color:var(--ink); font-weight:500}
+pre i{color:var(--muted); font-style:normal}
+
+.rules{list-style:none; padding:0; margin:16px 0 0; display:grid; gap:14px}
+.rules li{padding-left:26px; position:relative; color:var(--ink-2)}
+.rules li::before{content:"→"; position:absolute; left:0; color:var(--accent); font-family:"JetBrains Mono",monospace}
+.rules li b{color:var(--ink); font-weight:600}
+
+footer{border-top:1px solid var(--rule); padding-top:24px; margin-top:20px; font-size:13px; color:var(--muted)}
+footer a{color:var(--ink-2); text-decoration:none; border-bottom:1px solid var(--rule)}
+footer a:hover{color:var(--accent)}
+footer a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+@media (max-width:880px){
+  .cols{grid-template-columns:1fr; gap:20px}
+  .gate{grid-template-columns:52px minmax(0,1fr); gap:16px}
+  .gate .rail::after{left:17px}
+}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <p class="kick">Filing_Agentic_RAG · build plan v1</p>
+  <h1>Nine gates to a shipped filing analyst</h1>
+  <p class="lede">An agentic RAG system that answers multi-hop questions over SEC filings by routing numeric sub-questions to SQL over XBRL and narrative ones to hybrid text search — with every figure recomputed, every claim cited, and every run traced. <b>Gate-based, not date-based:</b> each milestone has a definition of done that a command can verify. You do not advance on a gate you cannot prove.</p>
+</header>
+
+<dl class="strip">
+  <div><dt>Duration</dt><dd>5 weeks<small>35 working days, 9 gates</small></dd></div>
+  <div><dt>Inference</dt><dd>Gemini + local rerank<small>free key for chat and embeddings; cross-encoder on the CPU</small></dd></div>
+  <div><dt>Hard ceiling</dt><dd>10–100 rpm<small>per model, not per provider — the constraint that shapes the architecture</small></dd></div>
+  <div><dt>Gate that matters</dt><dd>M4<small>baseline + frozen eval set, before the agent exists</small></dd></div>
+</dl>
+
+<section>
+  <h2>The constraint comes first</h2>
+  <p class="sub">Everything downstream is shaped by the Gemini free tier: an OpenAI-compatible endpoint at <code>generativelanguage.googleapis.com/v1beta/openai/</code>, a per-model request ceiling that ranges from roughly 10 rpm on the chat model to 100 on embeddings, and a daily request cap on top of it. Design for it on day one and it never bites you; discover it in week four and you rebuild.</p>
+  <div class="panel">
+    <h3>Seven decisions that fall out of the rate limit</h3>
+    <ol class="numbered">
+      <li><b>One adapter, no exceptions.</b> Every model call goes through a backend module — <code>llm/gemini.py</code> today. Rate limiter, retry, and cache live there and nowhere else. No module ever calls a provider directly, which is what makes a provider swap a file rather than a refactor.</li>
+      <li><b>One limiter per model, not per provider.</b> Chat allows a tenth of what embeddings do. A single shared limiter would throttle the whole indexing run to the speed of the slowest model in the registry, and you would blame the network.</li>
+      <li><b>Cache by content hash, aggressively.</b> A repeated eval run should cost close to zero API calls. This is what makes ablations affordable — you are re-scoring cached generations, not regenerating them.</li>
+      <li><b>Batch the embeddings.</b> Indexing is the single biggest credit consumer. Do it once, cache the vectors to disk, and never re-embed an unchanged chunk.</li>
+      <li><b>Judge suite runs nightly, not per commit.</b> CI gets the deterministic metrics only — free, fast, non-flaky. LLM-judged metrics run on a schedule.</li>
+      <li><b>Model IDs live in a registry.</b> Hosted model IDs are retired on the vendor's schedule, not yours. Put them in <code>config.py</code> so a retirement is one line, not a grep across the repo. This is the decision that paid for itself first — see M0.</li>
+      <li><b>Wire the local fallback in M0, not in a panic.</b> Same adapter interface, Ollama behind it. If credits run out mid-week you switch an env var and keep working at lower quality instead of losing days.</li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <h2>The stack</h2>
+  <p class="sub">Well-worn Python packages throughout. Nothing exotic, nothing that will be unmaintained in six months — every choice is one you can defend in an interview.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Role</th><th>Package / service</th><th>Why this one</th></tr></thead>
+      <tbody>
+        <tr><td class="role">Chat LLM</td><td><code>openai</code> SDK, <code>base_url</code> → Gemini</td><td>Google ships an OpenAI-compatible endpoint, so the standard SDK <i>and</i> its OpenInference instrumentation both work unchanged</td></tr>
+        <tr><td class="role">Embeddings</td><td><code>gemini-embedding-001</code>, native REST</td><td>Asymmetric retrieval needs <code>taskType</code>, which has no OpenAI equivalent — and the compatibility shim drops unknown fields <i>silently</i>. So embeddings bypass the shim on purpose</td></tr>
+        <tr><td class="role">Reranking</td><td><code>sentence-transformers</code> cross-encoder, local</td><td>Gemini serves no reranker. MiniLM on the CPU costs no key and no quota, which is exactly what makes the M8 ablation sweep affordable</td></tr>
+        <tr><td class="role">Orchestration</td><td><code>langgraph</code></td><td>Cyclic graphs with typed state and checkpointing — agent loops are cycles, not pipelines</td></tr>
+        <tr><td class="role">Filings + XBRL</td><td><code>httpx</code>, <code>duckdb</code>, <code>pyyaml</code></td><td>EDGAR's four endpoints, called directly. <code>edgartools</code> was the plan and was dropped in M1: it keeps its own local store, which would put a second source of truth beside the manifest</td></tr>
+        <tr><td class="role">Document parsing</td><td><code>docling</code></td><td>Keeps table structure intact instead of flattening it — the whole reason this project beats naive RAG</td></tr>
+        <tr><td class="role">Structured store</td><td><code>duckdb</code>, <code>polars</code></td><td>In-process analytical SQL; no server, and it is where all arithmetic actually happens</td></tr>
+        <tr><td class="role">Vector store</td><td><code>qdrant-client</code> (Docker)</td><td>Fast, filterable, easy to run locally — <code>lancedb</code> is the zero-Docker fallback</td></tr>
+        <tr><td class="role">Keyword search</td><td><code>bm25s</code></td><td>In-process BM25; fusing it with dense yourself makes RRF explicit and explainable</td></tr>
+        <tr><td class="role">Entity graph</td><td><code>networkx</code></td><td>v1 needs traversal, not a graph database. Neo4j only if the graph outgrows memory</td></tr>
+        <tr><td class="role">Tracing</td><td><code>arize-phoenix</code>, <code>openinference-*</code></td><td>OpenTelemetry-native, self-hosted, free — traces are not tied to a vendor</td></tr>
+        <tr><td class="role">Evaluation</td><td><code>ragas</code> + custom deterministic suite</td><td>RAGAS for faithfulness and context precision; your own code for anything XBRL can verify</td></tr>
+        <tr><td class="role">Reliability</td><td><code>tenacity</code>, <code>diskcache</code></td><td>Exponential backoff and content-hash caching — the two things that make the free tier workable</td></tr>
+        <tr><td class="role">Serving</td><td><code>fastapi</code>, <code>streamlit</code></td><td>Structured API plus a transparency UI without spending a week on frontend</td></tr>
+        <tr><td class="role">Quality</td><td><code>pytest</code>, <code>ruff</code>, <code>pre-commit</code></td><td>A portfolio repo that fails its own lint is a bad first impression</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Schedule</h2>
+  <p class="sub">Five weeks. The first three gates build the substrate, M4 makes everything measurable, and M5–M6 are where the accuracy actually arrives.</p>
+  <figure class="chart">
+    <div class="scroll">
+      <svg class="gantt" viewBox="0 0 660 312" role="img" aria-label="Gantt chart of nine milestones across 35 working days: M0 rig 2 days, M1 corpus 3 days, M2 structured store 3 days, M3 unstructured store 5 days, M4 baseline and eval harness 4 days, M5 agent graph 7 days, M6 verification 3 days, M7 transparency UI 4 days, M8 evidence pack and ship 4 days.">
+        <line class="grid" x1="120" y1="28" x2="120" y2="272"/>
+        <line class="grid" x1="224" y1="28" x2="224" y2="272"/>
+        <line class="grid" x1="328" y1="28" x2="328" y2="272"/>
+        <line class="grid" x1="432" y1="28" x2="432" y2="272"/>
+        <line class="grid" x1="536" y1="28" x2="536" y2="272"/>
+        <line class="grid" x1="640" y1="28" x2="640" y2="272"/>
+
+        <text class="wk" x="172" y="20" text-anchor="middle">WEEK 1</text>
+        <text class="wk" x="276" y="20" text-anchor="middle">WEEK 2</text>
+        <text class="wk" x="380" y="20" text-anchor="middle">WEEK 3</text>
+        <text class="wk" x="484" y="20" text-anchor="middle">WEEK 4</text>
+        <text class="wk" x="588" y="20" text-anchor="middle">WEEK 5</text>
+
+        <text x="112" y="47" text-anchor="end">M0 rig</text>
+        <rect class="bar" x="120" y="36" width="30" height="14"><title>M0 · the rig · days 1–2</title></rect>
+        <text class="dur" x="156" y="47">2d</text>
+
+        <text x="112" y="73" text-anchor="end">M1 corpus</text>
+        <rect class="bar" x="150" y="62" width="45" height="14"><title>M1 · corpus acquisition · days 3–5</title></rect>
+        <text class="dur" x="201" y="73">3d</text>
+
+        <text x="112" y="99" text-anchor="end">M2 facts</text>
+        <rect class="bar" x="194" y="88" width="45" height="14"><title>M2 · structured store · days 6–8</title></rect>
+        <text class="dur" x="245" y="99">3d</text>
+
+        <text x="112" y="125" text-anchor="end">M3 text+graph</text>
+        <rect class="bar" x="239" y="114" width="74" height="14"><title>M3 · unstructured store · days 9–13</title></rect>
+        <text class="dur" x="319" y="125">5d</text>
+
+        <text x="112" y="151" text-anchor="end">M4 baseline</text>
+        <rect class="bar" x="313" y="140" width="59" height="14"><title>M4 · baseline and eval harness · days 14–17</title></rect>
+        <text class="dur" x="378" y="151">4d</text>
+
+        <text x="112" y="177" text-anchor="end">M5 graph</text>
+        <rect class="bar" x="372" y="166" width="104" height="14"><title>M5 · the agent graph · days 18–24</title></rect>
+        <text class="dur" x="482" y="177">7d</text>
+
+        <text x="112" y="203" text-anchor="end">M6 verify</text>
+        <rect class="bar" x="477" y="192" width="45" height="14"><title>M6 · verification and guardrails · days 25–27</title></rect>
+        <text class="dur" x="528" y="203">3d</text>
+
+        <text x="112" y="229" text-anchor="end">M7 surface</text>
+        <rect class="bar" x="521" y="218" width="59" height="14"><title>M7 · transparency surface · days 28–31</title></rect>
+        <text class="dur" x="586" y="229">4d</text>
+
+        <text x="112" y="255" text-anchor="end">M8 ship</text>
+        <rect class="bar" x="581" y="244" width="59" height="14"><title>M8 · evidence pack and ship · days 32–35</title></rect>
+
+        <line class="mk" x1="372" y1="28" x2="372" y2="278"/>
+        <text class="mkt" x="368" y="290" text-anchor="end">eval set frozen here — nothing after this changes it</text>
+      </svg>
+    </div>
+    <figcaption>Bars are working days. The dashed line is the point of no return: once the eval set is frozen, every later number is comparable to every earlier one.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>The nine gates</h2>
+  <p class="sub">Each gate lists what you build, what proves it done, and what you do instead if it breaks. The bail-out clauses are the difference between a plan and a wish.</p>
+
+  <!-- M0 -->
+  <div class="gate">
+    <div class="rail"><div class="gid shipped">M0</div><p class="days">DAYS 1–2</p><p class="stamp">Shipped</p></div>
+    <div class="card">
+      <h3>The rig</h3>
+      <p class="goal">Before any domain code: the adapter, the limiter, the cache, and tracing. Everything else assumes these work.</p>
+      <div class="cols">
+        <div class="blk">
+          <h4>Build</h4>
+          <ul>
+            <li>Repo scaffold, <code>pyproject.toml</code>, conda env, <code>.env.example</code></li>
+            <li><code>config.py</code> with pydantic-settings and the <b>model registry</b></li>
+            <li><code>llm/gemini.py</code>: <code>chat()</code>, <code>embed()</code>, <code>rerank()</code> behind one interface</li>
+            <li>Sliding-window limiter, one per model, tenacity backoff on 429, diskcache keyed by content hash</li>
+            <li><code>llm/rerank_local.py</code>: cross-encoder reranking, imported lazily so the CLI never pays for torch</li>
+            <li>Phoenix in docker-compose + OpenInference instrumentation</li>
+            <li><code>fallback_ollama.py</code> behind the same interface</li>
+          </ul>
+        </div>
+        <div class="blk">
+          <h4>Definition of done</h4>
+          <ul class="dod">
+            <li class="done"><code>make smoke</code> returns a completion, an embedding vector, and a rerank ordering — and the ordering must be <i>correct</i>, not merely non-empty</li>
+            <li class="done">A unit test with a fake clock proves the limiter never exceeds its declared rpm</li>
+            <li class="done">Calling the same prompt twice issues <b>one</b> HTTP request (assert on a counter)</li>
+            <li class="done">A trace with ≥3 spans is visible at <code>localhost:6006</code> — asserted by querying them back out, not by eyeballing the UI</li>
+            <li class="done">The fallback's contract holds <i>offline</i> — 12 tests drive it through a fake OpenAI-compatible transport, so interface drift fails the build instead of surfacing during an outage</li>
+            <li class="pending"><code>LLM_BACKEND=ollama</code> passes the identical smoke test <i>— pending the 1.5 GB installer + 2.3 GB of weights</i></li>
+          </ul>
+        </div>
+      </div>
+      <div class="pk"><span class="tag">openai</span><span class="tag">pydantic-settings</span><span class="tag">tenacity</span><span class="tag">diskcache</span><span class="tag">arize-phoenix</span><span class="tag">openinference-instrumentation-openai</span><span class="tag">sentence-transformers</span><span class="tag">typer</span></div>
+      <p class="bail"><b>If it breaks</b>A model ID 404s when the vendor retires it — change one line in the registry, not the codebase. That is the entire reason the registry exists.</p>
+      <p class="ship"><b>What actually happened</b>Both bail-outs fired, in the same gate. NVIDIA NIM was the original provider; its account verification proved impassable, so the whole provider was swapped for Gemini plus a local cross-encoder — one new backend file and one registry block, with the limiter, cache, tracing and every test carried over untouched. Then on the first live run <i>every</i> Gemini 2.x chat ID answered 404, <span class="mono">“no longer available to new users”</span>, while embeddings kept working: two more registry lines, no code. The gate's own premise is what made both cheap.<br><br>One correction the run forced, now in the code: <strong>a model listing is not a probe.</strong> <code>ListModels</code> returned an ID this key could not call, so <code>filing probe</code> issues a real request per ID instead of trusting the catalog — and never pins a <code>*-latest</code> alias, since one answered 503 while the pinned ID was fine.<br><br>Writing the fallback’s tests turned up something the risk register had wrong. “Flip <code>LLM_BACKEND</code> and keep working” is true for <b>chat</b> and false for <b>retrieval</b>: Gemini embeds at 1536 dims and <code>nomic-embed-text</code> at 768, and even at equal width they are different vector spaces where cosine means nothing. That is a silent failure — an index queried with the other backend’s vectors returns neighbours, just wrong ones. So the claim is narrowed above, M3 keys each collection by <b>backend + model + dim</b> so a swap is a startup error, and the finding is <i>an assertion in the test file</i> rather than a sentence in a doc, because prose does not fail a build.</p>
+    </div>
+  </div>
+
+  <!-- M1 -->
+  <div class="gate">
+    <div class="rail"><div class="gid shipped">M1</div><p class="days">DAYS 3–5</p><p class="stamp">Shipped</p></div>
+    <div class="card">
+      <h3>Corpus</h3>
+      <p class="goal">20 companies across 4 sectors, FY2020–FY2024, 10-K and 10-Q. Four sectors of five so peer-comparison questions have real peers.</p>
+      <div class="cols">
+        <div class="blk">
+          <h4>Build</h4>
+          <ul>
+            <li class="done">Ticker → CIK resolution and a committed <code>universe.yaml</code></li>
+            <li class="done">Filing downloader with SEC's required User-Agent header</li>
+            <li class="done"><code>companyfacts</code> JSON pull for all 20 companies</li>
+            <li class="done">Manifest table in DuckDB: cik, ticker, form, fy, accn, path, sha256</li>
+            <li class="done">Idempotent resume — the manifest is the source of truth, not the filesystem</li>
+          </ul>
+        </div>
+        <div class="blk">
+          <h4>Definition of done</h4>
+          <ul class="dod">
+            <li class="done">≥100 filings on disk, all present in the manifest — <b>407</b> (105 10-K, 302 10-Q), 0 rows without a file</li>
+            <li class="done">companyfacts retrieved for 20/20 companies</li>
+            <li class="done">A second run downloads <b>zero</b> files and exits clean — <code>filing corpus</code> proves it by <i>doing</i> the second run</li>
+            <li class="done">Corpus size and estimated parse time recorded in <code>docs/corpus.md</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="pk"><span class="tag">httpx</span><span class="tag">duckdb</span><span class="tag">pyyaml</span><span class="tag">tenacity</span><span class="tag">typer</span></div>
+      <p class="bail"><b>If it breaks</b>EDGAR returns 403 → you forgot the User-Agent header with a real contact address. If it throttles, back off and resume from the manifest; never restart a download run from scratch.</p>
+      <p class="ship"><b>What actually happened</b><code>edgartools</code> was dropped for raw <code>httpx</code>. It maintains its own local filing store, and a gate whose whole premise is <i>the manifest is the source of truth</i> cannot also have a second one; the EDGAR contract is four endpoints, and it is the part worth showing. Two hazards inside it are invisible until they cost you a corpus. <strong><code>filings.recent</code> caps at ~1000 submissions</strong> — a heavy Form-4 filer burns that in under three years, so five years of 10-Ks can sit entirely in the overflow chunks under <code>filings.files</code>. And <strong>filtering on a fiscal-year label is filtering on a company convention</strong>: the year ending 2024-01-31 is Walmart's FY2024 while the year ending 2024-02-03 is Target's FY2023. The corpus filters on <i>period end</i> instead, and the five retailers are in the universe precisely so that divergence stays visible.<br><br>The gate then caught something none of its original four checks would have. <strong>XOM contributed zero filings and everything still passed.</strong> SEC's <code>company_tickers.json</code> maps a ticker to whoever trades under it <i>today</i> — for XOM a registrant created in a holding-company reorganisation, whose first filing postdates the entire window, while the history sits under a CIK that now carries no ticker at all. Resolution succeeded; the corpus was silently short one company's five years. Nothing errored, and 387 filings across 20 companies looked healthy in every total. The fix is two lines of YAML pinning the CIK — but the real fix is the <strong>per-company coverage check</strong> the gate now runs, because a corpus-wide total can never see a hole inside one company. An aggregate that passes is not evidence that its parts did.<br><br>The resume path was proved by accident: the first run was killed partway through, and the restart fetched the 35 missing filings in 62 requests instead of re-downloading 387 in ~600. The manifest row goes in only <i>after</i> the bytes land, which is what makes that safe.</p>
+    </div>
+  </div>
+
+  <!-- M2 -->
+  <div class="gate">
+    <div class="rail"><div class="gid shipped">M2</div><p class="days">DAYS 6–8</p><p class="stamp">Shipped</p></div>
+    <div class="card">
+      <h3>Structured store</h3>
+      <p class="goal">Every number the system will ever state, in SQL, with a link back to the filing that reported it. No LLM touches arithmetic after this gate.</p>
+      <div class="cols">
+        <div class="blk">
+          <h4>Build</h4>
+          <ul>
+            <li class="done"><code>facts</code> table: cik, taxonomy, tag, unit, period_start, period_end, span, val, accn, filed — <b>514,649 rows, 2,827 concepts</b></li>
+            <li class="done"><code>companies</code> and <code>filings</code> dimension tables, copied in rather than attached</li>
+            <li class="done">Metric registry: 25 metrics, human name → us-gaap tag(s) → SQL expression, resolved <i>per company</i></li>
+            <li class="done">Derived views: gross/operating/net margin, ROE, ROA, D/E, FCF, YoY growth, CAGR</li>
+            <li class="done">Span classification, sign documented not mutated, restatements kept and surfaced as a view</li>
+          </ul>
+        </div>
+        <div class="blk">
+          <h4>Definition of done</h4>
+          <ul class="dod">
+            <li class="done">Uniqueness holds on (cik, taxonomy, tag, unit, period, accn) — <b>0 duplicates</b>. <i>Not</i> on segment: <code>companyfacts</code> returns consolidated figures only and carries no segment field, so the original key named a column that cannot exist</li>
+            <li class="done">50 randomly sampled facts checked against the source filing — <b>49 found</b> across 45 documents; the one miss is a Pfizer tax line that lives in the XBRL attachment and not the readable 10-Q</li>
+            <li class="done">10 hand-written numeric questions answered exactly by SQL, no LLM in the loop — <b>10/10</b></li>
+            <li class="done">Derived metrics match a manual calculation for 3 companies — <b>570 values over 57 fiscal years</b>, recomputed longhand in Python, zero disagreement</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pk"><span class="tag">duckdb</span><span class="tag">polars</span><span class="tag">pandera</span><span class="tag">pytest</span></div>
+      <p class="bail"><b>If it breaks</b>XBRL segment dimensions are genuinely messy. v1 scope is consolidated totals only — document the exclusion in the README rather than burning a week on axis normalisation.</p>
+      <p class="ship"><b>What actually happened</b>The bail-out was never needed, because the premise was wrong in the useful direction: <strong>the <code>companyfacts</code> endpoint carries no segment dimension at all</strong>. It is consolidated-only by construction, so both the uniqueness key and the escape hatch named a column that does not exist. Segment data would mean parsing the XBRL attachments, which is a different gate.<br><br>Three properties of this data cost more than the loading did. <strong>A tag is not a period.</strong> <code>NetIncomeLoss</code> carries quarters, halves, nine-month stubs and full years under one name; summing the tag over a year triple-counts it. Every fact is therefore classified by span against the nearest canonical length, with a 25-day tolerance chosen because 4-4-5 retailers report 168-day halves and 252-day nine-months that no round range admits. <strong>A filing's fiscal-year label is not its facts' periods</strong> — <code>fy</code>/<code>fp</code> disagree with <code>year(period_end)</code> on 54.9% of rows, so they are stored as <code>filed_fy</code>/<code>filed_fp</code> and never used as a key. And <strong>the declared UNIQUE constraint is not the check</strong>: SQL treats NULLs as distinct and <code>period_start</code> is NULL for all 195,325 instants, so the constraint silently exempts 38% of the table. The gate runs a <code>GROUP BY</code>, which does treat NULLs as equal.<br><br>Numbers change after they are published: <strong>11,359 period-keys (4.3%) carry more than one value</strong>. Both are kept, <code>facts_current</code> picks the latest filing, and <code>restatements</code> exposes the movement — a restatement is a finding, not an error. But <strong>&ldquo;latest wins&rdquo; is right for a fact and wrong for a statement</strong>: a revision moves a set of lines together and a company re-tags only the years it still presents, so taking the newest value of each line independently can assemble a balance sheet out of two filings that balances in neither. Costco's FY2014 assets were revised in the FY2016 10-K without its liabilities being re-tagged. The identity check therefore reads one accession at a time — and then closes on <b>1,717 balance sheets with zero violations</b>.<br><br>The ten questions were meant to be a formality and <strong>scored 5/10 on the first run, two of them real defects</strong>. AbbVie and Pfizer appeared to do no R&amp;D: they report <code>ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost</code>, which the registry did not list — a fourth failure class, <i>near-synonyms that are not synonyms</i>, which yields wrong answers rather than missing ones. And 15 balance sheets did not balance, because the identity has four right-hand terms and the registry had two: total equity <i>including</i> NCI, the pre-ASC-810 <code>MinorityInterest</code> line, and mezzanine equity that belongs to neither side. That also forced a second resolution rule: coverage-first is right for a <i>tag succession</i> (19 of 20 companies switch revenue tags at ASC 606 and the series must survive), but registry-priority is right for <i>near-synonyms</i> — ranking equity by coverage had put ten companies on one definition of equity and ten on the other, so the ROE denominator meant different things depending on the ticker.</p>
+    </div>
+  </div>
+
+  <!-- M3 -->
+  <div class="gate">
+    <div class="rail"><div class="gid">M3</div><p class="days">DAYS 9–13</p></div>
+    <div class="card">
+      <h3>Unstructured store</h3>
+      <p class="goal">The narrative half: section-aware chunks that never lose their character offsets, indexed twice and fused.</p>
+      <div class="cols">
+        <div class="blk">
+          <h4>Build</h4>
+          <ul>
+            <li>Docling parse → blocks, cached to parquet so you parse each filing exactly once</li>
+            <li>Item splitter for 1A, 3, 7, 8 — the sections questions actually land in</li>
+            <li>Section-aware chunker preserving <code>{accn, item, char_start, char_end}</code></li>
+            <li>Batched Gemini embeddings → Qdrant; <code>bm25s</code> sparse index alongside</li>
+            <li>Collection keyed by <b>backend + model + dim</b>, so a backend swap is a startup error and not silently wrong neighbours</li>
+            <li>Explicit RRF fusion + the local cross-encoder reranker</li>
+            <li>Entity/relation extraction into a NetworkX graph, each edge carrying its source sentence</li>
+          </ul>
+        </div>
+        <div class="blk">
+          <h4>Definition of done</h4>
+          <ul class="dod">
+            <li>100% of filings parsed or explicitly quarantined with a written reason</li>
+            <li>200 random chunks: offsets resolve back to identical source text</li>
+            <li>Re-indexing an unchanged corpus costs <b>zero</b> embedding calls</li>
+            <li>recall@50 ≥ 0.85 on a 30-question smoke set</li>
+            <li>Reranking measurably improves precision@5 on that same set</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pk"><span class="tag">docling</span><span class="tag">qdrant-client</span><span class="tag">bm25s</span><span class="tag">networkx</span><span class="tag">pyarrow</span></div>
+      <p class="bail"><b>If it breaks</b>Docling is slow on 300-page filings — that is expected, parse once and cache. If Docker is painful on Windows, swap Qdrant for embedded LanceDB behind the same store interface; the rest of the codebase should not notice.</p>
+    </div>
+  </div>
+
+  <!-- M4 -->
+  <div class="gate">
+    <div class="rail"><div class="gid">M4</div><p class="days">DAYS 14–17</p></div>
+    <div class="card">
+      <h3>Baseline and eval harness</h3>
+      <p class="goal">The gate that makes every later claim measurable. Build the naive system you intend to beat, and freeze the questions before you know how the agent behaves.</p>
+      <div class="cols">
+        <div class="blk">
+          <h4>Build</h4>
+          <ul>
+            <li>Deliberately naive RAG: fixed 512-token chunks, dense top-5, one LLM call</li>
+            <li>Eval set v1.0 — 150 questions: 80 numeric auto-generated from XBRL with verified gold, 60 narrative with hand-checked gold spans, 10 unanswerable</li>
+            <li>Runner with config hashing and result caching</li>
+            <li>Deterministic metric suite: exact-match, recall@k, nDCG, router accuracy, citation resolution</li>
+            <li>Results written as JSON plus a rendered markdown table</li>
+          </ul>
+        </div>
+        <div class="blk">
+          <h4>Definition of done</h4>
+          <ul class="dod">
+            <li><code>python -m filing.eval run --config baseline</code> writes <code>results/baseline.json</code></li>
+            <li>Eval set tagged <code>v1.0</code>, committed, with a datasheet describing how each slice was built</li>
+            <li>Deterministic metrics complete with <b>zero</b> LLM calls</li>
+            <li>A full baseline run fits inside the rate-limit budget and is reproducible from cache</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pk"><span class="tag">ragas</span><span class="tag">pytest</span><span class="tag">rich</span><span class="tag">typer</span><span class="tag">jinja2</span></div>
+      <p class="bail"><b>If it breaks</b>If the 60 narrative labels slip, ship M4 with the 80 numeric plus 10 unanswerable and backfill narrative during M5. Never block the critical path on labelling — but never start M5 without <i>some</i> frozen baseline number.</p>
+    </div>
+  </div>
+
+  <!-- M5 -->
+  <div class="gate">
+    <div class="rail"><div class="gid">M5</div><p class="days">DAYS 18–24</p></div>
+    <div class="card">
+      <h3>The agent graph</h3>
+      <p class="goal">The project's actual thesis: planner, router, three retrievers, reranker, grader, and a bounded repair loop.</p>
+      <div class="cols">
+        <div class="blk">
+          <h4>Build</h4>
+          <ul>
+            <li>Typed LangGraph state and the unified evidence schema</li>
+            <li>Nodes: plan → route → retrieve{sql, text, graph} → rerank → grade → repair → synthesise</li>
+            <li>Router emits a store choice per typed sub-question</li>
+            <li>Text-to-SQL constrained to the metric registry for v1, free-form only behind a flag</li>
+            <li>Repair budget of 2, then abstain; checkpointing so a failed run resumes</li>
+            <li>One span per node with documented attributes</li>
+          </ul>
+        </div>
+        <div class="blk">
+          <h4>Definition of done</h4>
+          <ul class="dod">
+            <li>All 150 questions run with no unhandled exception</li>
+            <li>Accuracy beats baseline — target ≥ +20 points absolute on the multi-hop slice</li>
+            <li>Router accuracy ≥ 0.85 against gold store labels</li>
+            <li>Repair loop provably never exceeds 2 iterations (unit test)</li>
+            <li>One full trace exported to <code>docs/trace_example.json</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="pk"><span class="tag">langgraph</span><span class="tag">langchain-core</span><span class="tag">pydantic</span><span class="tag">openinference-instrumentation-langchain</span></div>
+      <p class="bail"><b>If it breaks</b>If the router underperforms, fall back to querying all three stores in parallel and letting the reranker sort it out. Slower and more expensive, but correct — and reporting it as a measured trade-off is stronger than hiding a weak router.</p>
+    </div>
+  </div>
+
+  <!-- M6 -->
+  <div class="gate">
+    <div class="rail"><div class="gid">M6</div><p class="days">DAYS 25–27</p></div>
+    <div class="card">
+      <h3>Verification and guardrails</h3>
+      <p class="goal">The layer that lets you claim zero hallucinated figures without hand-waving.</p>
+      <div class="cols">
+        <div class="blk">
+          <h4>Build</h4>
+          <ul>
+            <li>Numeric verifier: every derived figure recomputed in DuckDB from source facts</li>
+            <li>Citation resolver: a claim without a resolvable locator does not ship</li>
+            <li>Abstention guard on the final answer</li>
+            <li>Failure taxonomy tags written onto spans (<code>retrieval_miss</code>, <code>router_wrong</code>, <code>grader_false_positive</code>, <code>synthesis_drift</code>)</li>
+          </ul>
+        </div>
+        <div class="blk">
+          <h4>Definition of done</h4>
+          <ul class="dod">
+            <li>Hallucinated-number rate = 0 on the numeric slice</li>
+            <li>30 sampled answers: 100% of claims resolve to a real locator</li>
+            <li>Abstains on 10/10 unanswerable, and fires on &lt;5% of answerable questions</li>
+            <li>Failure taxonomy is queryable in Phoenix — your failure gallery is a filter, not a manual read</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pk"><span class="tag">duckdb</span><span class="tag">pydantic</span><span class="tag">arize-phoenix</span></div>
+      <p class="bail"><b>If it breaks</b>If the guard rejects too many valid answers, switch it to log-and-flag rather than hard-block, and report the flag rate. A system that surfaces its own uncertainty still beats one that suppresses it.</p>
+    </div>
+  </div>
+
+  <!-- M7 -->
+  <div class="gate">
+    <div class="rail"><div class="gid">M7</div><p class="days">DAYS 28–31</p></div>
+    <div class="card">
+      <h3>Transparency surface</h3>
+      <p class="goal">Developer observability is Phoenix. This is the other half: what the <i>user</i> sees about how the answer was reached.</p>
+      <div class="cols">
+        <div class="blk">
+          <h4>Build</h4>
+          <ul>
+            <li>FastAPI <code>/ask</code> returning a structured evidence payload, not just prose</li>
+            <li>Streamlit UI: the plan it made, stores it routed to, evidence panel with per-claim citations</li>
+            <li>Numeric verification shown explicitly — the computed value beside its inputs</li>
+            <li>Trace link per answer, and a first-class "abstained" state</li>
+          </ul>
+        </div>
+        <div class="blk">
+          <h4>Definition of done</h4>
+          <ul class="dod">
+            <li>One multi-hop query in the UI shows plan, routing, evidence, citations, verification and trace link</li>
+            <li>The API response contains the evidence records, so the UI is a client not the source of truth</li>
+            <li>Abstention and error states render without crashing</li>
+            <li>No console errors; usable on a laptop screen</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pk"><span class="tag">fastapi</span><span class="tag">uvicorn</span><span class="tag">streamlit</span><span class="tag">sse-starlette</span></div>
+      <p class="bail"><b>If it breaks</b>If Streamlit fights you on the evidence panel layout, drop to a static HTML template served by FastAPI. The panel matters; the framework does not.</p>
+    </div>
+  </div>
+
+  <!-- M8 -->
+  <div class="gate">
+    <div class="rail"><div class="gid">M8</div><p class="days">DAYS 32–35</p></div>
+    <div class="card">
+      <h3>Evidence pack and ship</h3>
+      <p class="goal">The week that converts a working system into something an interviewer can evaluate in ten minutes.</p>
+      <div class="cols">
+        <div class="blk">
+          <h4>Build</h4>
+          <ul>
+            <li>Ablation sweep across 6 configs: naive → +hybrid → +rerank → +router → +grader/repair → +verifier</li>
+            <li>Quality / cost / latency table, regenerable by one command</li>
+            <li>CI gate: deterministic metrics on a 40-question subset, per PR</li>
+            <li>Dockerfile + compose; deploy to a public URL</li>
+            <li>README written around the pain, plus a 3-minute walkthrough recording</li>
+          </ul>
+        </div>
+        <div class="blk">
+          <h4>Definition of done</h4>
+          <ul class="dod">
+            <li>Ablation table committed with 6 rows and a regeneration command in the README</li>
+            <li>CI provably fails on an injected regression — demonstrate it on a throwaway branch</li>
+            <li>Public URL live and answering</li>
+            <li>README opens with the problem, shows the table, links the eval datasheet, includes a trace screenshot</li>
+            <li>Walkthrough recorded: one hard multi-hop query, end to end</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pk"><span class="tag">docker</span><span class="tag">github-actions</span><span class="tag">matplotlib</span><span class="tag">rich</span></div>
+      <p class="bail"><b>If it breaks</b>If hosted deployment stalls on cost or cold starts, ship a Docker Compose one-liner plus a recorded walkthrough. A reproducible local run with a video beats a broken public URL.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Repository layout</h2>
+  <p class="sub">Decided now, not discovered in week three. The boundary that matters most: nothing outside <code>llm/</code> ever calls a model, and nothing outside <code>stores/</code> ever holds a connection.</p>
+<pre><b>Filing_Agentic_RAG/</b>
+├── pyproject.toml            <i># deps, ruff, pytest config</i>
+├── docker-compose.yml        <i># qdrant + phoenix</i>
+├── .env.example              <i># GEMINI_API_KEY, SEC_USER_AGENT, LLM_BACKEND</i>
+├── Makefile                  <i># smoke, ingest, index, eval, serve</i>
+├── src/filing/
+│   ├── config.py             <i># settings + MODEL_REGISTRY — the only place IDs live</i>
+│   ├── evidence.py           <i># the unified evidence record, imported everywhere</i>
+│   ├── <b>llm/</b>
+│   │   ├── base.py           <i># the three-verb interface everything else sees</i>
+│   │   ├── gemini.py         <i># chat / embed / rerank + limiter + cache</i>
+│   │   ├── rerank_local.py   <i># cross-encoder; torch imported lazily</i>
+│   │   ├── limiter.py        <i># sliding window, one instance per model</i>
+│   │   ├── retry.py          <i># shared tenacity policy: hosted vs local</i>
+│   │   └── fallback_ollama.py
+│   ├── <b>ingest/</b>
+│   │   ├── edgar.py          <i># filings + companyfacts, idempotent</i>
+│   │   ├── parse.py          <i># docling → blocks, cached to parquet</i>
+│   │   └── sections.py       <i># Item 1A / 3 / 7 / 8 splitter</i>
+│   ├── <b>stores/</b>
+│   │   ├── facts.py          <i># duckdb schema + metric registry</i>
+│   │   ├── text.py           <i># qdrant dense + bm25s sparse + RRF</i>
+│   │   └── graph.py          <i># networkx entities and relations</i>
+│   ├── <b>agent/</b>
+│   │   ├── state.py          <i># typed graph state</i>
+│   │   ├── graph.py          <i># langgraph wiring</i>
+│   │   └── nodes/            <i># plan, route, retrieve, rerank, grade,</i>
+│   │                         <i># repair, verify, synthesise, guard</i>
+│   ├── <b>eval/</b>
+│   │   ├── dataset/          <i># questions_v1.jsonl + datasheet.md</i>
+│   │   ├── metrics/          <i># deterministic/ and judged/</i>
+│   │   └── runner.py         <i># config hashing, caching, reporting</i>
+│   ├── api.py                <i># fastapi</i>
+│   └── ui.py                 <i># streamlit</i>
+├── tests/
+├── results/                  <i># one committed JSON per config — your evidence</i>
+└── docs/                     <i># corpus.md, trace_example.json, build-plan.html</i></pre>
+</section>
+
+<section>
+  <h2>Risk register</h2>
+  <p class="sub">Every one of these has a pre-decided response, so the decision is made now rather than at 1am in week four.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Risk</th><th>How you'll notice</th><th>Pre-decided response</th></tr></thead>
+      <tbody>
+        <tr><td class="role">Daily quota exhausted</td><td>429 storm from Gemini mid-run</td><td>Flip <code>LLM_BACKEND=ollama</code> and keep working on <b>chat</b> — planning, routing, grading, synthesis — which is what the daily cap actually binds. Reranking is local, so it never stops. <b>Retrieval does not fail over:</b> a Gemini index cannot be queried with Ollama vectors at any width, so it stays on the backend that built it. Re-run the final numbers on Gemini the next day</td></tr>
+        <tr><td class="role">Rate limit stalls evals</td><td>A 150-question run takes hours</td><td>Cache is doing nothing — check hash keys. Then reduce concurrency and run the judge suite overnight</td></tr>
+        <tr><td class="role">Model renamed / retired</td><td>404 on a model ID</td><td>One line in <code>MODEL_REGISTRY</code>. Pin versions and record the swap date in the README. <b>Already happened twice in M0</b> — the response is proven, not theoretical</td></tr>
+        <tr><td class="role">Docling chokes on a filing</td><td>Parse timeout or empty blocks</td><td>Quarantine that filing with a written reason; the corpus is 100+ documents, one exclusion is not a project risk</td></tr>
+        <tr><td class="role">Text-to-SQL unreliable</td><td>Malformed or wrong-result SQL</td><td>v1 uses parametrised templates from the metric registry. Free-form SQL is a flagged v2 experiment, measured separately</td></tr>
+        <tr><td class="role">Agent no better than baseline</td><td>M5 eval shows a flat delta</td><td>Ablate node by node — it is almost always the router or the grader. This is a finding worth writing up, not a failure</td></tr>
+        <tr><td class="role">Scope creep</td><td>"Just add 8-Ks / more companies / Neo4j"</td><td>Feature-freeze at M5. Anything new goes in a <code>v2.md</code> backlog and stays there</td></tr>
+        <tr><td class="role">Provider becomes unusable</td><td>Account verification, region block, or a pricing change</td><td>Swap the backend module and the registry block; everything above <code>llm/</code> is unaffected. This is exactly what happened to NIM in M0 and it cost hours, not days</td></tr>
+        <tr><td class="role">Windows/Docker friction</td><td>Qdrant won't start cleanly</td><td>LanceDB behind the same store interface. Decided in M3, costs an hour instead of a day</td></tr>
+        <tr><td class="role">Docker unavailable entirely</td><td>Engine down, mid-update, or not installed</td><td><code>pip install -e ".[phoenix]"</code> and <code>phoenix serve</code> — the collector runs as a plain process on the same port. Verified in M0; only the vector store still needs a container</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Gate rules</h2>
+  <div class="panel">
+    <ul class="rules">
+      <li><b>No gate advances on a claim.</b> Every DoD item is a command that exits zero or a number you can print. If you cannot verify it, it is not done.</li>
+      <li><b>Tracing is on from the first commit.</b> Retrofitting observability is the single most common reason these projects end up unexplainable.</li>
+      <li><b>The eval set freezes at M4</b> and gets a version tag. Adding a question later invalidates every earlier comparison — if you must, bump to v1.1 and re-run everything.</li>
+      <li><b>Commit <code>results/*.json</code> at every gate.</b> The git history of your metrics is itself a portfolio artifact — it shows the project improving under measurement.</li>
+      <li><b>Every number in the README is regenerable</b> by one documented command. A number you cannot reproduce is a number you cannot defend in an interview.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  Stack verified by live call, 5 September 2026 — every model ID in the registry answered a real request on that date, which is the only check that counts.
+  Vendors retire IDs without warning, so re-run <code>filing probe</code> rather than trusting any list, this one included. Reference:
+  <a href="https://aistudio.google.com/apikey">Google AI Studio</a> for keys,
+  <a href="https://ai.google.dev/gemini-api/docs/rate-limits">Gemini free-tier rate limits</a>, and
+  <a href="https://huggingface.co/cross-encoder/ms-marco-MiniLM-L-6-v2">ms-marco-MiniLM-L-6-v2</a> for the reranker.
+</footer>
+
+</div>

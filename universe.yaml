@@ -1,0 +1,72 @@
+# The corpus, declared rather than discovered.
+#
+# Committed on purpose. Every number this project reports is scoped by this
+# file, so "which companies?" is answerable from the repo alone rather than
+# from whatever happened to be on disk when the eval ran. Changing it changes
+# the corpus, which changes the eval set, which invalidates comparisons -- so
+# treat an edit here the way you would treat an edit to a test fixture.
+#
+# Four sectors of five, not twenty unrelated names. Peer-comparison questions
+# ("how does X's gross margin compare with its peers?") need real peers, and a
+# sector of one cannot answer them.
+
+window:
+  # Filter on period end, not on fiscal-year label. A fiscal year label is a
+  # company convention and the companies disagree: Walmart's year ending
+  # 2024-01-31 is its FY2024, while Target's year ending 2024-02-03 is its
+  # FY2023. A period-end date is unambiguous and needs no convention.
+  #
+  # The end date runs past 2024-12-31 deliberately: it is what pulls in the
+  # Jan/Feb year-ends of the retail sector. Calendar-year filers stop at their
+  # FY2024 10-K regardless, because their next period end is 2025-03-31.
+  period_end_from: "2020-01-01"
+  period_end_to: "2025-02-28"
+
+forms:
+  - 10-K
+  - 10-Q
+
+sectors:
+  # Deep segment reporting and five genuinely comparable businesses -- the
+  # sector most likely to produce hard multi-hop questions.
+  semiconductors:
+    - { ticker: NVDA, name: NVIDIA Corporation }
+    - { ticker: AMD,  name: Advanced Micro Devices }
+    - { ticker: INTC, name: Intel Corporation }
+    - { ticker: AVGO, name: Broadcom Inc. }
+    - { ticker: QCOM, name: QUALCOMM Incorporated }
+
+  # Every one of these has a January or February fiscal year end. That is the
+  # point: it keeps the fiscal-year handling honest instead of letting a corpus
+  # of calendar-year filers hide the off-by-one.
+  big_box_retail:
+    - { ticker: WMT,  name: Walmart Inc. }
+    - { ticker: TGT,  name: Target Corporation }
+    - { ticker: COST, name: Costco Wholesale Corporation }
+    - { ticker: HD,   name: The Home Depot }
+    - { ticker: LOW,  name: Lowe's Companies }
+
+  # Segment disclosure by product, heavy Item 1A risk narrative, and frequent
+  # restatements from acquisitions -- good stress for the restatement handling.
+  pharmaceuticals:
+    - { ticker: JNJ,  name: Johnson & Johnson }
+    - { ticker: PFE,  name: Pfizer Inc. }
+    - { ticker: MRK,  name: Merck & Co. }
+    - { ticker: ABBV, name: AbbVie Inc. }
+    - { ticker: LLY,  name: Eli Lilly and Company }
+
+  # Commodity-driven swings make year-over-year questions non-trivial: the
+  # right answer is rarely "it went up".
+  oil_and_gas:
+    # CIK pinned deliberately. SEC's company_tickers.json maps XOM to
+    # 0002115436 -- a registrant created in a holding-company
+    # reorganisation, whose first filing postdates this whole window. The
+    # ten years of 10-Ks sit under 0000034088 (EXXON MOBIL CORP), which now
+    # carries no ticker at all and so can never be found by ticker lookup.
+    # Without this line resolution succeeds and the corpus is silently
+    # short one company's entire history.
+    - { ticker: XOM, name: Exxon Mobil Corporation, cik: "0000034088" }
+    - { ticker: CVX, name: Chevron Corporation }
+    - { ticker: COP, name: ConocoPhillips }
+    - { ticker: SLB, name: Schlumberger (SLB) }
+    - { ticker: PSX, name: Phillips 66 }

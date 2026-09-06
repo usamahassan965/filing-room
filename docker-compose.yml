@@ -1,0 +1,26 @@
+# Two services, both stateful, both needed from M0 onward.
+#   phoenix -> trace collector + UI at http://localhost:6006
+#   qdrant  -> vector store, unused until M3 but pinned now so the version
+#              that produced a result is the version recorded in the result.
+services:
+  phoenix:
+    image: arizephoenix/phoenix:version-11.9.0
+    container_name: filing-phoenix
+    ports:
+      - "6006:6006"   # UI + OTLP/HTTP collector (/v1/traces)
+      - "4317:4317"   # OTLP/gRPC collector
+    environment:
+      PHOENIX_WORKING_DIR: /mnt/data
+    volumes:
+      - ./phoenix_data:/mnt/data
+    restart: unless-stopped
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.4
+    container_name: filing-qdrant
+    ports:
+      - "6333:6333"   # REST
+      - "6334:6334"   # gRPC
+    volumes:
+      - ./qdrant_storage:/qdrant/storage
+    restart: unless-stopped

@@ -1,0 +1,27 @@
+.env
+.conda/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Caches and corpora are reproducible; results are not.
+.cache/
+data/*
+!data/.gitkeep
+qdrant_storage/
+phoenix_data/
+
+# The one exception. facts.duckdb is a pure function of the JSON on disk and
+# rebuilds in 25 seconds, so it stays out. manifest.duckdb is not reproducible
+# without re-downloading 1.1 GB from a host that rate-limits to 10 req/s, and it
+# is the only record of what was fetched, when, and with which hash. 3.4 MB is a
+# cheap price for making the corpus rebuildable from a clone.
+!data/manifest.duckdb
+
+# Local editor/agent state, not project configuration.
+.claude/settings.local.json
