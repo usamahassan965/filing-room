@@ -149,8 +149,18 @@ MODEL_REGISTRY: dict[Backend, dict[str, ModelSpec]] = {
             note="cross-encoder; the single biggest retrieval quality lever",
         ),
     },
+    # Sized to the machine, not to the leaderboard. llama3.1:8b at q4 wants
+    # ~6 GB resident and this box has 15.8 GB total with ~4.8 GB actually free,
+    # so it would swap -- and a generator that swaps does not produce a slow
+    # eval, it produces a timed-out one. Both entries below are ~2 GB, which is
+    # why there are two of them: they are the bake-off, run over the same 150
+    # questions by the baseline-local configs rather than argued about.
     "ollama": {
-        "chat": ModelSpec(id="llama3.1:8b", note="local escape hatch"),
+        "chat": ModelSpec(
+            id="qwen2.5:3b",
+            alternates=("llama3.2:3b", "llama3.1:8b"),
+            note="local escape hatch; 8b is listed but does not fit this machine",
+        ),
         "chat_fast": ModelSpec(id="llama3.2:3b"),
         "embed": ModelSpec(id="nomic-embed-text", dim=768),
         # Ollama serves no cross-encoder. The Ollama backend reranks by
