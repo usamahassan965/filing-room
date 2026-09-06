@@ -1,2 +1,8 @@
 * text=auto
 *.duckdb binary
+
+# The eval set's sha256 is its identity: it goes into every run's fingerprint,
+# and `docs/eval-set.md` prints it. `text=auto` above would check it out CRLF on
+# Windows, so the same questions would hash differently depending on who cloned
+# them -- which is the one thing a frozen measurement set must not do.
+data/eval/*.jsonl text eol=lf

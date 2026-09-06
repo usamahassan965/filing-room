@@ -1,0 +1,2878 @@
+[
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did ABBV report for Revenues for the fiscal year ended 2018-12-31?",
+  "value": 32753000000.0,
+  "unit": "USD",
+  "tag": "Revenues",
+  "spans": [
+   {
+    "accn": "0001551152-21-000008",
+    "char_start": 256892,
+    "char_end": 256898,
+    "quote": "...9\n%\n11.1\n%\nInternational\n10,925\n9,359\n11,229\n16.7\n%\n(16.7)\n%\n17.8\n%\n(13.6)\n%\nNet revenues\n$\n45,804\n$\n33,266\n$\n32,753\n37.7\n%\n1.6\n%\n38.0\n%\n2.6\n%\n2020 Form 10-K |\n36\nThe following table details AbbVie's worldwide net revenues:\nPe..."
+   },
+   {
+    "accn": "0001551152-21-000008",
+    "char_start": 261059,
+    "char_end": 261065,
+    "quote": "....3\n%\nAll other\n$\n2,923\n$\n2,068\n$\n2,408\n41.3\n%\n(14.1)\n%\n42.4\n%\n(11.5)\n%\nTotal net revenues\n$\n45,804\n$\n33,266\n$\n32,753\n37.7\n%\n1.6\n%\n38.0\n%\n2.6\n%\nn/m – Not meaningful\n(a)Net revenues include Allergan product revenues from the dat..."
+   },
+   {
+    "accn": "0001551152-21-000008",
+    "char_start": 301351,
+    "char_end": 301357,
+    "quote": "...\nyears ended December 31 (in millions, except per share data)\n2020\n2019\n2018\nNet revenues\n$\n45,804\n$\n33,266\n$\n32,753\nCost of products sold\n15,387\n7,439\n7,718\nSelling, general and administrative\n11,299\n6,942\n7,399\nResearch and ..."
+   },
+   {
+    "accn": "0001551152-21-000008",
+    "char_start": 450803,
+    "char_end": 450809,
+    "quote": "...roid\nUnited States\n$\n771\n$\n786\n$\n776\nAll other\n$\n2,923\n$\n2,068\n$\n2,408\nTotal net revenues\n$\n45,804\n$\n33,266\n$\n32,753\n(a)Net revenues include Allergan product revenues from the date of the acquisition, May 8, 2020, through Dece..."
+   },
+   {
+    "accn": "0001551152-21-000008",
+    "char_start": 451446,
+    "char_end": 451452,
+    "quote": "...il\n406\n359\n350\nItaly\n379\n372\n652\nAll other countries\n3,977\n3,566\n3,863\nTotal net revenues\n$\n45,804\n$\n33,266\n$\n32,753\nLong-lived assets, primarily net property and equipment, by geographic area were as follows:\nas of December 3..."
+   }
+  ],
+  "tickers": [
+   "ABBV"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2018-12-31",
+  "accn": "0001551152-21-000008",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 5 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did ABBV report for Revenues for the fiscal year ended 2019-12-31?",
+  "value": 33266000000.0,
+  "unit": "USD",
+  "tag": "Revenues",
+  "spans": [
+   {
+    "accn": "0001551152-22-000007",
+    "char_start": 260607,
+    "char_end": 260613,
+    "quote": "...\n24.7\n%\n45.9\n%\nInternational\n12,687\n10,925\n9,359\n16.1\n%\n16.7\n%\n12.6\n%\n17.8\n%\nNet revenues\n$\n56,197\n$\n45,804\n$\n33,266\n22.7\n%\n37.7\n%\n21.9\n%\n38.0\n%\n37\n| 2021 Form 10-K\nThe following table details AbbVie's worldwide net revenues:\n..."
+   },
+   {
+    "accn": "0001551152-22-000007",
+    "char_start": 265187,
+    "char_end": 265193,
+    "quote": "...1.9)\n%\nAll other\n$\n2,673\n$\n2,923\n$\n2,068\n(8.6)\n%\n41.3\n%\n(9.7)\n%\n42.4\n%\nTotal net revenues\n$\n56,197\n$\n45,804\n$\n33,266\n22.7\n%\n37.7\n%\n21.9\n%\n38.0\n%\nn/m – Not meaningful\n(a)Net revenues include Allergan product revenues after the ..."
+   },
+   {
+    "accn": "0001551152-22-000007",
+    "char_start": 305581,
+    "char_end": 305587,
+    "quote": "...\nyears ended December 31 (in millions, except per share data)\n2021\n2020\n2019\nNet revenues\n$\n56,197\n$\n45,804\n$\n33,266\nCost of products sold\n17,446\n15,387\n7,439\nSelling, general and administrative\n12,349\n11,299\n6,942\nResearch an..."
+   },
+   {
+    "accn": "0001551152-22-000007",
+    "char_start": 454553,
+    "char_end": 454559,
+    "quote": "...roid\nUnited States\n$\n767\n$\n771\n$\n786\nAll other\n$\n2,673\n$\n2,923\n$\n2,068\nTotal net revenues\n$\n56,197\n$\n45,804\n$\n33,266\n(a)Net revenues include Allergan product revenues after the acquisition closing date of May 8, 2020.\n2021 For..."
+   },
+   {
+    "accn": "0001551152-22-000007",
+    "char_start": 455175,
+    "char_end": 455181,
+    "quote": "...m\n497\n509\n372\nBrazil\n368\n406\n359\nAll other countries\n4,761\n3,977\n3,566\nTotal net revenues\n$\n56,197\n$\n45,804\n$\n33,266\nLong-lived assets, primarily net property and equipment, by geographic area were as follows:\nas of December 3..."
+   }
+  ],
+  "tickers": [
+   "ABBV"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-12-31",
+  "accn": "0001551152-22-000007",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 5 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did ABBV report for Revenues for the fiscal year ended 2020-12-31?",
+  "value": 45804000000.0,
+  "unit": "USD",
+  "tag": "Revenues",
+  "spans": [
+   {
+    "accn": "0001551152-23-000011",
+    "char_start": 250282,
+    "char_end": 250288,
+    "quote": "...\n5.1\n%\n24.7\n%\nInternational\n12,341\n12,687\n10,925\n(2.7)\n%\n16.1\n%\n5.5\n%\n12.6\n%\nNet revenues\n$\n58,054\n$\n56,197\n$\n45,804\n3.3\n%\n22.7\n%\n5.1\n%\n21.9\n%\n37\n| 2022 Form 10-K\nThe following table details AbbVie's worldwide net revenues:\nPe..."
+   },
+   {
+    "accn": "0001551152-23-000011",
+    "char_start": 254590,
+    "char_end": 254596,
+    "quote": "...\n%\nAll other\n$\n4,137\n$\n5,019\n$\n5,119\n(17.6)\n%\n(2.0)\n%\n(16.3)\n%\n(2.8)\n%\nTotal net revenues\n$\n58,054\n$\n56,197\n$\n45,804\n3.3\n%\n22.7\n%\n5.1\n%\n21.9\n%\nn/m – Not meaningful\n(a)Net revenues include Allergan product revenues after the ac..."
+   },
+   {
+    "accn": "0001551152-23-000011",
+    "char_start": 295295,
+    "char_end": 295301,
+    "quote": "...\nyears ended December 31 (in millions, except per share data)\n2022\n2021\n2020\nNet revenues\n$\n58,054\n$\n56,197\n$\n45,804\nCost of products sold\n17,414\n17,446\n15,387\nSelling, general and administrative\n15,260\n12,349\n11,299\nResearch ..."
+   },
+   {
+    "accn": "0001551152-23-000011",
+    "char_start": 438034,
+    "char_end": 438040,
+    "quote": "...32\n32\n18\nTotal\n$\n1,035\n$\n1,038\n$\n667\nAll other\n$\n4,137\n$\n5,019\n$\n5,119\nTotal net revenues\n$\n58,054\n$\n56,197\n$\n45,804\n(a)Net revenues include Allergan product revenues after the acquisition closing date of May 8, 2020.\nNet reve..."
+   },
+   {
+    "accn": "0001551152-23-000011",
+    "char_start": 438638,
+    "char_end": 438644,
+    "quote": "...y\n444\n506\n379\nBrazil\n430\n368\n406\nAll other countries\n4,837\n4,761\n3,977\nTotal net revenues\n$\n58,054\n$\n56,197\n$\n45,804\nLong-lived assets, primarily net property and equipment, by geographic area were as follows:\nas of December 3..."
+   }
+  ],
+  "tickers": [
+   "ABBV"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2020-12-31",
+  "accn": "0001551152-23-000011",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 5 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did ABBV report for Revenues for the fiscal year ended 2021-12-31?",
+  "value": 56197000000.0,
+  "unit": "USD",
+  "tag": "Revenues",
+  "spans": [
+   {
+    "accn": "0001551152-24-000011",
+    "char_start": 259279,
+    "char_end": 259285,
+    "quote": "...%\n(8.4)\n%\n5.1\n%\nInternational\n12,435\n12,341\n12,687\n0.8\n%\n(2.7)\n%\n3.4\n%\n5.5\n%\nNet revenues\n$\n54,318\n$\n58,054\n$\n56,197\n(6.4)\n%\n3.3\n%\n(5.9)\n%\n5.1\n%\n2023 Form 10-K |\n38\nThe following table details AbbVie's worldwide net revenues:\n..."
+   },
+   {
+    "accn": "0001551152-24-000011",
+    "char_start": 264085,
+    "char_end": 264091,
+    "quote": "...\nAll other\n$\n3,035\n$\n4,137\n$\n5,019\n(26.7)\n%\n(17.6)\n%\n(25.7)\n%\n(16.3)\n%\nTotal net revenues\n$\n54,318\n$\n58,054\n$\n56,197\n(6.4)\n%\n3.3\n%\n(5.9)\n%\n5.1\n%\nn/m – Not meaningful\nThe following discussion and analysis of AbbVie's net revenu..."
+   },
+   {
+    "accn": "0001551152-24-000011",
+    "char_start": 305848,
+    "char_end": 305854,
+    "quote": "...\nyears ended December 31 (in millions, except per share data)\n2023\n2022\n2021\nNet revenues\n$\n54,318\n$\n58,054\n$\n56,197\nCost of products sold\n20,415\n17,414\n17,446\nSelling, general and administrative\n12,872\n15,260\n12,349\nResearch ..."
+   },
+   {
+    "accn": "0001551152-24-000011",
+    "char_start": 439112,
+    "char_end": 439118,
+    "quote": "...\n32\n32\nTotal\n$\n1,108\n$\n1,035\n$\n1,038\nAll other\n$\n3,035\n$\n4,137\n$\n5,019\nTotal net revenues\n$\n54,318\n$\n58,054\n$\n56,197\n2023 Form 10-K |\n94\nNet revenues to external customers by geographic area, based on product shipment destinat..."
+   },
+   {
+    "accn": "0001551152-24-000011",
+    "char_start": 439635,
+    "char_end": 439641,
+    "quote": "...0\n368\nUnited Kingdom\n417\n462\n497\nAll other countries\n5,042\n4,837\n4,761\nTotal net revenues\n$\n54,318\n$\n58,054\n$\n56,197\nLong-lived assets, primarily net property and equipment, by geographic area were as follows:\nas of December 3..."
+   }
+  ],
+  "tickers": [
+   "ABBV"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2021-12-31",
+  "accn": "0001551152-24-000011",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 5 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did ABBV report for Revenues for the fiscal year ended 2022-12-31?",
+  "value": 58054000000.0,
+  "unit": "USD",
+  "tag": "Revenues",
+  "spans": [
+   {
+    "accn": "0001551152-25-000020",
+    "char_start": 256638,
+    "char_end": 256644,
+    "quote": "...\n%\n2.7\n%\n(8.4)\n%\nInternational\n13,305\n12,435\n12,341\n7.0\n%\n0.8\n%\n11.1\n%\n3.4\n%\nNet revenues\n$\n56,334\n$\n54,318\n$\n58,054\n3.7\n%\n(6.4)\n%\n4.6\n%\n(5.9)\n%\n2024 Form 10-K |\n38\nThe following table details AbbVie's worldwide net revenues:\n..."
+   },
+   {
+    "accn": "0001551152-25-000020",
+    "char_start": 261607,
+    "char_end": 261613,
+    "quote": "...\n%\n7.1\n%\nAll other\n$\n3,032\n$\n3,035\n$\n4,137\n—\n%\n(26.7)\n%\n1.4\n%\n(25.7)\n%\nTotal net revenues\n$\n56,334\n$\n54,318\n$\n58,054\n3.7\n%\n(6.4)\n%\n4.6\n%\n(5.9)\n%\nn/m – Not meaningful\n(a)Net revenues include ImmunoGen product revenues after the..."
+   },
+   {
+    "accn": "0001551152-25-000020",
+    "char_start": 303200,
+    "char_end": 303206,
+    "quote": "...\nyears ended December 31 (in millions, except per share data)\n2024\n2023\n2022\nNet revenues\n$\n56,334\n$\n54,318\n$\n58,054\nCost of products sold\n16,904\n20,415\n17,414\nSelling, general and administrative\n14,752\n12,872\n15,260\nResearch ..."
+   },
+   {
+    "accn": "0001551152-25-000020",
+    "char_start": 454299,
+    "char_end": 454305,
+    "quote": "...38\n35\n32\nTotal\n$\n954\n$\n1,108\n$\n1,035\nAll other\n$\n3,032\n$\n3,035\n$\n4,137\nTotal net revenues\n$\n56,334\n$\n54,318\n$\n58,054\n(a)Net revenues include ImmunoGen product revenues after the acquisition closing date of February 12, 2024.\n9..."
+   },
+   {
+    "accn": "0001551152-25-000020",
+    "char_start": 454930,
+    "char_end": 454936,
+    "quote": "...64\n439\n430\nAustralia\n463\n472\n508\nAll other countries\n5,449\n5,042\n4,837\nTotal net revenues\n$\n56,334\n$\n54,318\n$\n58,054\nSee the following for additional information about certain income and expenses included in net earnings: inta..."
+   }
+  ],
+  "tickers": [
+   "ABBV"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2022-12-31",
+  "accn": "0001551152-25-000020",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 5 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did AMD report for Revenue from Contract with Customer, Excluding Assessed Tax for the fiscal year ended 2018-12-29?",
+  "value": 6475000000.0,
+  "unit": "USD",
+  "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+  "spans": [
+   {
+    "accn": "0001628280-21-001185",
+    "char_start": 200890,
+    "char_end": 200895,
+    "quote": "...0(1)\n2019(1)\n2018(1)\n2017(1)(2)\n2016(1)(2)\nIn millions except per share amounts\nNet revenue\n$\n9,763\n$\n6,731\n$\n6,475\n$\n5,253\n$\n4,319\nNet income (loss) (3)\n$\n2,490\n$\n341\n$\n337\n$\n(33)\n$\n(498)\nEarnings (loss) per share\nBasic\n$\n2...."
+   },
+   {
+    "accn": "0001628280-21-001185",
+    "char_start": 222814,
+    "char_end": 222819,
+    "quote": "...32\n$\n4,709\n$\n4,125\nEnterprise, Embedded and Semi-Custom\n3,331\n2,022\n2,350\nTotal net revenue\n$\n9,763\n$\n6,731\n$\n6,475\nOperating income (loss):\nComputing and Graphics\n$\n1,266\n$\n577\n$\n470\nEnterprise, Embedded and Semi-Custom\n391\n..."
+   },
+   {
+    "accn": "0001628280-21-001185",
+    "char_start": 225247,
+    "char_end": 225252,
+    "quote": "...a for 2020, 2019 and 2018:\n2020\n2019\n2018\n(In millions, except for percentages)\nNet revenue\n$\n9,763\n$\n6,731\n$\n6,475\nCost of sales\n5,416\n3,863\n4,028\nGross profit\n4,347\n2,868\n2,447\nGross margin\n45\n%\n43\n%\n38\n%\nResearch and devel..."
+   },
+   {
+    "accn": "0001628280-21-001185",
+    "char_start": 241996,
+    "char_end": 242001,
+    "quote": "...020\nDecember 28,\n2019\nDecember 29,\n2018\n(In millions, except per share amounts)\nNet revenue\n$\n9,763\n$\n6,731\n$\n6,475\nCost of sales\n5,416\n3,863\n4,028\nGross profit\n4,347\n2,868\n2,447\nResearch and development\n1,983\n1,547\n1,434\nMar..."
+   },
+   {
+    "accn": "0001628280-21-001185",
+    "char_start": 317921,
+    "char_end": 317926,
+    "quote": "...32\n$\n4,709\n$\n4,125\nEnterprise, Embedded and Semi-Custom\n3,331\n2,022\n2,350\nTotal net revenue\n$\n9,763\n$\n6,731\n$\n6,475\nOperating income (loss):\nComputing and Graphics\n$\n1,266\n$\n577\n$\n470\nEnterprise, Embedded and Semi-Custom\n391\n..."
+   },
+   {
+    "accn": "0001628280-21-001185",
+    "char_start": 319016,
+    "char_end": 319021,
+    "quote": "...1,197\nSingapore\n1,096\n597\n728\nOther countries\n716\n313\n209\nTotal sales to external customers\n$\n9,763\n$\n6,731\n$\n6,475\nThe following table summarizes sales to major customers that accounted for at least 10% of the Company’s cons..."
+   }
+  ],
+  "tickers": [
+   "AMD"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2018-12-29",
+  "accn": "0001628280-21-001185",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 6 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did AMD report for Revenue from Contract with Customer, Excluding Assessed Tax for the fiscal year ended 2019-12-28?",
+  "value": 6731000000.0,
+  "unit": "USD",
+  "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+  "spans": [
+   {
+    "accn": "0000002488-22-000016",
+    "char_start": 232403,
+    "char_end": 232408,
+    "quote": "...21\nDecember 26,\n2020\nDecember 28,\n2019\n(In millions, except per share amounts)\nNet revenue\n$\n16,434\n$\n9,763\n$\n6,731\nCost of sales\n8,505\n5,416\n3,863\nGross profit\n7,929\n4,347\n2,868\nResearch and development\n2,845\n1,983\n1,547\nMar..."
+   },
+   {
+    "accn": "0000002488-22-000016",
+    "char_start": 303949,
+    "char_end": 303954,
+    "quote": "...2\n$\n6,432\n$\n4,709\nEnterprise, Embedded and Semi-Custom\n7,102\n3,331\n2,022\nTotal net revenue\n$\n16,434\n$\n9,763\n$\n6,731\nOperating income (loss):\nComputing and Graphics\n$\n2,090\n$\n1,266\n$\n577\nEnterprise, Embedded and Semi-Custom\n1,..."
+   },
+   {
+    "accn": "0000002488-22-000016",
+    "char_start": 305093,
+    "char_end": 305098,
+    "quote": "...19\nSingapore\n1,389\n1,096\n597\nOther countries\n572\n716\n313\nTotal sales to external customers\n$\n16,434\n$\n9,763\n$\n6,731\nThe following table summarizes sales to major customers that accounted for at least 10% of the Company’s cons..."
+   }
+  ],
+  "tickers": [
+   "AMD"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-12-28",
+  "accn": "0000002488-22-000016",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 3 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did AMD report for Revenue from Contract with Customer, Excluding Assessed Tax for the fiscal year ended 2020-12-26?",
+  "value": 9763000000.0,
+  "unit": "USD",
+  "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+  "spans": [
+   {
+    "accn": "0000002488-23-000047",
+    "char_start": 259636,
+    "char_end": 259641,
+    "quote": "...2\nDecember 25,\n2021\nDecember 26,\n2020\n(In millions, except per share amounts)\nNet revenue\n$\n23,601\n$\n16,434\n$\n9,763\nCost of sales\n11,550\n8,505\n5,416\nAmortization of acquisition-related intangibles\n1,448\n—\n—\nTotal cost of sale..."
+   },
+   {
+    "accn": "0000002488-23-000047",
+    "char_start": 302082,
+    "char_end": 302087,
+    "quote": "...lient\n6,201\n6,887\n5,189\nGaming\n6,805\n5,607\n2,746\nEmbedded\n4,552\n246\n143\nTotal net revenue\n$\n23,601\n$\n16,434\n$\n9,763\nOperating income (loss):\nData Center\n$\n1,848\n$\n991\n$\n198\nClient\n1,190\n2,088\n1,608\nGaming\n953\n934\n(138)\nEmbedd..."
+   },
+   {
+    "accn": "0000002488-23-000047",
+    "char_start": 303304,
+    "char_end": 303309,
+    "quote": "...Singapore\n1,380\n1,389\n1,096\nOther countries\n646\n572\n716\nTotal sales to external customers\n$\n23,601\n$\n16,434\n$\n9,763\n65\nTable of Contents\nThe following table summarizes sales to major customers that accounted for at least 10% ..."
+   }
+  ],
+  "tickers": [
+   "AMD"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2020-12-26",
+  "accn": "0000002488-23-000047",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 3 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did AMD report for Revenue from Contract with Customer, Excluding Assessed Tax for the fiscal year ended 2021-12-25?",
+  "value": 16434000000.0,
+  "unit": "USD",
+  "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+  "spans": [
+   {
+    "accn": "0000002488-24-000012",
+    "char_start": 276004,
+    "char_end": 276010,
+    "quote": "...3\nDecember 31,\n2022\nDecember 25,\n2021\n(In millions, except per share amounts)\nNet revenue\n$\n22,680\n$\n23,601\n$\n16,434\nCost of sales\n11,278\n11,550\n8,505\nAmortization of acquisition-related intangibles\n942\n1,448\n—\nTotal cost of s..."
+   },
+   {
+    "accn": "0000002488-24-000012",
+    "char_start": 314620,
+    "char_end": 314626,
+    "quote": "...ent\n4,651\n6,201\n6,887\nGaming\n6,212\n6,805\n5,607\nEmbedded\n5,321\n4,552\n246\nTotal net revenue\n$\n22,680\n$\n23,601\n$\n16,434\nOperating income (loss):\nData Center\n$\n1,267\n$\n1,848\n$\n991\nClient\n(46)\n1,190\n2,088\nGaming\n971\n953\n934\nEmbedde..."
+   },
+   {
+    "accn": "0000002488-24-000012",
+    "char_start": 315879,
+    "char_end": 315885,
+    "quote": "...49\nTaiwan\n1,841\n2,369\n2,091\nOther countries\n695\n646\n572\nTotal sales to external customers\n$\n22,680\n$\n23,601\n$\n16,434\nThe following table summarizes sales to major customers that accounted for at least 10% of the Company’s cons..."
+   }
+  ],
+  "tickers": [
+   "AMD"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2021-12-25",
+  "accn": "0000002488-24-000012",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 3 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did AMD report for Revenue from Contract with Customer, Excluding Assessed Tax for the fiscal year ended 2022-12-31?",
+  "value": 23601000000.0,
+  "unit": "USD",
+  "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+  "spans": [
+   {
+    "accn": "0000002488-25-000012",
+    "char_start": 267434,
+    "char_end": 267440,
+    "quote": "...4\nDecember 30,\n2023\nDecember 31,\n2022\n(In millions, except per share amounts)\nNet revenue\n$\n25,785\n$\n22,680\n$\n23,601\nCost of sales\n12,114\n11,278\n11,550\nAmortization of acquisition-related intangibles\n946\n942\n1,448\nTotal cost o..."
+   },
+   {
+    "accn": "0000002488-25-000012",
+    "char_start": 306796,
+    "char_end": 306802,
+    "quote": "...t\n7,054\n4,651\n6,201\nGaming\n2,595\n6,212\n6,805\nEmbedded\n3,557\n5,321\n4,552\nTotal net revenue\n$\n25,785\n$\n22,680\n$\n23,601\nCost of sales and operating expenses:\nData Center\n$\n9,097\n$\n5,229\n$\n4,195\nClient\n6,157\n4,697\n5,011\nGaming\n2,3..."
+   },
+   {
+    "accn": "0000002488-25-000012",
+    "char_start": 308609,
+    "char_end": 308615,
+    "quote": "...,177\nEurope\n1,625\n2,030\n1,773\nOther regions\n554\n695\n646\nTotal sales to external customers\n$\n25,785\n$\n22,680\n$\n23,601\nThe following table summarizes sales to a major customer that accounted for at least 10% of the Company’s con..."
+   }
+  ],
+  "tickers": [
+   "AMD"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2022-12-31",
+  "accn": "0000002488-25-000012",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 3 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did AVGO report for Net Income (Loss) Attributable to Parent for the fiscal year ended 2022-10-30?",
+  "value": 11495000000.0,
+  "unit": "USD",
+  "tag": "NetIncomeLoss",
+  "spans": [
+   {
+    "accn": "0001730168-24-000139",
+    "char_start": 262230,
+    "char_end": 262236,
+    "quote": "...9,916\n15,097\n12,434\nProvision for income taxes\n3,748\n1,015\n939\nIncome from continuing operations\n6,168\n14,082\n11,495\nLoss from discontinued operations, net of income taxes\n(273)\n—\n—\nNet income\n5,895\n14,082\n11,495\nDividends on ..."
+   },
+   {
+    "accn": "0001730168-24-000139",
+    "char_start": 262326,
+    "char_end": 262332,
+    "quote": "...\n6,168\n14,082\n11,495\nLoss from discontinued operations, net of income taxes\n(273)\n—\n—\nNet income\n5,895\n14,082\n11,495\nDividends on preferred stock\n—\n—\n(272)\nNet income attributable to common stock\n$\n5,895\n$\n14,082\n$\n11,223\nBasi..."
+   },
+   {
+    "accn": "0001730168-24-000139",
+    "char_start": 263260,
+    "char_end": 263266,
+    "quote": "...cal Year Ended\nNovember 3,\n2024\nOctober 29,\n2023\nOctober 30,\n2022\n(In millions)\nNet income\n$\n5,895\n$\n14,082\n$\n11,495\nOther comprehensive income, net of tax:\nChange in unrealized gain on derivative instruments\n(1)\n290\n37\nChange..."
+   },
+   {
+    "accn": "0001730168-24-000139",
+    "char_start": 263874,
+    "char_end": 263880,
+    "quote": "...r 29,\n2023\nOctober 30,\n2022\n(In millions)\nCash flows from operating activities:\nNet income\n$\n5,895\n$\n14,082\n$\n11,495\nAdjustments to reconcile net income to net cash provided by operating activities:\nAmortization of intangible ..."
+   },
+   {
+    "accn": "0001730168-24-000139",
+    "char_start": 266336,
+    "char_end": 266342,
+    "quote": "...millions)\nBalance as of October 31, 2021\n4\n$\n—\n4,129\n$\n4\n$\n24,326\n$\n748\n$\n(116)\n$\n24,962\nNet income\n—\n—\n—\n—\n—\n11,495\n—\n11,495\nOther comprehensive income\n—\n—\n—\n—\n—\n—\n62\n62\nFair value of partially vested equity awards assumed in..."
+   },
+   {
+    "accn": "0001730168-24-000139",
+    "char_start": 266345,
+    "char_end": 266351,
+    "quote": "...\nBalance as of October 31, 2021\n4\n$\n—\n4,129\n$\n4\n$\n24,326\n$\n748\n$\n(116)\n$\n24,962\nNet income\n—\n—\n—\n—\n—\n11,495\n—\n11,495\nOther comprehensive income\n—\n—\n—\n—\n—\n—\n62\n62\nFair value of partially vested equity awards assumed in connecti..."
+   },
+   {
+    "accn": "0001730168-24-000139",
+    "char_start": 332547,
+    "char_end": 332553,
+    "quote": "...023\n2022\n(In millions, except per share data)\nNumerator:\nIncome from continuing operations\n$\n6,168\n$\n14,082\n$\n11,495\nDividends on preferred stock\n—\n—\n(272)\nIncome from continuing operations attributable to common stock\n6,168\n1..."
+   }
+  ],
+  "tickers": [
+   "AVGO"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2022-10-30",
+  "accn": "0001730168-24-000139",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 7 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did AVGO report for Net Income (Loss) Attributable to Parent for the fiscal year ended 2024-11-03?",
+  "value": 5895000000.0,
+  "unit": "USD",
+  "tag": "NetIncomeLoss",
+  "spans": [
+   {
+    "accn": "0001730168-24-000139",
+    "char_start": 262313,
+    "char_end": 262318,
+    "quote": "...ng operations\n6,168\n14,082\n11,495\nLoss from discontinued operations, net of income taxes\n(273)\n—\n—\nNet income\n5,895\n14,082\n11,495\nDividends on preferred stock\n—\n—\n(272)\nNet income attributable to common stock\n$\n5,895\n$\n14,082..."
+   },
+   {
+    "accn": "0001730168-24-000139",
+    "char_start": 262414,
+    "char_end": 262419,
+    "quote": "...t income\n5,895\n14,082\n11,495\nDividends on preferred stock\n—\n—\n(272)\nNet income attributable to common stock\n$\n5,895\n$\n14,082\n$\n11,223\nBasic income per share attributable to common stock:\nIncome per share from continuing opera..."
+   },
+   {
+    "accn": "0001730168-24-000139",
+    "char_start": 263243,
+    "char_end": 263248,
+    "quote": "...ENSIVE INCOME\nFiscal Year Ended\nNovember 3,\n2024\nOctober 29,\n2023\nOctober 30,\n2022\n(In millions)\nNet income\n$\n5,895\n$\n14,082\n$\n11,495\nOther comprehensive income, net of tax:\nChange in unrealized gain on derivative instruments..."
+   },
+   {
+    "accn": "0001730168-24-000139",
+    "char_start": 263538,
+    "char_end": 263543,
+    "quote": "...d with defined benefit plans\n1\n(29)\n25\nOther comprehensive income, net of tax\n—\n261\n62\nComprehensive income\n$\n5,895\n$\n14,343\n$\n11,557\nThe accompanying notes are an integral part of these consolidated financial statements.\n53\n..."
+   },
+   {
+    "accn": "0001730168-24-000139",
+    "char_start": 263857,
+    "char_end": 263862,
+    "quote": "...er 3,\n2024\nOctober 29,\n2023\nOctober 30,\n2022\n(In millions)\nCash flows from operating activities:\nNet income\n$\n5,895\n$\n14,082\n$\n11,495\nAdjustments to reconcile net income to net cash provided by operating activities:\nAmortizat..."
+   },
+   {
+    "accn": "0001730168-24-000139",
+    "char_start": 267540,
+    "char_end": 267545,
+    "quote": "...—\n(1,872)\n—\n—\n(1,872)\nBalance as of October 29, 2023\n—\n—\n4,139\n4\n21,095\n2,682\n207\n23,988\nNet income\n—\n—\n—\n—\n—\n5,895\n—\n5,895\nIssuance of common stock upon the acquisition of VMware, Inc.\n—\n—\n544\n1\n53,420\n—\n—\n53,421\nFair value ..."
+   },
+   {
+    "accn": "0001730168-24-000139",
+    "char_start": 267548,
+    "char_end": 267553,
+    "quote": "...)\n—\n—\n(1,872)\nBalance as of October 29, 2023\n—\n—\n4,139\n4\n21,095\n2,682\n207\n23,988\nNet income\n—\n—\n—\n—\n—\n5,895\n—\n5,895\nIssuance of common stock upon the acquisition of VMware, Inc.\n—\n—\n544\n1\n53,420\n—\n—\n53,421\nFair value of parti..."
+   },
+   {
+    "accn": "0001730168-24-000139",
+    "char_start": 332813,
+    "char_end": 332818,
+    "quote": "...ations, net of income taxes, attributable to common stock\n(273)\n—\n—\nNet income attributable to common stock\n$\n5,895\n$\n14,082\n$\n11,223\nDenominator:\nWeighted-average shares outstanding - basic\n4,624\n4,149\n4,089\nDilutive effect ..."
+   }
+  ],
+  "tickers": [
+   "AVGO"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2024-11-03",
+  "accn": "0001730168-24-000139",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 8 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did COP report for Net Income (Loss) Attributable to Parent for the fiscal year ended 2018-12-31?",
+  "value": 6257000000.0,
+  "unit": "USD",
+  "tag": "NetIncomeLoss",
+  "spans": [
+   {
+    "accn": "0001562762-21-000027",
+    "char_start": 262050,
+    "char_end": 262055,
+    "quote": "...3\n364\nCorporate and Other\n(1,880)\n38\n(1,667)\nNet income (loss) attributable to ConocoPhillips\n$\n(2,701)\n7,189\n6,257\n2020 vs. 2019\nNet income (loss) attributable to ConocoPhillips\ndecreased $9.9 billion in 2020.\nThe decrease w..."
+   },
+   {
+    "accn": "0001562762-21-000027",
+    "char_start": 389107,
+    "char_end": 389112,
+    "quote": "...e to noncontrolling interests\n(46)\n(68)\n(48)\nNet Income (Loss) Attributable to ConocoPhillips\n$\n(2,701)\n7,189\n6,257\nNet Income (Loss) Attributable to ConocoPhillips Per Share\nof Common Stock\n(dollars)\nBasic\n$\n(2.51)\n6.43\n5.36..."
+   },
+   {
+    "accn": "0001562762-21-000027",
+    "char_start": 395648,
+    "char_end": 395653,
+    "quote": "...lling\nInterests\nTotal\nBalances at December 31, 2017\n$\n18\n46,622\n(39,906)\n(5,518)\n29,391\n194\n30,801\nNet income\n6,257\n48\n6,305\nOther comprehensive loss\n(603)\n(603)\nDividends paid ($\n1.16\nper share of common stock)\n(1,363)\n(1,36..."
+   },
+   {
+    "accn": "0001562762-21-000027",
+    "char_start": 569794,
+    "char_end": 569799,
+    "quote": "...te and Other\n(1,880)\n38\n(1,667)\nConsolidated net income (loss) attributable\nto ConocoPhillips\n$\n(2,701)\n7,189\n6,257\n149\nMillions of Dollars\n2020\n2019\n2018\nInvestments in and Advances to Affiliates\nAlaska\n$\n62\n83\n86\nLower 48\n2..."
+   }
+  ],
+  "tickers": [
+   "COP"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2018-12-31",
+  "accn": "0001562762-21-000027",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 4 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did COP report for Net Income (Loss) Attributable to Parent for the fiscal year ended 2019-12-31?",
+  "value": 7189000000.0,
+  "unit": "USD",
+  "tag": "NetIncomeLoss",
+  "spans": [
+   {
+    "accn": "0001562762-22-000031",
+    "char_start": 242565,
+    "char_end": 242570,
+    "quote": "...64)\n263\nCorporate and Other\n(210)\n(1,880)\n38\nNet income (loss) attributable to\nConocoPhillips\n$\n8,079\n(2,701)\n7,189\nNet Income (loss) attributable to\nConocoPhillips increased $10.8 billion in 2021.\n2021 earnings were positive..."
+   },
+   {
+    "accn": "0001562762-22-000031",
+    "char_start": 367525,
+    "char_end": 367530,
+    "quote": "...able to noncontrolling\ninterests\n-\n(46)\n(68)\nNet Income (Loss) Attributable\nto ConocoPhillips\n$\n8,079\n(2,701)\n7,189\nNet Income (Loss) Attributable\nto ConocoPhillips Per Share\nof Common Stock\n(dollars)\nBasic\n$\n6.09\n(2.51)\n6.43..."
+   },
+   {
+    "accn": "0001562762-22-000031",
+    "char_start": 374435,
+    "char_end": 374440,
+    "quote": "...lling\nInterests\nTotal\nBalances at December 31, 2018\n$\n18\n46,879\n(42,905)\n(6,063)\n34,010\n125\n32,064\nNet income\n7,189\n68\n7,257\nOther comprehensive loss\n746\n746\nDividends declared—ordinary ($\n1.34\nper share of common stock)\n(1,5..."
+   },
+   {
+    "accn": "0001562762-22-000031",
+    "char_start": 554429,
+    "char_end": 554434,
+    "quote": "...rate and Other\n(210)\n(1,880)\n38\nConsolidated net income (loss) attributable\nto ConocoPhillips\n$\n8,079\n(2,701)\n7,189\nNotes to Consolidated Financial Statements\nTable of Contents\n147\nConocoPhillips\n2021 10-K\nMillions of Dollars..."
+   }
+  ],
+  "tickers": [
+   "COP"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-12-31",
+  "accn": "0001562762-22-000031",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 4 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did COP report for Net Income (Loss) Attributable to Parent for the fiscal year ended 2020-12-31?",
+  "value": -2701000000.0,
+  "unit": "USD",
+  "tag": "NetIncomeLoss",
+  "spans": [
+   {
+    "accn": "0001163165-23-000006",
+    "char_start": 220384,
+    "char_end": 220389,
+    "quote": "...(64)\nCorporate and Other\n(330)\n(210)\n(1,880)\nNet income (loss) attributable to ConocoPhillips\n$\n18,680\n8,079\n(2,701)\nNet Income (loss) attributable to ConocoPhillips increased $10,601 million in 2022. Earnings were positively..."
+   },
+   {
+    "accn": "0001163165-23-000006",
+    "char_start": 343065,
+    "char_end": 343070,
+    "quote": "...butable to noncontrolling interests\n—\n—\n(46)\nNet Income (Loss) Attributable to ConocoPhillips\n$\n18,680\n8,079\n(2,701)\nNet Income (Loss) Attributable to ConocoPhillips Per Share of Common Stock (dollars)\nBasic\n$\n14.62\n6.09\n(2.5..."
+   },
+   {
+    "accn": "0001163165-23-000006",
+    "char_start": 349898,
+    "char_end": 349903,
+    "quote": "...nterests\nTotal\nBalances at December 31, 2019\n$\n18\n46,983\n(46,405)\n(5,357)\n39,742\n69\n35,050\nNet income (loss)\n(2,701)\n46\n(2,655)\nOther comprehensive income (loss)\n139\n139\nDividends declared—ordinary ($1.69 per share of common ..."
+   },
+   {
+    "accn": "0001163165-23-000006",
+    "char_start": 383034,
+    "char_end": 383039,
+    "quote": "...Income (loss) before income taxes\n(3,140)\n787\n(247)\n(2,600)\nNet Income (Loss) attributable to ConocoPhillips\n(2,701)\n498\n(189)\n(2,392)\nEarnings per share:\nBasic net loss\n$\n(2.51)\n(1.75)\nDiluted net loss\n(2.51)\n(1.75)\nThe unau..."
+   },
+   {
+    "accn": "0001163165-23-000006",
+    "char_start": 521508,
+    "char_end": 521513,
+    "quote": "...r 31\n2022\n2021\n2020\nBasic earnings per share\nNet Income (Loss) Attributable to ConocoPhillips\n$\n18,680\n8,079\n(2,701)\nLess: Dividends and undistributed earnings\nallocated to participating securities\n60\n19\n6\nNet Income (Loss) a..."
+   },
+   {
+    "accn": "0001163165-23-000006",
+    "char_start": 526157,
+    "char_end": 526162,
+    "quote": "...e and Other\n(330)\n(210)\n(1,880)\nConsolidated net income (loss) attributable to ConocoPhillips\n$\n18,680\n8,079\n(2,701)\nInvestments in and Advances to Affiliates\nAlaska\n$\n55\n58\n62\nLower 48\n235\n242\n25\nCanada\n—\n—\n—\nEurope, Middle ..."
+   }
+  ],
+  "tickers": [
+   "COP"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2020-12-31",
+  "accn": "0001163165-23-000006",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 6 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did AVGO report for Operating Income (Loss) for the fiscal year ended 2018-11-04?",
+  "value": 5135000000.0,
+  "unit": "USD",
+  "tag": "OperatingIncomeLoss",
+  "spans": [
+   {
+    "accn": "0001730168-20-000226",
+    "char_start": 264180,
+    "char_end": 264185,
+    "quote": "...219\n3\n1\nLitigation settlements\n—\n14\n—\n—\nTotal operating expenses\n9,039\n5,598\n40\n27\nOperating income\n$\n3,444\n$\n5,135\n15\n%\n25\n%\nThe following tables set forth net revenue by segment for the periods presented:\nNet Revenue\nFiscal..."
+   },
+   {
+    "accn": "0001730168-20-000226",
+    "char_start": 268724,
+    "char_end": 268729,
+    "quote": "...re\n3,391\n1,157\n2,234\n193\n%\nUnallocated expenses\n(8,485)\n(5,275)\n(3,210)\n61\n%\nTotal operating income\n$\n3,444\n$\n5,135\n$\n(1,691)\n(33)\n%\nOperating income from our semiconductor solutions segment decreased primarily due to lower d..."
+   },
+   {
+    "accn": "0001730168-20-000226",
+    "char_start": 308974,
+    "char_end": 308979,
+    "quote": "...736\n219\nLitigation settlements\n—\n—\n14\nTotal operating expenses\n9,502\n9,039\n5,598\nOperating income\n4,014\n3,444\n5,135\nInterest expense\n(1,777)\n(1,444)\n(628)\nImpairment on investment\n—\n—\n(106)\nOther income, net\n206\n226\n144\nIncom..."
+   },
+   {
+    "accn": "0001730168-20-000226",
+    "char_start": 454826,
+    "char_end": 454831,
+    "quote": "...tware\n4,363\n3,391\n1,157\nUnallocated expenses\n(8,925)\n(8,485)\n(5,275)\nTotal operating income\n$\n4,014\n$\n3,444\n$\n5,135\nGeographic Information\nNet revenue by country is based on the geographic shipment or delivery location as spe..."
+   }
+  ],
+  "tickers": [
+   "AVGO"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2018-11-04",
+  "accn": "0001730168-20-000226",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 4 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did AVGO report for Operating Income (Loss) for the fiscal year ended 2019-11-03?",
+  "value": 3444000000.0,
+  "unit": "USD",
+  "tag": "OperatingIncomeLoss",
+  "spans": [
+   {
+    "accn": "0001730168-21-000153",
+    "char_start": 276031,
+    "char_end": 276036,
+    "quote": "...ment and disposal charges\n148\n198\n736\nTotal operating expenses\n8,325\n9,502\n9,039\nOperating income\n8,519\n4,014\n3,444\nInterest expense\n(1,885)\n(1,777)\n(1,444)\nOther income, net\n131\n206\n226\nIncome from continuing operations befo..."
+   },
+   {
+    "accn": "0001730168-21-000153",
+    "char_start": 405527,
+    "char_end": 405532,
+    "quote": "...tware\n4,936\n4,363\n3,391\nUnallocated expenses\n(7,393)\n(8,925)\n(8,485)\nTotal operating income\n$\n8,519\n$\n4,014\n$\n3,444\nGeographic Information\nNet revenue by country is based primarily on the geographic shipment or delivery locat..."
+   }
+  ],
+  "tickers": [
+   "AVGO"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-11-03",
+  "accn": "0001730168-21-000153",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did AVGO report for Operating Income (Loss) for the fiscal year ended 2020-11-01?",
+  "value": 4014000000.0,
+  "unit": "USD",
+  "tag": "OperatingIncomeLoss",
+  "spans": [
+   {
+    "accn": "0001730168-22-000118",
+    "char_start": 263290,
+    "char_end": 263295,
+    "quote": "...ment and disposal charges\n57\n148\n198\nTotal operating expenses\n7,870\n8,325\n9,502\nOperating income\n14,225\n8,519\n4,014\nInterest expense\n(1,737)\n(1,885)\n(1,777)\nOther income (expense), net\n(54)\n131\n206\nIncome from continuing oper..."
+   },
+   {
+    "accn": "0001730168-22-000118",
+    "char_start": 376721,
+    "char_end": 376726,
+    "quote": "...ware\n5,219\n4,936\n4,363\nUnallocated expenses\n(6,069)\n(7,393)\n(8,925)\nTotal operating income\n$\n14,225\n$\n8,519\n$\n4,014\nGeographic Information\nNet revenue by country is based primarily on the geographic shipment or delivery locat..."
+   }
+  ],
+  "tickers": [
+   "AVGO"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2020-11-01",
+  "accn": "0001730168-22-000118",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did COST report for Operating Income (Loss) for the fiscal year ended 2018-09-02?",
+  "value": 4480000000.0,
+  "unit": "USD",
+  "tag": "OperatingIncomeLoss",
+  "spans": [
+   {
+    "accn": "0000909832-20-000017",
+    "char_start": 85337,
+    "char_end": 85342,
+    "quote": "...enses as a percentage of net sales\n10.01\n%\n10.04\n%\n10.02\n%\n10.26\n%\n10.40\n%\nOperating income\n$\n5,435\n$\n4,737\n$\n4,480\n$\n4,111\n$\n3,672\nNet income attributable to Costco\n4,002\n3,659\n3,134\n2,679\n2,350\nNet income per diluted common..."
+   },
+   {
+    "accn": "0000909832-20-000017",
+    "char_start": 136377,
+    "char_end": 136382,
+    "quote": "...ng, general and administrative\n16,332\n14,994\n13,876\nPreopening expenses\n55\n86\n68\nOperating income\n5,435\n4,737\n4,480\nOTHER INCOME (EXPENSE)\nInterest expense\n(160)\n(150)\n(159)\nInterest income and other, net\n92\n178\n121\nINCOME BE..."
+   },
+   {
+    "accn": "0000909832-20-000017",
+    "char_start": 217084,
+    "char_end": 217089,
+    "quote": "...62\n4,369\n8,869\n45,400\n2018\nTotal revenue\n$\n102,286\n$\n20,689\n$\n18,601\n$\n141,576\nOperating income\n2,787\n939\n754\n4,480\nDepreciation and amortization\n1,078\n135\n224\n1,437\nAdditions to property and equipment\n2,046\n268\n655\n2,969\nPro..."
+   }
+  ],
+  "tickers": [
+   "COST"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2018-09-02",
+  "accn": "0000909832-20-000017",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 3 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did COST report for Operating Income (Loss) for the fiscal year ended 2019-09-01?",
+  "value": 4737000000.0,
+  "unit": "USD",
+  "tag": "OperatingIncomeLoss",
+  "spans": [
+   {
+    "accn": "0000909832-21-000014",
+    "char_start": 129836,
+    "char_end": 129841,
+    "quote": "...ng, general and administrative\n18,461\n16,332\n14,994\nPreopening expenses\n76\n55\n86\nOperating income\n6,708\n5,435\n4,737\nOTHER INCOME (EXPENSE)\nInterest expense\n(171)\n(160)\n(150)\nInterest income and other, net\n143\n92\n178\nINCOME BE..."
+   },
+   {
+    "accn": "0000909832-21-000014",
+    "char_start": 210563,
+    "char_end": 210568,
+    "quote": "...6\n5,270\n11,920\n55,556\n2019\nTotal revenue\n$\n111,751\n$\n21,366\n$\n19,586\n$\n152,703\nOperating income\n3,063\n924\n750\n4,737\nDepreciation and amortization\n1,126\n143\n223\n1,492\nAdditions to property and equipment\n2,186\n303\n509\n2,998\nPro..."
+   }
+  ],
+  "tickers": [
+   "COST"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-09-01",
+  "accn": "0000909832-21-000014",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did HD report for Gross Profit for the fiscal year ended 2018-01-28?",
+  "value": 34356000000.0,
+  "unit": "USD",
+  "tag": "GrossProfit",
+  "spans": [
+   {
+    "accn": "0000354950-20-000015",
+    "char_start": 128345,
+    "char_end": 128351,
+    "quote": "...f Net Sales\n$\n% of Net Sales\nNet sales\n$\n110,225\n$\n108,203\n$\n100,904\nGross profit\n37,572\n34.1\n%\n37,160\n34.3\n%\n34,356\n34.0\n%\nOperating expenses:\nSelling, general and administrative\n19,740\n17.9\n19,513\n18.0\n17,864\n17.7\nDepreciati..."
+   },
+   {
+    "accn": "0000354950-20-000015",
+    "char_start": 167772,
+    "char_end": 167778,
+    "quote": "...18\n2017\nNet sales\n$\n110,225\n$\n108,203\n$\n100,904\nCost of sales\n72,653\n71,043\n66,548\nGross profit\n37,572\n37,160\n34,356\nOperating expenses:\nSelling, general and administrative\n19,740\n19,513\n17,864\nDepreciation and amortization\n1,..."
+   }
+  ],
+  "tickers": [
+   "HD"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2018-01-28",
+  "accn": "0000354950-20-000015",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did HD report for Gross Profit for the fiscal year ended 2019-02-03?",
+  "value": 37160000000.0,
+  "unit": "USD",
+  "tag": "GrossProfit",
+  "spans": [
+   {
+    "accn": "0000354950-21-000089",
+    "char_start": 152985,
+    "char_end": 152991,
+    "quote": "...f Net Sales\n$\n% of Net Sales\nNet sales\n$\n132,110\n$\n110,225\n$\n108,203\nGross profit\n44,853\n34.0\n%\n37,572\n34.1\n%\n37,160\n34.3\n%\nOperating expenses:\nSelling, general and administrative\n24,447\n18.5\n19,740\n17.9\n19,513\n18.0\nDepreciati..."
+   },
+   {
+    "accn": "0000354950-21-000089",
+    "char_start": 193671,
+    "char_end": 193677,
+    "quote": "...19\n2018\nNet sales\n$\n132,110\n$\n110,225\n$\n108,203\nCost of sales\n87,257\n72,653\n71,043\nGross profit\n44,853\n37,572\n37,160\nOperating expenses:\nSelling, general and administrative\n24,447\n19,740\n19,513\nDepreciation and amortization\n2,..."
+   }
+  ],
+  "tickers": [
+   "HD"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-02-03",
+  "accn": "0000354950-21-000089",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did HD report for Gross Profit for the fiscal year ended 2020-02-02?",
+  "value": 37572000000.0,
+  "unit": "USD",
+  "tag": "GrossProfit",
+  "spans": [
+   {
+    "accn": "0000354950-22-000070",
+    "char_start": 149613,
+    "char_end": 149619,
+    "quote": "...f Net Sales\n$\n% of Net Sales\nNet sales\n$\n151,157\n$\n132,110\n$\n110,225\nGross profit\n50,832\n33.6\n%\n44,853\n34.0\n%\n37,572\n34.1\n%\nOperating expenses:\nSelling, general and administrative\n25,406\n16.8\n24,447\n18.5\n19,740\n17.9\nDepreciati..."
+   },
+   {
+    "accn": "0000354950-22-000070",
+    "char_start": 186450,
+    "char_end": 186456,
+    "quote": "...0\n2019\nNet sales\n$\n151,157\n$\n132,110\n$\n110,225\nCost of sales\n100,325\n87,257\n72,653\nGross profit\n50,832\n44,853\n37,572\nOperating expenses:\nSelling, general and administrative\n25,406\n24,447\n19,740\nDepreciation and amortization\n2,..."
+   }
+  ],
+  "tickers": [
+   "HD"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2020-02-02",
+  "accn": "0000354950-22-000070",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did HD report for Gross Profit for the fiscal year ended 2021-01-31?",
+  "value": 44853000000.0,
+  "unit": "USD",
+  "tag": "GrossProfit",
+  "spans": [
+   {
+    "accn": "0000354950-23-000059",
+    "char_start": 156379,
+    "char_end": 156385,
+    "quote": "...f Net Sales\n$\n% of Net Sales\nNet sales\n$\n157,403\n$\n151,157\n$\n132,110\nGross profit\n52,778\n33.5\n%\n50,832\n33.6\n%\n44,853\n34.0\n%\nOperating expenses:\nSelling, general and administrative\n26,284\n16.7\n25,406\n16.8\n24,447\n18.5\nDepreciati..."
+   },
+   {
+    "accn": "0000354950-23-000059",
+    "char_start": 188960,
+    "char_end": 188966,
+    "quote": "...\n2020\nNet sales\n$\n157,403\n$\n151,157\n$\n132,110\nCost of sales\n104,625\n100,325\n87,257\nGross profit\n52,778\n50,832\n44,853\nOperating expenses:\nSelling, general and administrative\n26,284\n25,406\n24,447\nDepreciation and amortization\n2,..."
+   }
+  ],
+  "tickers": [
+   "HD"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2021-01-31",
+  "accn": "0000354950-23-000059",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did HD report for Gross Profit for the fiscal year ended 2022-01-30?",
+  "value": 50832000000.0,
+  "unit": "USD",
+  "tag": "GrossProfit",
+  "spans": [
+   {
+    "accn": "0000354950-24-000062",
+    "char_start": 163828,
+    "char_end": 163834,
+    "quote": "...f Net Sales\n$\n% of Net Sales\nNet sales\n$\n152,669\n$\n157,403\n$\n151,157\nGross profit\n50,960\n33.4\n%\n52,778\n33.5\n%\n50,832\n33.6\n%\nOperating expenses:\nSelling, general and administrative\n26,598\n17.4\n26,284\n16.7\n25,406\n16.8\nDepreciati..."
+   },
+   {
+    "accn": "0000354950-24-000062",
+    "char_start": 196109,
+    "char_end": 196115,
+    "quote": "...2021\nNet sales\n$\n152,669\n$\n157,403\n$\n151,157\nCost of sales\n101,709\n104,625\n100,325\nGross profit\n50,960\n52,778\n50,832\nOperating expenses:\nSelling, general and administrative\n26,598\n26,284\n25,406\nDepreciation and amortization\n2,..."
+   }
+  ],
+  "tickers": [
+   "HD"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2022-01-30",
+  "accn": "0000354950-24-000062",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did NVDA report for Cost of Revenue for the fiscal year ended 2020-01-26?",
+  "value": 4150000000.0,
+  "unit": "USD",
+  "tag": "CostOfRevenue",
+  "spans": [
+   {
+    "accn": "0001045810-22-000036",
+    "char_start": 221948,
+    "char_end": 221953,
+    "quote": "...ary 30,\n2022\nJanuary 31,\n2021\nJanuary 26,\n2020\nRevenue\n$\n26,914\n$\n16,675\n$\n10,918\nCost of revenue\n9,439\n6,279\n4,150\nGross profit\n17,475\n10,396\n6,768\nOperating expenses\nResearch and development\n5,268\n3,924\n2,829\nSales, general..."
+   }
+  ],
+  "tickers": [
+   "NVDA"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2020-01-26",
+  "accn": "0001045810-22-000036",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did NVDA report for Cost of Revenue for the fiscal year ended 2021-01-31?",
+  "value": 6279000000.0,
+  "unit": "USD",
+  "tag": "CostOfRevenue",
+  "spans": [
+   {
+    "accn": "0001045810-23-000017",
+    "char_start": 236923,
+    "char_end": 236928,
+    "quote": "...ry 29,\n2023\nJanuary 30,\n2022\nJanuary 31,\n2021\nRevenue\n$\n26,974\n$\n26,914\n$\n16,675\nCost of revenue\n11,618\n9,439\n6,279\nGross profit\n15,356\n17,475\n10,396\nOperating expenses\nResearch and development\n7,339\n5,268\n3,924\nSales, genera..."
+   }
+  ],
+  "tickers": [
+   "NVDA"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2021-01-31",
+  "accn": "0001045810-23-000017",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did NVDA report for Cost of Revenue for the fiscal year ended 2022-01-30?",
+  "value": 9439000000.0,
+  "unit": "USD",
+  "tag": "CostOfRevenue",
+  "spans": [
+   {
+    "accn": "0001045810-24-000029",
+    "char_start": 257812,
+    "char_end": 257817,
+    "quote": "...Ended\nJan 28, 2024\nJan 29, 2023\nJan 30, 2022\nRevenue\n$\n60,922\n$\n26,974\n$\n26,914\nCost of revenue\n16,621\n11,618\n9,439\nGross profit\n44,301\n15,356\n17,475\nOperating expenses\nResearch and development\n8,675\n7,339\n5,268\nSales, genera..."
+   }
+  ],
+  "tickers": [
+   "NVDA"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2022-01-30",
+  "accn": "0001045810-24-000029",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did NVDA report for Cost of Revenue for the fiscal year ended 2023-01-29?",
+  "value": 11618000000.0,
+  "unit": "USD",
+  "tag": "CostOfRevenue",
+  "spans": [
+   {
+    "accn": "0001045810-25-000023",
+    "char_start": 266061,
+    "char_end": 266067,
+    "quote": "...nded\nJan 26, 2025\nJan 28, 2024\nJan 29, 2023\nRevenue\n$\n130,497\n$\n60,922\n$\n26,974\nCost of revenue\n32,639\n16,621\n11,618\nGross profit\n97,858\n44,301\n15,356\nOperating expenses\nResearch and development\n12,914\n8,675\n7,339\nSales, gener..."
+   }
+  ],
+  "tickers": [
+   "NVDA"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2023-01-29",
+  "accn": "0001045810-25-000023",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did QCOM report for Cost of Revenue for the fiscal year ended 2018-09-30?",
+  "value": 10244000000.0,
+  "unit": "USD",
+  "tag": "CostOfRevenue",
+  "spans": [
+   {
+    "accn": "0001728949-20-000067",
+    "char_start": 242550,
+    "char_end": 242556,
+    "quote": "...cept percentages)\n2020\n2019\n2018\n2020 vs. 2019 Change\n2019 vs. 2018 Change\nCost of revenues\n$\n9,255\n$\n8,599\n$\n10,244\n$\n656\n$\n(1,645)\nGross margin\n61\n%\n65\n%\n55\n%\n2020 vs. 2019\nThe decrease in margin percentage in fiscal 2020 wa..."
+   },
+   {
+    "accn": "0001728949-20-000067",
+    "char_start": 329556,
+    "char_end": 329562,
+    "quote": "...ensing\n7,233\n9,662\n5,211\nTotal revenues\n23,531\n24,273\n22,611\nCosts and expenses:\nCost of revenues\n9,255\n8,599\n10,244\nResearch and development\n5,975\n5,398\n5,625\nSelling, general and administrative\n2,074\n2,195\n2,986\nOther\n(28)\n4..."
+   }
+  ],
+  "tickers": [
+   "QCOM"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2018-09-30",
+  "accn": "0001728949-20-000067",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did COP report for Cost of Goods and Services Sold for the fiscal year ended 2018-12-31?",
+  "value": 14294000000.0,
+  "unit": "USD",
+  "tag": "CostOfGoodsAndServicesSold",
+  "spans": [
+   {
+    "accn": "0001562762-21-000027",
+    "char_start": 388337,
+    "char_end": 388343,
+    "quote": "...73\nTotal Revenues and\nOther Income\n19,256\n36,670\n38,727\nCosts and Expenses\nPurchased commodities\n8,078\n11,842\n14,294\nProduction and operating expenses\n4,344\n5,322\n5,213\nSelling, general and administrative expenses\n430\n556\n401\n..."
+   }
+  ],
+  "tickers": [
+   "COP"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2018-12-31",
+  "accn": "0001562762-21-000027",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did COP report for Cost of Goods and Services Sold for the fiscal year ended 2019-12-31?",
+  "value": 11842000000.0,
+  "unit": "USD",
+  "tag": "CostOfGoodsAndServicesSold",
+  "spans": [
+   {
+    "accn": "0001562762-22-000031",
+    "char_start": 366756,
+    "char_end": 366762,
+    "quote": "...58\nTotal\nRevenues and Other Income\n48,349\n19,256\n36,670\nCosts and Expenses\nPurchased commodities\n18,158\n8,078\n11,842\nProduction and operating expenses\n5,694\n4,344\n5,322\nSelling, general and administrative\nexpenses\n719\n430\n556\n..."
+   }
+  ],
+  "tickers": [
+   "COP"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-12-31",
+  "accn": "0001562762-22-000031",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did COST report for Cost of Goods and Services Sold for the fiscal year ended 2018-09-02?",
+  "value": 123152000000.0,
+  "unit": "USD",
+  "tag": "CostOfGoodsAndServicesSold",
+  "spans": [
+   {
+    "accn": "0000909832-20-000017",
+    "char_start": 101991,
+    "char_end": 101998,
+    "quote": "...e.\nGross Margin\n2020\n2019\n2018\nNet sales\n$\n163,220\n$\n149,351\n$\n138,434\nLess merchandise costs\n144,939\n132,886\n123,152\nGross margin\n$\n18,281\n$\n16,465\n$\n15,282\nGross margin percentage\n11.20\n%\n11.02\n%\n11.04\n%\nThe gross margin of o..."
+   },
+   {
+    "accn": "0000909832-20-000017",
+    "char_start": 136254,
+    "char_end": 136261,
+    "quote": "...\n3,541\n3,352\n3,142\nTotal revenue\n166,761\n152,703\n141,576\nOPERATING EXPENSES\nMerchandise costs\n144,939\n132,886\n123,152\nSelling, general and administrative\n16,332\n14,994\n13,876\nPreopening expenses\n55\n86\n68\nOperating income\n5,435\n..."
+   }
+  ],
+  "tickers": [
+   "COST"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2018-09-02",
+  "accn": "0000909832-20-000017",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did COST report for Cost of Goods and Services Sold for the fiscal year ended 2019-09-01?",
+  "value": 132886000000.0,
+  "unit": "USD",
+  "tag": "CostOfGoodsAndServicesSold",
+  "spans": [
+   {
+    "accn": "0000909832-21-000014",
+    "char_start": 99398,
+    "char_end": 99405,
+    "quote": "...d.\nGross Margin\n2021\n2020\n2019\nNet sales\n$\n192,052\n$\n163,220\n$\n149,351\nLess merchandise costs\n170,684\n144,939\n132,886\nGross margin\n$\n21,368\n$\n18,281\n$\n16,465\nGross margin percentage\n11.13\n%\n11.20\n%\n11.02\n%\nThe gross margin of o..."
+   },
+   {
+    "accn": "0000909832-21-000014",
+    "char_start": 129713,
+    "char_end": 129720,
+    "quote": "...\n3,877\n3,541\n3,352\nTotal revenue\n195,929\n166,761\n152,703\nOPERATING EXPENSES\nMerchandise costs\n170,684\n144,939\n132,886\nSelling, general and administrative\n18,461\n16,332\n14,994\nPreopening expenses\n76\n55\n86\nOperating income\n6,708\n..."
+   }
+  ],
+  "tickers": [
+   "COST"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-09-01",
+  "accn": "0000909832-21-000014",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did COST report for Cost of Goods and Services Sold for the fiscal year ended 2020-08-30?",
+  "value": 144939000000.0,
+  "unit": "USD",
+  "tag": "CostOfGoodsAndServicesSold",
+  "spans": [
+   {
+    "accn": "0000909832-22-000021",
+    "char_start": 95542,
+    "char_end": 95549,
+    "quote": "...d.\nGross Margin\n2022\n2021\n2020\nNet sales\n$\n222,730\n$\n192,052\n$\n163,220\nLess merchandise costs\n199,382\n170,684\n144,939\nGross margin\n$\n23,348\n$\n21,368\n$\n18,281\nGross margin percentage\n10.48\n%\n11.13\n%\n11.20\n%\nTotal gross margin pe..."
+   },
+   {
+    "accn": "0000909832-22-000021",
+    "char_start": 125408,
+    "char_end": 125415,
+    "quote": "...\n4,224\n3,877\n3,541\nTotal revenue\n226,954\n195,929\n166,761\nOPERATING EXPENSES\nMerchandise costs\n199,382\n170,684\n144,939\nSelling, general and administrative\n19,779\n18,537\n16,387\nOperating income\n7,793\n6,708\n5,435\nOTHER INCOME (EXP..."
+   }
+  ],
+  "tickers": [
+   "COST"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2020-08-30",
+  "accn": "0000909832-22-000021",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did CVX report for Research and Development Expense for the fiscal year ended 2022-12-31?",
+  "value": 268000000.0,
+  "unit": "USD",
+  "tag": "ResearchAndDevelopmentExpense",
+  "spans": [
+   {
+    "accn": "0000093410-25-000009",
+    "char_start": 146884,
+    "char_end": 146891,
+    "quote": "... connection with its supply and trading activities.\nU.S. and international sales of NGLs averaged 511,000 and 268,000 barrels per day, respectively, in 2024.\nDuring 2024, U.S. and international sales of natural gas averaged 5.2..."
+   }
+  ],
+  "tickers": [
+   "CVX"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2022-12-31",
+  "accn": "0000093410-25-000009",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as thousands; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did INTC report for Research and Development Expense for the fiscal year ended 2018-12-29?",
+  "value": 13543000000.0,
+  "unit": "USD",
+  "tag": "ResearchAndDevelopmentExpense",
+  "spans": [
+   {
+    "accn": "0000050863-21-000010",
+    "char_start": 180601,
+    "char_end": 180607,
+    "quote": "...%\nGross margin\n43,612\n56.0\n%\n42,140\n58.6\n%\n43,737\n61.7\n%\nResearch and development\n13,556\n17.4\n%\n13,362\n18.6\n%\n13,543\n19.1\n%\nMarketing, general and administrative\n6,180\n7.9\n%\n6,350\n8.8\n%\n6,950\n9.8\n%\nRestructuring and other char..."
+   },
+   {
+    "accn": "0000050863-21-000010",
+    "char_start": 214338,
+    "char_end": 214344,
+    "quote": "...233\nGross margin percentage1\n56.0\n%\n58.6\n%\n61.7\n%\n62.3\n%\n61.0\n%\nResearch and development1\n$\n13,556\n$\n13,362\n$\n13,543\n$\n13,035\n$\n12,685\nMarketing, general and administrative1\n$\n6,180\n$\n6,350\n$\n6,950\n$\n7,629\n$\n8,671\nR&D and MG&A..."
+   },
+   {
+    "accn": "0000050863-21-000010",
+    "char_start": 335458,
+    "char_end": 335464,
+    "quote": "...8\nCost of sales\n34,255\n29,825\n27,111\nGross margin\n43,612\n42,140\n43,737\nResearch and development\n13,556\n13,362\n13,543\nMarketing, general and administrative\n6,180\n6,350\n6,950\nRestructuring and other charges\n198\n393\n(72)\nOperatin..."
+   }
+  ],
+  "tickers": [
+   "INTC"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2018-12-29",
+  "accn": "0000050863-21-000010",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 3 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did INTC report for Research and Development Expense for the fiscal year ended 2019-12-28?",
+  "value": 13362000000.0,
+  "unit": "USD",
+  "tag": "ResearchAndDevelopmentExpense",
+  "spans": [
+   {
+    "accn": "0000050863-22-000007",
+    "char_start": 179454,
+    "char_end": 179460,
+    "quote": "...%\nGross margin\n43,815\n55.4\n%\n43,612\n56.0\n%\n42,140\n58.6\n%\nResearch and development\n15,190\n19.2\n%\n13,556\n17.4\n%\n13,362\n18.6\n%\nMarketing, general and administrative\n6,543\n8.3\n%\n6,180\n7.9\n%\n6,350\n8.8\n%\nRestructuring and other char..."
+   },
+   {
+    "accn": "0000050863-22-000007",
+    "char_start": 337072,
+    "char_end": 337078,
+    "quote": "...5\nCost of sales\n35,209\n34,255\n29,825\nGross margin\n43,815\n43,612\n42,140\nResearch and development\n15,190\n13,556\n13,362\nMarketing, general and administrative\n6,543\n6,180\n6,350\nRestructuring and other charges\n2,626\n198\n393\nOperati..."
+   }
+  ],
+  "tickers": [
+   "INTC"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-12-28",
+  "accn": "0000050863-22-000007",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did INTC report for Research and Development Expense for the fiscal year ended 2020-12-26?",
+  "value": 13556000000.0,
+  "unit": "USD",
+  "tag": "ResearchAndDevelopmentExpense",
+  "spans": [
+   {
+    "accn": "0000050863-23-000006",
+    "char_start": 184058,
+    "char_end": 184064,
+    "quote": "...%\nGross margin\n26,866\n42.6\n%\n43,815\n55.4\n%\n43,612\n56.0\n%\nResearch and development\n17,528\n27.8\n%\n15,190\n19.2\n%\n13,556\n17.4\n%\nMarketing, general and administrative\n7,002\n11.1\n%\n6,543\n8.3\n%\n6,180\n7.9\n%\nRestructuring and other cha..."
+   },
+   {
+    "accn": "0000050863-23-000006",
+    "char_start": 361887,
+    "char_end": 361893,
+    "quote": "...7\nCost of sales\n36,188\n35,209\n34,255\nGross margin\n26,866\n43,815\n43,612\nResearch and development\n17,528\n15,190\n13,556\nMarketing, general and administrative\n7,002\n6,543\n6,180\nRestructuring and other charges\n2\n2,626\n198\nOperating..."
+   }
+  ],
+  "tickers": [
+   "INTC"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2020-12-26",
+  "accn": "0000050863-23-000006",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did INTC report for Research and Development Expense for the fiscal year ended 2021-12-25?",
+  "value": 15190000000.0,
+  "unit": "USD",
+  "tag": "ResearchAndDevelopmentExpense",
+  "spans": [
+   {
+    "accn": "0000050863-24-000010",
+    "char_start": 179484,
+    "char_end": 179490,
+    "quote": "...%\nGross margin\n21,711\n40.0\n%\n26,866\n42.6\n%\n43,815\n55.4\n%\nResearch and development\n16,046\n29.6\n%\n17,528\n27.8\n%\n15,190\n19.2\n%\nMarketing, general, and administrative\n5,634\n10.4\n%\n7,002\n11.1\n%\n6,543\n8.3\n%\nRestructuring and other c..."
+   },
+   {
+    "accn": "0000050863-24-000010",
+    "char_start": 363775,
+    "char_end": 363781,
+    "quote": "...4\nCost of sales\n32,517\n36,188\n35,209\nGross margin\n21,711\n26,866\n43,815\nResearch and development\n16,046\n17,528\n15,190\nMarketing, general, and administrative\n5,634\n7,002\n6,543\nRestructuring and other charges\n(62)\n2\n2,626\nOperati..."
+   }
+  ],
+  "tickers": [
+   "INTC"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2021-12-25",
+  "accn": "0000050863-24-000010",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did CVX report for Selling, General and Administrative Expense for the fiscal year ended 2018-12-31?",
+  "value": 3838000000.0,
+  "unit": "USD",
+  "tag": "SellingGeneralAndAdministrativeExpense",
+  "spans": [
+   {
+    "accn": "0000093410-21-000009",
+    "char_start": 315974,
+    "char_end": 315979,
+    "quote": "...0,113\n94,578\nOperating expenses\n20,323\n21,385\n20,544\nSelling, general and administrative expenses\n4,213\n4,143\n3,838\nExploration expenses\n1,537\n770\n1,210\nDepreciation, depletion and amortization\n19,508\n29,218\n19,419\nTaxes othe..."
+   }
+  ],
+  "tickers": [
+   "CVX"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2018-12-31",
+  "accn": "0000093410-21-000009",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did CVX report for Selling, General and Administrative Expense for the fiscal year ended 2019-12-31?",
+  "value": 4143000000.0,
+  "unit": "USD",
+  "tag": "SellingGeneralAndAdministrativeExpense",
+  "spans": [
+   {
+    "accn": "0000093410-22-000019",
+    "char_start": 312337,
+    "char_end": 312342,
+    "quote": "...0,488\n80,113\nOperating expenses\n20,726\n20,323\n21,385\nSelling, general and administrative expenses\n4,014\n4,213\n4,143\nExploration expenses\n549\n1,537\n770\nDepreciation, depletion and amortization\n17,925\n19,508\n29,218\nTaxes other ..."
+   }
+  ],
+  "tickers": [
+   "CVX"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-12-31",
+  "accn": "0000093410-22-000019",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did CVX report for Selling, General and Administrative Expense for the fiscal year ended 2020-12-31?",
+  "value": 4213000000.0,
+  "unit": "USD",
+  "tag": "SellingGeneralAndAdministrativeExpense",
+  "spans": [
+   {
+    "accn": "0000093410-23-000009",
+    "char_start": 325294,
+    "char_end": 325299,
+    "quote": "...2,249\n52,148\nOperating expenses\n24,714\n20,726\n20,323\nSelling, general and administrative expenses\n4,312\n4,014\n4,213\nExploration expenses\n974\n549\n1,537\nDepreciation, depletion and amortization\n16,319\n17,925\n19,508\nTaxes other ..."
+   }
+  ],
+  "tickers": [
+   "CVX"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2020-12-31",
+  "accn": "0000093410-23-000009",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did CVX report for Selling, General and Administrative Expense for the fiscal year ended 2021-12-31?",
+  "value": 4014000000.0,
+  "unit": "USD",
+  "tag": "SellingGeneralAndAdministrativeExpense",
+  "spans": [
+   {
+    "accn": "0000093410-24-000013",
+    "char_start": 338870,
+    "char_end": 338875,
+    "quote": "...5,416\n92,249\nOperating expenses\n24,887\n24,714\n20,726\nSelling, general and administrative expenses\n4,141\n4,312\n4,014\nExploration expenses\n914\n974\n549\nDepreciation, depletion and amortization\n17,326\n16,319\n17,925\nTaxes other th..."
+   }
+  ],
+  "tickers": [
+   "CVX"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2021-12-31",
+  "accn": "0000093410-24-000013",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did INTC report for Selling, General and Administrative Expense for the fiscal year ended 2018-12-29?",
+  "value": 6950000000.0,
+  "unit": "USD",
+  "tag": "SellingGeneralAndAdministrativeExpense",
+  "spans": [
+   {
+    "accn": "0000050863-21-000010",
+    "char_start": 180677,
+    "char_end": 180682,
+    "quote": "...pment\n13,556\n17.4\n%\n13,362\n18.6\n%\n13,543\n19.1\n%\nMarketing, general and administrative\n6,180\n7.9\n%\n6,350\n8.8\n%\n6,950\n9.8\n%\nRestructuring and other charges\n198\n0.3\n%\n393\n0.5\n%\n(72)\n(0.1)\n%\nOperating income\n23,678\n30.4\n%\n22,035\n..."
+   },
+   {
+    "accn": "0000050863-21-000010",
+    "char_start": 214420,
+    "char_end": 214425,
+    "quote": "...opment1\n$\n13,556\n$\n13,362\n$\n13,543\n$\n13,035\n$\n12,685\nMarketing, general and administrative1\n$\n6,180\n$\n6,350\n$\n6,950\n$\n7,629\n$\n8,671\nR&D and MG&A as a percentage of revenue1\n25.3\n%\n27.4\n%\n28.9\n%\n32.9\n%\n36.0\n%\nOperating income1..."
+   },
+   {
+    "accn": "0000050863-21-000010",
+    "char_start": 335515,
+    "char_end": 335520,
+    "quote": "...42,140\n43,737\nResearch and development\n13,556\n13,362\n13,543\nMarketing, general and administrative\n6,180\n6,350\n6,950\nRestructuring and other charges\n198\n393\n(72)\nOperating expenses\n19,934\n20,105\n20,421\nOperating income\n23,678\n..."
+   }
+  ],
+  "tickers": [
+   "INTC"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2018-12-29",
+  "accn": "0000050863-21-000010",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 3 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did JNJ report for Income Tax Expense (Benefit) for the fiscal year ended 2018-12-30?",
+  "value": 2702000000.0,
+  "unit": "USD",
+  "tag": "IncomeTaxExpenseBenefit",
+  "spans": [
+   {
+    "accn": "0000200406-21-000008",
+    "char_start": 264444,
+    "char_end": 264449,
+    "quote": "... before provision for taxes on income\n16,497\n17,328\n17,999\nProvision for taxes on income (Note 8)\n1,783\n2,209\n2,702\nNet earnings\n$\n14,714\n15,119\n15,297\nNet earnings per share (Notes 1 and 15)\nBasic\n$\n5.59\n5.72\n5.70\nDiluted\n$\n..."
+   },
+   {
+    "accn": "0000200406-21-000008",
+    "char_start": 324528,
+    "char_end": 324533,
+    "quote": "...es\n(1,065)\n(1,662)\n(2,226)\nTotal deferred\n(1,141)\n(2,476)\n(1,016)\nProvision for taxes on income\n$\n1,783\n2,209\n2,702\n(1) Includes $1.4 billion of deferred tax expense for the adoption of the deferred method to account for GILT..."
+   }
+  ],
+  "tickers": [
+   "JNJ"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2018-12-30",
+  "accn": "0000200406-21-000008",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did JNJ report for Income Tax Expense (Benefit) for the fiscal year ended 2019-12-29?",
+  "value": 2209000000.0,
+  "unit": "USD",
+  "tag": "IncomeTaxExpenseBenefit",
+  "spans": [
+   {
+    "accn": "0000200406-22-000022",
+    "char_start": 273677,
+    "char_end": 273682,
+    "quote": "... before provision for taxes on income\n22,776\n16,497\n17,328\nProvision for taxes on income (Note 8)\n1,898\n1,783\n2,209\nNet earnings\n$\n20,878\n14,714\n15,119\nNet earnings per share (Notes 1 and 15)\nBasic\n$\n7.93\n5.59\n5.72\nDiluted\n$\n..."
+   },
+   {
+    "accn": "0000200406-22-000022",
+    "char_start": 333444,
+    "char_end": 333449,
+    "quote": "...es\n(2,662)\n(1,065)\n(1,662)\nTotal deferred\n(2,079)\n(1,141)\n(2,476)\nProvision for taxes on income\n$\n1,898\n1,783\n2,209\n62\nA comparison of income tax expense at the U.S. statutory rate of 21% in fiscal years 2021, 2020 and 2019, ..."
+   }
+  ],
+  "tickers": [
+   "JNJ"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-12-29",
+  "accn": "0000200406-22-000022",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did JNJ report for Income Tax Expense (Benefit) for the fiscal year ended 2021-01-03?",
+  "value": 1783000000.0,
+  "unit": "USD",
+  "tag": "IncomeTaxExpenseBenefit",
+  "spans": [
+   {
+    "accn": "0000200406-23-000016",
+    "char_start": 216132,
+    "char_end": 216137,
+    "quote": "...)\n(9.3)\nOther Oncology\n571\n568\n0.6\n6.0\n(5.4)\nTotal Pulmonary Hypertension\n3,417\n3,450\n(1.0)\n3.0\n(4.0)\nOPSUMIT\n1,783\n1,819\n(2.0)\n2.6\n(4.6)\nUPTRAVI\n1,322\n1,237\n6.9\n8.6\n(1.7)\nOther Pulmonary Hypertension\n313\n395\n(20.8)\n(13.1)\n(7..."
+   },
+   {
+    "accn": "0000200406-23-000016",
+    "char_start": 274301,
+    "char_end": 274306,
+    "quote": "... before provision for taxes on income\n21,725\n22,776\n16,497\nProvision for taxes on income (Note 8)\n3,784\n1,898\n1,783\nNet earnings\n$\n17,941\n20,878\n14,714\nNet earnings per share (Notes 1 and 15)\nBasic\n$\n6.83\n7.93\n5.59\nDiluted\n$\n..."
+   },
+   {
+    "accn": "0000200406-23-000016",
+    "char_start": 332867,
+    "char_end": 332872,
+    "quote": "... taxes\n418\n(2,662)\n(1,065)\nTotal deferred\n(1,663)\n(2,079)\n(1,141)\nProvision for taxes on income\n$\n3,784\n1,898\n1,783\n61\nA comparison of income tax expense at the U.S. statutory rate of 21% in fiscal years 2022, 2021 and 2020, ..."
+   },
+   {
+    "accn": "0000200406-23-000016",
+    "char_start": 380901,
+    "char_end": 380906,
+    "quote": "...3,450\n3,148\n(1.0)\n9.6\nOPSUMIT\nU.S.\n1,132\n1,147\n1,008\n(1.3)\n13.7\nInternational\n651\n672\n631\n(3.2)\n6.6\nWorldwide\n1,783\n1,819\n1,639\n(2.0)\n11.0\nUPTRAVI\nU.S.\n1,104\n1,056\n955\n4.5\n10.5\nInternational\n218\n181\n138\n20.4\n31.1\nWorldwide\n1,..."
+   }
+  ],
+  "tickers": [
+   "JNJ"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2021-01-03",
+  "accn": "0000200406-23-000016",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 4 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did JNJ report for Income Tax Expense (Benefit) for the fiscal year ended 2022-01-02?",
+  "value": 1377000000.0,
+  "unit": "USD",
+  "tag": "IncomeTaxExpenseBenefit",
+  "spans": [
+   {
+    "accn": "0000200406-24-000013",
+    "char_start": 266844,
+    "char_end": 266849,
+    "quote": "... before provision for taxes on income\n15,062\n19,359\n19,178\nProvision for taxes on income (Note 8)\n1,736\n2,989\n1,377\nNet earnings from continuing operations\n13,326\n16,370\n17,801\nNet earnings from discontinued operations, net o..."
+   },
+   {
+    "accn": "0000200406-24-000013",
+    "char_start": 327190,
+    "char_end": 327195,
+    "quote": "...nal taxes\n(619)\n410\n(2,595)\nTotal deferred\n(4,059)\n(1,580)\n(2,030)\nProvision for taxes on income\n$1,736\n2,989\n1,377\n66\nA comparison of income tax expense at the U.S. statutory rate of 21% in fiscal years 2023, 2022 and 2021, ..."
+   }
+  ],
+  "tickers": [
+   "JNJ"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2022-01-02",
+  "accn": "0000200406-24-000013",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What did JNJ report for Income Tax Expense (Benefit) for the fiscal year ended 2023-01-01?",
+  "value": 2989000000.0,
+  "unit": "USD",
+  "tag": "IncomeTaxExpenseBenefit",
+  "spans": [
+   {
+    "accn": "0000200406-25-000038",
+    "char_start": 268299,
+    "char_end": 268304,
+    "quote": "... before provision for taxes on income\n16,687\n15,062\n19,359\nProvision for taxes on income (Note 8)\n2,621\n1,736\n2,989\nNet earnings from continuing operations\n14,066\n13,326\n16,370\nNet earnings from discontinued operations, net o..."
+   },
+   {
+    "accn": "0000200406-25-000038",
+    "char_start": 330892,
+    "char_end": 330897,
+    "quote": "...ational taxes\n356\n(619)\n410\nTotal deferred\n(2,183)\n(4,059)\n(1,580)\nProvision for taxes on income\n$2,621\n1,736\n2,989\n2024 Annual Report\n67\nA comparison of income tax expense at the U.S. statutory rate of 21% in fiscal years 20..."
+   }
+  ],
+  "tickers": [
+   "JNJ"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2023-01-01",
+  "accn": "0000200406-25-000038",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was LLY's Assets as of 2019-12-31?",
+  "value": 39286100000.0,
+  "unit": "USD",
+  "tag": "Assets",
+  "spans": [
+   {
+    "accn": "0000059478-21-000083",
+    "char_start": 310160,
+    "char_end": 310166,
+    "quote": "...and equipment, net (Note 9)\n8,681.9\n7,872.9\nOther noncurrent assets\n3,475.4\n2,871.2\nTotal assets\n$\n46,633.1\n$\n39,286.1\nLiabilities and Equity\nCurrent Liabilities\nShort-term borrowings and current maturities of long-term debt (..."
+   },
+   {
+    "accn": "0000059478-21-000083",
+    "char_start": 311504,
+    "char_end": 311510,
+    "quote": "....9\nNoncontrolling interests\n183.6\n92.2\nTotal equity\n5,825.2\n2,699.1\nTotal liabilities and equity\n$\n46,633.1\n$\n39,286.1\nSee notes to consolidated financial statements.\n59\nConsolidated Statements of Shareholders' Equity\nEquity o..."
+   }
+  ],
+  "tickers": [
+   "LLY"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-12-31",
+  "accn": "0000059478-21-000083",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was LLY's Assets as of 2020-12-31?",
+  "value": 46633100000.0,
+  "unit": "USD",
+  "tag": "Assets",
+  "spans": [
+   {
+    "accn": "0000059478-22-000068",
+    "char_start": 312375,
+    "char_end": 312381,
+    "quote": "...and equipment, net (Note 9)\n8,985.1\n8,681.9\nOther noncurrent assets\n4,082.7\n3,475.4\nTotal assets\n$\n48,806.0\n$\n46,633.1\nLiabilities and Equity\nCurrent Liabilities\nShort-term borrowings and current maturities of long-term debt (..."
+   },
+   {
+    "accn": "0000059478-22-000068",
+    "char_start": 313720,
+    "char_end": 313726,
+    "quote": "...6\nNoncontrolling interests\n175.6\n183.6\nTotal equity\n9,154.8\n5,825.2\nTotal liabilities and equity\n$\n48,806.0\n$\n46,633.1\nSee notes to consolidated financial statements.\n57\nConsolidated Statements of Shareholders' Equity\nEquity o..."
+   }
+  ],
+  "tickers": [
+   "LLY"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2020-12-31",
+  "accn": "0000059478-22-000068",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was LLY's Assets as of 2021-12-31?",
+  "value": 48806000000.0,
+  "unit": "USD",
+  "tag": "Assets",
+  "spans": [
+   {
+    "accn": "0000059478-23-000082",
+    "char_start": 313048,
+    "char_end": 313054,
+    "quote": "...nd equipment, net (Note 9)\n10,144.0\n8,985.1\nOther noncurrent assets\n4,337.0\n4,082.7\nTotal assets\n$\n49,489.8\n$\n48,806.0\nLiabilities and Equity\nCurrent Liabilities\nShort-term borrowings and current maturities of long-term debt (..."
+   },
+   {
+    "accn": "0000059478-23-000082",
+    "char_start": 314401,
+    "char_end": 314407,
+    "quote": "...\nNoncontrolling interests\n125.6\n175.6\nTotal equity\n10,775.4\n9,154.8\nTotal liabilities and equity\n$\n49,489.8\n$\n48,806.0\nSee notes to consolidated financial statements.\n58\nConsolidated Statements of Shareholders' Equity\nEquity o..."
+   }
+  ],
+  "tickers": [
+   "LLY"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2021-12-31",
+  "accn": "0000059478-23-000082",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was LLY's Assets as of 2022-12-31?",
+  "value": 49489800000.0,
+  "unit": "USD",
+  "tag": "Assets",
+  "spans": [
+   {
+    "accn": "0000059478-24-000065",
+    "char_start": 320652,
+    "char_end": 320658,
+    "quote": "...d equipment, net (Note 9)\n12,913.6\n10,144.0\nOther noncurrent assets\n4,989.9\n4,337.0\nTotal assets\n$\n64,006.3\n$\n49,489.8\nLiabilities and Equity\nCurrent Liabilities\nShort-term borrowings and current maturities of long-term debt (..."
+   },
+   {
+    "accn": "0000059478-24-000065",
+    "char_start": 321931,
+    "char_end": 321937,
+    "quote": "...\nNoncontrolling interests\n91.8\n125.6\nTotal equity\n10,863.7\n10,775.4\nTotal liabilities and equity\n$\n64,006.3\n$\n49,489.8\nSee notes to consolidated financial statements.\n59\nConsolidated Statements of Shareholders' Equity\nEquity o..."
+   }
+  ],
+  "tickers": [
+   "LLY"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2022-12-31",
+  "accn": "0000059478-24-000065",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was LLY's Assets as of 2023-12-31?",
+  "value": 64006300000.0,
+  "unit": "USD",
+  "tag": "Assets",
+  "spans": [
+   {
+    "accn": "0000059478-25-000067",
+    "char_start": 324804,
+    "char_end": 324810,
+    "quote": "...d equipment, net (Note 9)\n17,102.4\n12,913.6\nOther noncurrent assets\n5,719.7\n4,989.9\nTotal assets\n$\n78,714.9\n$\n64,006.3\nLiabilities and Equity\nCurrent Liabilities\nShort-term borrowings and current maturities of long-term debt (..."
+   },
+   {
+    "accn": "0000059478-25-000067",
+    "char_start": 326083,
+    "char_end": 326089,
+    "quote": "...9\nNoncontrolling interests\n79.5\n91.8\nTotal equity\n14,271.6\n10,863.7\nTotal liabilities and equity\n$\n78,714.9\n$\n64,006.3\nSee notes to consolidated financial statements.\n60\nConsolidated Statements of Shareholders' Equity\nELI LILL..."
+   },
+   {
+    "accn": "0000059478-25-000067",
+    "char_start": 470518,
+    "char_end": 470524,
+    "quote": "...udes expenditures for property and equipment and computer software costs.\n2024\n2023\nTotal assets\n$\n78,714.9\n$\n64,006.3\nEquity method investments\n1,142.7\n962.3\n107\nManagement's Reports\nManagement's Report for Financial Statemen..."
+   }
+  ],
+  "tickers": [
+   "LLY"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2023-12-31",
+  "accn": "0000059478-25-000067",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 3 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was LOW's Assets, Current as of 2019-02-01?",
+  "value": 14228000000.0,
+  "unit": "USD",
+  "tag": "AssetsCurrent",
+  "spans": [
+   {
+    "accn": "0000060667-20-000036",
+    "char_start": 182457,
+    "char_end": 182463,
+    "quote": "...\n160\n218\nMerchandise inventory - net\n13,179\n12,561\nOther current assets\n1,263\n938\nTotal current assets\n15,318\n14,228\nProperty, less accumulated depreciation\n18,669\n18,432\nOperating lease right-of-use assets\n3,891\n—\nLong-term i..."
+   }
+  ],
+  "tickers": [
+   "LOW"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-02-01",
+  "accn": "0000060667-20-000036",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was LOW's Assets, Current as of 2020-01-31?",
+  "value": 15318000000.0,
+  "unit": "USD",
+  "tag": "AssetsCurrent",
+  "spans": [
+   {
+    "accn": "0000060667-21-000026",
+    "char_start": 186358,
+    "char_end": 186364,
+    "quote": "...\n506\n160\nMerchandise inventory – net\n16,193\n13,179\nOther current assets\n937\n1,263\nTotal current assets\n22,326\n15,318\nProperty, less accumulated depreciation\n19,155\n18,769\nOperating lease right-of-use assets\n3,832\n3,891\nLong-te..."
+   }
+  ],
+  "tickers": [
+   "LOW"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2020-01-31",
+  "accn": "0000060667-21-000026",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was LOW's Assets, Current as of 2021-01-29?",
+  "value": 22326000000.0,
+  "unit": "USD",
+  "tag": "AssetsCurrent",
+  "spans": [
+   {
+    "accn": "0000060667-22-000038",
+    "char_start": 185038,
+    "char_end": 185044,
+    "quote": "...\n271\n506\nMerchandise inventory – net\n17,605\n16,193\nOther current assets\n1,051\n937\nTotal current assets\n20,060\n22,326\nProperty, less accumulated depreciation\n19,071\n19,155\nOperating lease right-of-use assets\n4,108\n3,832\nLong-te..."
+   }
+  ],
+  "tickers": [
+   "LOW"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2021-01-29",
+  "accn": "0000060667-22-000038",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was LOW's Assets, Current as of 2022-01-28?",
+  "value": 20060000000.0,
+  "unit": "USD",
+  "tag": "AssetsCurrent",
+  "spans": [
+   {
+    "accn": "0000060667-23-000034",
+    "char_start": 188517,
+    "char_end": 188523,
+    "quote": "...84\n271\nMerchandise inventory – net\n18,532\n17,605\nOther current assets\n1,178\n1,051\nTotal current assets\n21,442\n20,060\nProperty, less accumulated depreciation\n17,567\n19,071\nOperating lease right-of-use assets\n3,518\n4,108\nLong-te..."
+   }
+  ],
+  "tickers": [
+   "LOW"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2022-01-28",
+  "accn": "0000060667-23-000034",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was LOW's Assets, Current as of 2023-02-03?",
+  "value": 21442000000.0,
+  "unit": "USD",
+  "tag": "AssetsCurrent",
+  "spans": [
+   {
+    "accn": "0000060667-24-000033",
+    "char_start": 189162,
+    "char_end": 189168,
+    "quote": "...\n307\n384\nMerchandise inventory – net\n16,894\n18,532\nOther current assets\n949\n1,178\nTotal current assets\n19,071\n21,442\nProperty, less accumulated depreciation\n17,653\n17,567\nOperating lease right-of-use assets\n3,733\n3,518\nLong-te..."
+   }
+  ],
+  "tickers": [
+   "LOW"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2023-02-03",
+  "accn": "0000060667-24-000033",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was NVDA's Liabilities as of 2019-01-27?",
+  "value": 3950000000.0,
+  "unit": "USD",
+  "tag": "Liabilities",
+  "spans": [
+   {
+    "accn": "0001045810-20-000010",
+    "char_start": 183090,
+    "char_end": 183095,
+    "quote": "...1,988\nLong-term operating lease liabilities\n561\n—\nOther long-term liabilities\n775\n633\nTotal liabilities\n5,111\n3,950\nCommitments and contingencies - see Note 13\nShareholders’ equity:\nPreferred stock, $.001 par value; 2 shares ..."
+   }
+  ],
+  "tickers": [
+   "NVDA"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-01-27",
+  "accn": "0001045810-20-000010",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was PFE's Liabilities as of 2019-12-31?",
+  "value": 104148000000.0,
+  "unit": "USD",
+  "tag": "Liabilities",
+  "spans": [
+   {
+    "accn": "0000078003-21-000038",
+    "char_start": 421785,
+    "char_end": 421792,
+    "quote": "...063\n5,652\nOther taxes payable\n11,560\n12,126\nOther noncurrent liabilities\n6,669\n6,894\nTotal liabilities\n90,756\n104,148\nCommitments and Contingencies\nPreferred stock, no par value, at stated value; 27 shares authorized; issued: 2..."
+   }
+  ],
+  "tickers": [
+   "PFE"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-12-31",
+  "accn": "0000078003-21-000038",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was PFE's Liabilities as of 2020-12-31?",
+  "value": 90756000000.0,
+  "unit": "USD",
+  "tag": "Liabilities",
+  "spans": [
+   {
+    "accn": "0000078003-22-000027",
+    "char_start": 431760,
+    "char_end": 431766,
+    "quote": "...49\n4,063\nOther taxes payable\n11,331\n11,560\nOther noncurrent liabilities\n9,743\n6,669\nTotal liabilities\n104,013\n90,756\nCommitments and Contingencies\nPreferred stock, no par value, at stated value; 27 shares authorized; no shares..."
+   }
+  ],
+  "tickers": [
+   "PFE"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2020-12-31",
+  "accn": "0000078003-22-000027",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was PFE's Liabilities as of 2021-12-31?",
+  "value": 104013000000.0,
+  "unit": "USD",
+  "tag": "Liabilities",
+  "spans": [
+   {
+    "accn": "0000078003-23-000024",
+    "char_start": 421916,
+    "char_end": 421923,
+    "quote": "...,023\n349\nOther taxes payable\n9,812\n11,331\nOther noncurrent liabilities\n13,180\n9,743\nTotal liabilities\n101,288\n104,013\nCommitments and Contingencies\nPreferred stock, no par value, at stated value; 27 shares authorized; no shares..."
+   }
+  ],
+  "tickers": [
+   "PFE"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2021-12-31",
+  "accn": "0000078003-23-000024",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was PFE's Liabilities as of 2022-12-31?",
+  "value": 101288000000.0,
+  "unit": "USD",
+  "tag": "Liabilities",
+  "spans": [
+   {
+    "accn": "0000078003-24-000039",
+    "char_start": 455231,
+    "char_end": 455238,
+    "quote": "...40\n1,023\nOther taxes payable\n8,534\n9,812\nOther noncurrent liabilities\n16,539\n13,180\nTotal liabilities\n137,213\n101,288\nCommitments and Contingencies\nPreferred stock, no par value, at stated value; 27 shares authorized; no shares..."
+   }
+  ],
+  "tickers": [
+   "PFE"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2022-12-31",
+  "accn": "0000078003-24-000039",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was MRK's Liabilities, Current as of 2019-12-31?",
+  "value": 22220000000.0,
+  "unit": "USD",
+  "tag": "LiabilitiesCurrent",
+  "spans": [
+   {
+    "accn": "0000310158-21-000004",
+    "char_start": 509889,
+    "char_end": 509895,
+    "quote": "...s\n13,053\n12,549\nIncome taxes payable\n1,575\n736\nDividends payable\n1,674\n1,587\nTotal current liabilities\n27,327\n22,220\nLong-Term Debt\n25,360\n22,736\nDeferred Income Taxes\n1,015\n1,470\nOther Noncurrent Liabilities\n12,482\n11,970\nMer..."
+   }
+  ],
+  "tickers": [
+   "MRK"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-12-31",
+  "accn": "0000310158-21-000004",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was MRK's Liabilities, Current as of 2020-12-31?",
+  "value": 27327000000.0,
+  "unit": "USD",
+  "tag": "LiabilitiesCurrent",
+  "spans": [
+   {
+    "accn": "0000310158-22-000003",
+    "char_start": 496116,
+    "char_end": 496122,
+    "quote": "...s payable\n1,768\n1,674\nCurrent liabilities of discontinued operations\n—\n1,086\nTotal current liabilities\n23,872\n27,327\nLong-Term Debt\n30,690\n25,360\nDeferred Income Taxes\n3,441\n1,005\nOther Noncurrent Liabilities\n9,434\n12,306\nNonc..."
+   }
+  ],
+  "tickers": [
+   "MRK"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2020-12-31",
+  "accn": "0000310158-22-000003",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was MRK's Liabilities, Current as of 2021-12-31?",
+  "value": 23872000000.0,
+  "unit": "USD",
+  "tag": "LiabilitiesCurrent",
+  "spans": [
+   {
+    "accn": "0001628280-23-005061",
+    "char_start": 502663,
+    "char_end": 502669,
+    "quote": "...14,159\n13,859\nIncome taxes payable\n1,986\n1,224\nDividends payable\n1,884\n1,768\nTotal current liabilities\n24,239\n23,872\nLong-Term Debt\n28,745\n30,690\nDeferred Income Taxes\n1,795\n3,441\nOther Noncurrent Liabilities\n8,323\n9,434\nMerck..."
+   }
+  ],
+  "tickers": [
+   "MRK"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2021-12-31",
+  "accn": "0001628280-23-005061",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was MRK's Liabilities, Current as of 2022-12-31?",
+  "value": 24239000000.0,
+  "unit": "USD",
+  "tag": "LiabilitiesCurrent",
+  "spans": [
+   {
+    "accn": "0001628280-24-006850",
+    "char_start": 496510,
+    "char_end": 496516,
+    "quote": "...15,766\n14,159\nIncome taxes payable\n2,649\n1,986\nDividends payable\n1,985\n1,884\nTotal current liabilities\n25,694\n24,239\nLong-Term Debt\n33,683\n28,745\nDeferred Income Taxes\n871\n1,795\nOther Noncurrent Liabilities\n8,792\n8,323\nMerck &..."
+   }
+  ],
+  "tickers": [
+   "MRK"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2022-12-31",
+  "accn": "0001628280-24-006850",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was MRK's Liabilities, Current as of 2023-12-31?",
+  "value": 25694000000.0,
+  "unit": "USD",
+  "tag": "LiabilitiesCurrent",
+  "spans": [
+   {
+    "accn": "0001628280-25-007732",
+    "char_start": 507330,
+    "char_end": 507336,
+    "quote": "...15,694\n15,766\nIncome taxes payable\n3,914\n2,649\nDividends payable\n2,084\n1,985\nTotal current liabilities\n28,420\n25,694\nLong-Term Debt\n34,462\n33,683\nDeferred Income Taxes\n1,387\n871\nOther Noncurrent Liabilities\n6,465\n8,792\nMerck &..."
+   }
+  ],
+  "tickers": [
+   "MRK"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2023-12-31",
+  "accn": "0001628280-25-007732",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was PFE's Stockholders' Equity Attributable to Parent as of 2019-12-31?",
+  "value": 63143000000.0,
+  "unit": "USD",
+  "tag": "StockholdersEquity",
+  "spans": [
+   {
+    "accn": "0000078003-21-000038",
+    "char_start": 422268,
+    "char_end": 422274,
+    "quote": "...0\n97,670\nAccumulated other comprehensive loss\n(11,688)\n(11,640)\nTotal Pfizer Inc. shareholders’ equity\n63,238\n63,143\nEquity attributable to noncontrolling interests\n235\n303\nTotal equity\n63,473\n63,447\nTotal liabilities and equi..."
+   },
+   {
+    "accn": "0000078003-21-000038",
+    "char_start": 424085,
+    "char_end": 424091,
+    "quote": "...0)\n—\n—\n19\n(21)\n(60)\n(81)\nBalance, December 31, 2019\n431\n17\n9,369\n468\n87,428\n(3,835)\n(110,801)\n97,670\n(11,640)\n63,143\n303\n63,447\nNet income\n9,616\n9,616\n36\n9,652\nOther comprehensive income/(loss), net of tax\n23\n23\n(9)\n14\nCash di..."
+   }
+  ],
+  "tickers": [
+   "PFE"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-12-31",
+  "accn": "0000078003-21-000038",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was PSX's Stockholders' Equity Attributable to Parent as of 2019-12-31?",
+  "value": 24910000000.0,
+  "unit": "USD",
+  "tag": "StockholdersEquity",
+  "spans": [
+   {
+    "accn": "0001534701-21-000074",
+    "char_start": 325764,
+    "char_end": 325770,
+    "quote": "...ned earnings\n16,500\n22,064\nAccumulated other comprehensive loss\n(789)\n(788)\nTotal Stockholders’ Equity\n18,984\n24,910\nNoncontrolling interests\n2,539\n2,259\nTotal Equity\n21,523\n27,169\nTotal Liabilities and Equity\n$\n54,721\n58,720\n..."
+   }
+  ],
+  "tickers": [
+   "PSX"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-12-31",
+  "accn": "0001534701-21-000074",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was PSX's Stockholders' Equity Attributable to Parent as of 2020-12-31?",
+  "value": 18984000000.0,
+  "unit": "USD",
+  "tag": "StockholdersEquity",
+  "spans": [
+   {
+    "accn": "0001534701-22-000078",
+    "char_start": 330290,
+    "char_end": 330296,
+    "quote": "...ned earnings\n16,216\n16,500\nAccumulated other comprehensive loss\n(445)\n(789)\nTotal Stockholders’ Equity\n19,166\n18,984\nNoncontrolling interests\n2,471\n2,539\nTotal Equity\n21,637\n21,523\nTotal Liabilities and Equity\n$\n55,594\n54,721\n..."
+   }
+  ],
+  "tickers": [
+   "PSX"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2020-12-31",
+  "accn": "0001534701-22-000078",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was PSX's Stockholders' Equity Attributable to Parent as of 2021-12-31?",
+  "value": 19166000000.0,
+  "unit": "USD",
+  "tag": "StockholdersEquity",
+  "spans": [
+   {
+    "accn": "0001534701-23-000053",
+    "char_start": 383221,
+    "char_end": 383227,
+    "quote": "...ned earnings\n25,432\n16,216\nAccumulated other comprehensive loss\n(460)\n(445)\nTotal Stockholders’ Equity\n29,494\n19,166\nNoncontrolling interests\n4,612\n2,471\nTotal Equity\n34,106\n21,637\nTotal Liabilities and Equity\n$\n76,442\n55,594\n..."
+   }
+  ],
+  "tickers": [
+   "PSX"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2021-12-31",
+  "accn": "0001534701-23-000053",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was PSX's Stockholders' Equity Attributable to Parent as of 2022-12-31?",
+  "value": 29494000000.0,
+  "unit": "USD",
+  "tag": "StockholdersEquity",
+  "spans": [
+   {
+    "accn": "0001534701-24-000078",
+    "char_start": 400327,
+    "char_end": 400333,
+    "quote": "...ned earnings\n30,550\n25,432\nAccumulated other comprehensive loss\n(282)\n(460)\nTotal Stockholders’ Equity\n30,583\n29,494\nNoncontrolling interests\n1,067\n4,612\nTotal Equity\n31,650\n34,106\nTotal Liabilities and Equity\n$\n75,501\n76,442\n..."
+   }
+  ],
+  "tickers": [
+   "PSX"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2022-12-31",
+  "accn": "0001534701-24-000078",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 1 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was PSX's Cash and Cash Equivalents, at Carrying Value as of 2019-12-31?",
+  "value": 1614000000.0,
+  "unit": "USD",
+  "tag": "CashAndCashEquivalentsAtCarryingValue",
+  "spans": [
+   {
+    "accn": "0001534701-21-000074",
+    "char_start": 207381,
+    "char_end": 207386,
+    "quote": "...inancial Indicators\nMillions of Dollars, Except as Indicated\n2020\n2019\n2018\nCash and cash equivalents\n$\n2,514\n1,614\n3,019\nNet cash provided by operating activities\n2,111\n4,808\n7,573\nShort-term debt\n987\n547\n67\nTotal debt\n15,89..."
+   },
+   {
+    "accn": "0001534701-21-000074",
+    "char_start": 324388,
+    "char_end": 324393,
+    "quote": "...lance Sheet\nPhillips 66\nMillions of Dollars\nAt December 31\n2020\n2019\nAssets\nCash and cash equivalents\n$\n2,514\n1,614\nAccounts and notes receivable (net of allowances of $37 million in 2020 and $41 million in 2019)\n5,688\n7,376\n..."
+   },
+   {
+    "accn": "0001534701-21-000074",
+    "char_start": 327854,
+    "char_end": 327859,
+    "quote": "...(35)\nNet Change in Cash and Cash Equivalents\n900\n(1,405)\n(100)\nCash and cash equivalents at beginning of year\n1,614\n3,019\n3,119\nCash and Cash Equivalents at End of Year\n$\n2,514\n1,614\n3,019\nSee Notes to Consolidated Financial ..."
+   },
+   {
+    "accn": "0001534701-21-000074",
+    "char_start": 327921,
+    "char_end": 327926,
+    "quote": "... and cash equivalents at beginning of year\n1,614\n3,019\n3,119\nCash and Cash Equivalents at End of Year\n$\n2,514\n1,614\n3,019\nSee Notes to Consolidated Financial Statements.\n88\nTable of Contents\nIndex to Financial Statements\nCons..."
+   }
+  ],
+  "tickers": [
+   "PSX"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-12-31",
+  "accn": "0001534701-21-000074",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 4 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was QCOM's Cash and Cash Equivalents, at Carrying Value as of 2019-09-29?",
+  "value": 11839000000.0,
+  "unit": "USD",
+  "tag": "CashAndCashEquivalentsAtCarryingValue",
+  "spans": [
+   {
+    "accn": "0001728949-20-000067",
+    "char_start": 327931,
+    "char_end": 327937,
+    "quote": "...lue amounts)\nSeptember 27,\n2020\nSeptember 29,\n2019\nASSETS\nCurrent assets:\nCash and cash equivalents\n$\n6,707\n$\n11,839\nMarketable securities\n4,507\n421\nAccounts receivable, net\n4,003\n2,471\nInventories\n2,598\n1,400\nOther current as..."
+   },
+   {
+    "accn": "0001728949-20-000067",
+    "char_start": 333423,
+    "char_end": 333429,
+    "quote": "...in total cash and cash equivalents\n(5,132)\n62\n(25,252)\nTotal cash and cash equivalents at beginning of period\n11,839\n11,777\n37,029\nTotal cash and cash equivalents at end of period\n$\n6,707\n$\n11,839\n$\n11,777\nSee accompanying not..."
+   },
+   {
+    "accn": "0001728949-20-000067",
+    "char_start": 333503,
+    "char_end": 333509,
+    "quote": "...alents at beginning of period\n11,839\n11,777\n37,029\nTotal cash and cash equivalents at end of period\n$\n6,707\n$\n11,839\n$\n11,777\nSee accompanying notes.\nF-7\nQUALCOMM Incorporated\nCONSOLIDATED STATEMENTS OF STOCKHOLDERS’ EQUITY\n(I..."
+   }
+  ],
+  "tickers": [
+   "QCOM"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2019-09-29",
+  "accn": "0001728949-20-000067",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 3 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was QCOM's Cash and Cash Equivalents, at Carrying Value as of 2020-09-27?",
+  "value": 6707000000.0,
+  "unit": "USD",
+  "tag": "CashAndCashEquivalentsAtCarryingValue",
+  "spans": [
+   {
+    "accn": "0001728949-21-000076",
+    "char_start": 320032,
+    "char_end": 320037,
+    "quote": "...lue amounts)\nSeptember 26,\n2021\nSeptember 27,\n2020\nASSETS\nCurrent assets:\nCash and cash equivalents\n$\n7,116\n$\n6,707\nMarketable securities\n5,298\n4,507\nAccounts receivable, net\n3,579\n4,003\nInventories\n3,228\n2,598\nOther current ..."
+   },
+   {
+    "accn": "0001728949-21-000076",
+    "char_start": 325244,
+    "char_end": 325249,
+    "quote": "...ase) in total cash and cash equivalents\n409\n(5,132)\n62\nTotal cash and cash equivalents at beginning of period\n6,707\n11,839\n11,777\nTotal cash and cash equivalents at end of period\n$\n7,116\n$\n6,707\n$\n11,839\nSee accompanying note..."
+   },
+   {
+    "accn": "0001728949-21-000076",
+    "char_start": 325323,
+    "char_end": 325328,
+    "quote": "...valents at beginning of period\n6,707\n11,839\n11,777\nTotal cash and cash equivalents at end of period\n$\n7,116\n$\n6,707\n$\n11,839\nSee accompanying notes.\nF-6\nQUALCOMM Incorporated\nCONSOLIDATED STATEMENTS OF STOCKHOLDERS’ EQUITY\n(I..."
+   }
+  ],
+  "tickers": [
+   "QCOM"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2020-09-27",
+  "accn": "0001728949-21-000076",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 3 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was QCOM's Cash and Cash Equivalents, at Carrying Value as of 2021-09-26?",
+  "value": 7116000000.0,
+  "unit": "USD",
+  "tag": "CashAndCashEquivalentsAtCarryingValue",
+  "spans": [
+   {
+    "accn": "0000804328-22-000021",
+    "char_start": 262732,
+    "char_end": 262737,
+    "quote": "... 26, 2021 (in millions):\nSeptember 25,\n2022\nSeptember 26,\n2021\nChange\nCash and cash equivalents (1)\n$\n2,773\n$\n7,116\n$\n(4,343)\nMarketable securities\n3,609\n5,298\n(1,689)\nCash, cash equivalents and marketable securities\n$\n6,382\n..."
+   },
+   {
+    "accn": "0000804328-22-000021",
+    "char_start": 312513,
+    "char_end": 312518,
+    "quote": "...lue amounts)\nSeptember 25,\n2022\nSeptember 26,\n2021\nASSETS\nCurrent assets:\nCash and cash equivalents\n$\n2,773\n$\n7,116\nMarketable securities\n3,609\n5,298\nAccounts receivable, net\n5,643\n3,579\nInventories\n6,341\n3,228\nHeld for sale ..."
+   },
+   {
+    "accn": "0000804328-22-000021",
+    "char_start": 318280,
+    "char_end": 318285,
+    "quote": "...in total cash and cash equivalents\n(4,017)\n409\n(5,132)\nTotal cash and cash equivalents at beginning of period\n7,116\n6,707\n11,839\nTotal cash and cash equivalents at end of period (including $326 million classified as held for ..."
+   },
+   {
+    "accn": "0000804328-22-000021",
+    "char_start": 318433,
+    "char_end": 318438,
+    "quote": "...valents at end of period (including $326 million classified as held for sale at September 25, 2022)\n$\n3,099\n$\n7,116\n$\n6,707\nSee accompanying notes.\nF-6\nQUALCOMM Incorporated\nCONSOLIDATED STATEMENTS OF STOCKHOLDERS’ EQUITY\n(In..."
+   }
+  ],
+  "tickers": [
+   "QCOM"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2021-09-26",
+  "accn": "0000804328-22-000021",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 4 printing(s)",
+  "note": ""
+ },
+ {
+  "id": "",
+  "slice": "numeric",
+  "question": "What was QCOM's Cash and Cash Equivalents, at Carrying Value as of 2022-09-25?",
+  "value": 2773000000.0,
+  "unit": "USD",
+  "tag": "CashAndCashEquivalentsAtCarryingValue",
+  "spans": [
+   {
+    "accn": "0000804328-23-000055",
+    "char_start": 260204,
+    "char_end": 260209,
+    "quote": "... 25, 2022 (in millions):\nSeptember 24,\n2023\nSeptember 25,\n2022\nChange\nCash and cash equivalents (1)\n$\n8,450\n$\n2,773\n$\n5,677\nMarketable securities\n2,874\n3,609\n(735)\nCash, cash equivalents and marketable securities\n$\n11,324\n$\n6..."
+   },
+   {
+    "accn": "0000804328-23-000055",
+    "char_start": 306803,
+    "char_end": 306808,
+    "quote": "...lue amounts)\nSeptember 24,\n2023\nSeptember 25,\n2022\nASSETS\nCurrent assets:\nCash and cash equivalents\n$\n8,450\n$\n2,773\nMarketable securities\n2,874\n3,609\nAccounts receivable, net\n3,183\n5,643\nInventories\n6,422\n6,341\nHeld for sale ..."
+   }
+  ],
+  "tickers": [
+   "QCOM"
+  ],
+  "forms": [
+   "10-K"
+  ],
+  "period_end": "2022-09-25",
+  "accn": "0000804328-23-000055",
+  "item_key": "",
+  "origin": "generated from facts_current: headline us-gaap tag, USD, FY or instant, |val| > 1e6, capped at 5/company and 5/concept",
+  "gold_source": "value from XBRL, located in the filing text as millions; 2 printing(s)",
+  "note": ""
+ }
+]

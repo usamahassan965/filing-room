@@ -80,10 +80,18 @@ def is_narrative(chunk: Chunk) -> bool:
     return chunk.item_key in allowed if allowed else True
 
 
-def collection_name(backend: str, model_id: str, dim: int) -> str:
-    """Backend, model and width, in the name. See the module docstring."""
+def collection_name(backend: str, model_id: str, dim: int, variant: str = "") -> str:
+    """Backend, model and width, in the name. See the module docstring.
+
+    ``variant`` names the *chunking* that produced the points. Two collections
+    can share a backend, a model and a width and still be incomparable, because
+    what was cut up differently is not the same corpus -- M4's naive baseline is
+    exactly that, and it has to sit beside the real index rather than on top of
+    it. Empty for the system's own index, so its name is unchanged.
+    """
     slug = model_id.replace("/", "_").replace(":", "_").replace(".", "-")
-    return f"filing__{backend}__{slug}__{dim}"
+    tail = f"__{variant}" if variant else ""
+    return f"filing__{backend}__{slug}__{dim}{tail}"
 
 
 class CollectionMismatch(RuntimeError):
@@ -144,17 +152,18 @@ def payload_of(chunk: Chunk) -> dict[str, object]:
 class VectorIndex:
     """Qdrant, wrapped thinly enough that LanceDB could replace it."""
 
-    def __init__(self, cfg: Settings, *, backend: str | None = None) -> None:
+    def __init__(self, cfg: Settings, *, backend: str | None = None, variant: str = "") -> None:
         from qdrant_client import QdrantClient
 
         self.cfg = cfg
         self.backend = backend or cfg.embed_backend
+        self.variant = variant
         spec = model_for("embed", self.backend)  # type: ignore[arg-type]
         self.model = spec.id
         self.dim = spec.dim or 0
         if not self.dim:  # pragma: no cover - registry error
             raise ValueError(f"no dim registered for {self.backend} embed model {self.model}")
-        self.name = collection_name(self.backend, self.model, self.dim)
+        self.name = collection_name(self.backend, self.model, self.dim, variant)
         self.client = QdrantClient(url=cfg.qdrant_url, timeout=cfg.qdrant_timeout_s)
 
     def exists(self) -> bool:

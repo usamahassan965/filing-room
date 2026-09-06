@@ -23,5 +23,18 @@ phoenix_data/
 # cheap price for making the corpus rebuildable from a clone.
 !data/manifest.duckdb
 
+# The eval set is the other exception, and for the opposite reason. The manifest
+# is committed because rebuilding it needs the corpus; this is committed because
+# no amount of corpus would produce it again -- seventy of its questions were
+# written by a person, and a measurement is only comparable across time if the
+# questions it was taken on are the same file. 168 KB, versioned in its filename.
+!data/eval/
+!data/eval/**
+
+# Results are the deliverable and go in. The per-question cache underneath them
+# is a local convenience -- 150 files per configuration, rewritten whenever a
+# fingerprint changes -- and it reconstructs itself from one run.
+results/cache/
+
 # Local editor/agent state, not project configuration.
 .claude/settings.local.json

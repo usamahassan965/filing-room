@@ -1,0 +1,253 @@
+"""Scoring. Every number in the results table starts as one of these functions.
+
+The tests worth having here are the ones that pin down what a metric *refuses*
+to reward: a number scored right at the wrong scale, a retrieval scored as a hit
+because it landed in the right document, an abstention counted for a system that
+answered. Those are the ways an eval flatters the thing it measures.
+"""
+
+from __future__ import annotations
+
+import pytest
+
+from filing.eval import metrics
+from filing.eval.dataset import EvalQuestion, Span
+from filing.eval.metrics import Outcome, RetrievedChunk
+
+
+def chunk(accn="A", start=0, end=100, cid=None) -> RetrievedChunk:
+    return RetrievedChunk(
+        chunk_id=cid or f"{accn}:{start}", accn=accn, char_start=start, char_end=end
+    )
+
+
+def q_narrative(spans, qid="nar-001") -> EvalQuestion:
+    return EvalQuestion(
+        id=qid,
+        slice="narrative",
+        question="why?",
+        spans=tuple(spans),
+        origin="test",
+        gold_source="test",
+    )
+
+
+ONE_SPAN = (Span("A", 0, 50),)
+
+
+def q_numeric(value=1000.0, spans=ONE_SPAN, qid="num-001") -> EvalQuestion:
+    return EvalQuestion(
+        id=qid,
+        slice="numeric",
+        question="how much?",
+        value=value,
+        unit="USD",
+        tag="Revenues",
+        spans=tuple(spans),
+        origin="test",
+        gold_source="test",
+    )
+
+
+def q_unanswerable(qid="una-001") -> EvalQuestion:
+    return EvalQuestion(
+        id=qid, slice="unanswerable", question="what?", origin="test", gold_source="none"
+    )
+
+
+# ------------------------------------------------------------ number parsing
+
+
+@pytest.mark.parametrize(
+    ("answer", "gold"),
+    [
+        ("Revenue was $16,434 million.", 16_434_000_000.0),
+        ("Revenue was $16.4 billion.", 16_434_000_000.0),
+        ("16434", 16_434_000_000.0),
+        ("Net loss of (1,234) million", -1_234_000_000.0),
+        ("The figure is 60,922.", 60_922_000_000.0),
+        ("gross margin was 77.7 percent", 77.7),
+    ],
+)
+def test_numeric_match_accepts_every_honest_spelling(answer, gold):
+    assert metrics.numeric_match(answer, gold)
+
+
+@pytest.mark.parametrize(
+    ("answer", "gold"),
+    [
+        ("Revenue was $16,000 million.", 16_434_000_000.0),
+        ("INSUFFICIENT EVIDENCE", 16_434_000_000.0),
+        ("Revenue rose sharply.", 16_434_000_000.0),
+        ("Revenue was $1,434 million.", 16_434_000_000.0),
+    ],
+)
+def test_numeric_match_rejects_the_wrong_number(answer, gold):
+    assert not metrics.numeric_match(answer, gold)
+
+
+def test_tolerance_is_relative_and_tight():
+    assert metrics.numeric_match("1000.4", 1000.0)
+    assert not metrics.numeric_match("1006", 1000.0)
+
+
+def test_parse_numbers_offers_every_scale():
+    got = metrics.parse_numbers("2.4")
+    assert 2.4 in got and 2.4e6 in got and 2.4e9 in got
+
+
+def test_a_named_scale_binds_to_its_own_number():
+    assert 2.4e9 in metrics.parse_numbers("$2.4 billion of cash")
+
+
+# ---------------------------------------------------------------- retrieval
+
+
+def test_hit_rate_is_position_sensitive():
+    q = q_narrative([Span("A", 500, 600)])
+    got = (chunk(start=0, end=100), chunk(start=100, end=200), chunk(start=500, end=600))
+    assert metrics.hit_rate(q, got, 1) == 0.0
+    assert metrics.hit_rate(q, got, 5) == 1.0
+
+
+def test_the_right_document_is_not_a_hit():
+    """The M3 failure this whole gate exists to repair."""
+    q = q_narrative([Span("A", 5000, 5100)])
+    assert metrics.hit_rate(q, (chunk(accn="A", start=0, end=100),), 5) == 0.0
+
+
+def test_recall_counts_alternatives_not_chunks():
+    q = q_narrative([Span("A", 0, 100), Span("B", 0, 100), Span("C", 0, 100)])
+    got = (chunk(accn="A"), chunk(accn="B"))
+    assert metrics.recall(q, got, 5) == pytest.approx(2 / 3)
+    assert metrics.hit_rate(q, got, 5) == 1.0
+
+
+def test_two_chunks_over_one_span_do_not_double_count():
+    q = q_narrative([Span("A", 0, 200)])
+    got = (chunk(accn="A", start=0, end=100), chunk(accn="A", start=100, end=200))
+    assert metrics.recall(q, got, 5) == 1.0
+
+
+def test_ndcg_prefers_the_higher_rank():
+    q = q_narrative([Span("A", 0, 100)])
+    first = (chunk(accn="A"), chunk(accn="B"), chunk(accn="C"))
+    third = (chunk(accn="B"), chunk(accn="C"), chunk(accn="A"))
+    assert metrics.ndcg(q, first, 5) == 1.0
+    assert 0.0 < metrics.ndcg(q, third, 5) < 1.0
+
+
+def test_ndcg_ideal_is_capped_by_k():
+    q = q_narrative([Span(a, 0, 100) for a in "ABCDEFG"])
+    got = tuple(chunk(accn=a) for a in "AB")
+    assert metrics.ndcg(q, got, 2) == 1.0
+
+
+def test_no_gold_scores_zero_rather_than_dividing_by_nothing():
+    assert metrics.ndcg(q_unanswerable(), (chunk(),), 5) == 0.0
+    assert metrics.recall(q_unanswerable(), (chunk(),), 5) == 0.0
+
+
+# --------------------------------------------------------------- scorecard
+
+
+def test_score_separates_the_slices():
+    questions = [q_numeric(), q_narrative([Span("A", 0, 50)]), q_unanswerable()]
+    outcomes = [
+        Outcome(qid="num-001", route="text", answer="$1,000", retrieved=(chunk(end=50),)),
+        Outcome(qid="nar-001", route="text", answer="because", retrieved=(chunk(end=50),)),
+        Outcome(qid="una-001", route="refuse", answer="INSUFFICIENT EVIDENCE", refused=True),
+    ]
+    card = metrics.score(questions, outcomes)
+    assert card.slices["numeric"].exact_match == 1.0
+    assert card.slices["numeric"].router_accuracy == 0.0  # answered from text, not SQL
+    assert card.slices["narrative"].router_accuracy == 1.0
+    assert card.slices["unanswerable"].abstention == 1.0
+    assert card.slices["unanswerable"].over_answered == 0.0
+    assert card.overall.n == 3
+
+
+def test_a_system_that_never_abstains_is_visible():
+    card = metrics.score(
+        [q_unanswerable()], [Outcome(qid="una-001", route="text", answer="$5 billion")]
+    )
+    assert card.slices["unanswerable"].abstention == 0.0
+    assert card.slices["unanswerable"].over_answered == 1.0
+
+
+def test_a_refusal_never_counts_as_a_correct_number():
+    card = metrics.score(
+        [q_numeric()],
+        [Outcome(qid="num-001", answer="INSUFFICIENT EVIDENCE (1000)", refused=True)],
+    )
+    assert card.slices["numeric"].exact_match == 0.0
+
+
+def test_an_unattempted_question_is_scored_as_an_error_not_skipped():
+    card = metrics.score([q_numeric()], [])
+    assert card.slices["numeric"].n == 1
+    assert card.slices["numeric"].errors == 1
+    assert card.slices["numeric"].exact_match == 0.0
+
+
+def test_citations_separate_resolvable_from_supported():
+    q = q_narrative([Span("A", 0, 50)])
+    good, bad = chunk(accn="A", end=50, cid="good"), chunk(accn="B", cid="bad")
+    card = metrics.score(
+        [q],
+        [Outcome(qid="nar-001", route="text", retrieved=(good, bad), citations=("good", "bad"))],
+    )
+    s = card.slices["narrative"]
+    assert s.citations_made == 2
+    assert s.citations_resolvable == 1.0
+    assert s.citations_supported == 0.5
+
+
+def test_a_cited_id_that_was_never_retrieved_is_unresolvable():
+    card = metrics.score(
+        [q_narrative([Span("A", 0, 50)])],
+        [Outcome(qid="nar-001", citations=("invented",))],
+    )
+    assert card.slices["narrative"].citations_resolvable == 0.0
+
+
+def test_known_chunks_rescues_a_real_but_unretrieved_id():
+    card = metrics.score(
+        [q_narrative([Span("A", 0, 50)])],
+        [Outcome(qid="nar-001", citations=("elsewhere",))],
+        known_chunks={"elsewhere"},
+    )
+    assert card.slices["narrative"].citations_resolvable == 1.0
+    assert card.slices["narrative"].citations_supported == 0.0
+
+
+# --------------------------------------------------------------- rendering
+
+
+def test_markdown_has_a_row_per_slice_plus_overall():
+    card = metrics.score([q_numeric(), q_unanswerable()], [])
+    table = metrics.to_markdown(card, title="baseline")
+    assert "baseline" in table
+    for name in ("numeric", "narrative", "unanswerable", "overall"):
+        assert f"| {name} |" in table
+    assert table.count("\n") == 8  # title + blank + header + rule + 3 slices + overall
+
+
+def test_markdown_prints_missing_metrics_as_dashes():
+    card = metrics.score([q_narrative([Span("A", 0, 1)])], [])
+    assert "--" in metrics.to_markdown(card)
+
+
+# --------------------------------------------------------------- round trip
+
+
+def test_outcome_round_trips_through_json():
+    o = Outcome(
+        qid="num-001",
+        route="sql",
+        answer="a",
+        retrieved=(chunk(),),
+        citations=("x",),
+        llm_calls=1,
+    )
+    assert Outcome.from_json(o.to_json()) == o

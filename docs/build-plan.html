@@ -447,10 +447,10 @@ footer a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
         <div class="blk">
           <h4>Definition of done</h4>
           <ul class="dod">
-            <li><code>python -m filing.eval run --config baseline</code> writes <code>results/baseline.json</code></li>
-            <li>Eval set tagged <code>v1.0</code>, committed, with a datasheet describing how each slice was built</li>
-            <li>Deterministic metrics complete with <b>zero</b> LLM calls</li>
-            <li>A full baseline run fits inside the rate-limit budget and is reproducible from cache</li>
+            <li class="pending"><code>python -m filing.eval run --config baseline</code> writes <code>results/baseline.json</code> <i>— pending the naive index build</i></li>
+            <li class="done">Eval set tagged <code>v1.0</code>, committed, with a datasheet describing how each slice was built — <b>150 questions, 260 gold spans, 87 filings</b>, sha256 <code>38ee1f91…</code>, documented in <code>docs/eval-set.md</code></li>
+            <li class="done">Deterministic metrics complete with <b>zero</b> LLM calls — 122 eval tests, every scoring path driven by a fake backend</li>
+            <li class="pending">A full baseline run fits inside the rate-limit budget and is reproducible from cache — the cache half is proven (<code>test_a_second_run_costs_nothing_and_needs_nothing</code> runs with <i>no</i> backend and <i>no</i> retriever); the budget half needs the run</li>
           </ul>
         </div>
       </div>
