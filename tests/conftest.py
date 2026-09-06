@@ -54,3 +54,43 @@ def make_chunk(
 @pytest.fixture
 def chunk():
     return make_chunk
+
+
+# ---------------------------------------------------------------------------
+# no test reaches the internet
+# ---------------------------------------------------------------------------
+
+_LOCAL = {"127.0.0.1", "::1", "localhost", "0.0.0.0"}
+
+
+@pytest.fixture(autouse=True)
+def _no_outbound_network(monkeypatch):
+    """Fail any test that opens a socket to something that is not this machine.
+
+    Written after a test spent live API quota. It passed ``None`` for the chat
+    backend and asserted that the run would serve everything from cache -- so on
+    a cache hit nothing happened, and on a cache *miss* the runner did exactly
+    what it is supposed to do and built the real Gemini client. An unrelated
+    bug emptied the cache, and a hermetic-looking test quietly burned a day's
+    requests and reported the 429s as ordinary failures.
+
+    The lesson is not "fix that test" (it is fixed) but that a suite's
+    hermeticity should be enforced rather than assumed: every network-using test
+    here already injects an ``httpx.MockTransport``, so a real connection is
+    always a mistake, and it should be a red test rather than an invoice.
+    Localhost stays open -- Qdrant and Ollama are services, not the internet.
+    """
+    import socket
+
+    real = socket.socket.connect
+
+    def guarded(self, address, *a, **kw):
+        host = address[0] if isinstance(address, tuple) else address
+        if isinstance(host, str) and host not in _LOCAL:
+            raise AssertionError(
+                f"a test tried to connect to {host!r}. Tests are offline by design: "
+                "inject an httpx.MockTransport or a fake backend."
+            )
+        return real(self, address, *a, **kw)
+
+    monkeypatch.setattr(socket.socket, "connect", guarded)

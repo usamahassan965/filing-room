@@ -80,6 +80,7 @@ class EvalConfig:
     embed_model: str = ""
     chunker: str = NAIVE_CHUNKER
     collection: str = ""
+    generate: bool = True
     dataset_version: str = dataset.DATASET_VERSION
     prompt_version: str = PROMPT_VERSION
     temperature: float = 0.0
@@ -92,19 +93,35 @@ class EvalConfig:
         Done once, explicitly, and then written to the results file -- because
         "gemini" is not a reproducible description of an experiment and
         ``gemini-3.5-flash`` is.
+
+        When ``generate`` is off, every chat field is blanked instead. That is
+        not tidiness: those fields are in the fingerprint, and a retrieval-only
+        run that inherited whichever chat model happened to be configured would
+        appear to be a different experiment each time the generator changed --
+        while producing, correctly, the identical numbers. The retriever does
+        not know what will read its output, so the retrieval fingerprint must
+        not either.
         """
         from dataclasses import replace
 
         from filing.stores.index import collection_name
 
-        chat_backend = self.chat_backend or cfg.llm_backend
         embed_backend = self.embed_backend or cfg.embed_backend
-        chat = model_for(self.chat_role, chat_backend)  # type: ignore[arg-type]
         embed = model_for("embed", embed_backend)  # type: ignore[arg-type]
+        chat: dict[str, Any] = {"chat_backend": "", "chat_model": "", "chat_role": ""}
+        if self.generate:
+            backend = self.chat_backend or cfg.llm_backend
+            model = model_for(self.chat_role, backend)  # type: ignore[arg-type]
+            chat = {
+                "chat_backend": backend,
+                "chat_model": model.id,
+                "chat_role": self.chat_role,
+            }
+        else:
+            chat |= {"prompt_version": "", "temperature": 0.0, "max_tokens": 0}
         return replace(
             self,
-            chat_backend=chat_backend,
-            chat_model=chat.id,
+            **chat,
             embed_backend=embed_backend,
             embed_model=embed.id,
             collection=self.collection
@@ -128,6 +145,19 @@ CONFIGS: dict[str, EvalConfig] = {
         name="baseline",
         system="naive",
         note="fixed 2,048-char chunks over the whole filing, dense top-5, one LLM call",
+    ),
+    # The same retriever with the generator removed. It exists because the
+    # ceiling on every downstream number is set here: a generator cannot cite
+    # evidence the search never returned, so hit@k is not a diagnostic for the
+    # baseline's answers, it is the bound on them. It also costs nothing and
+    # needs no key, which means it is the half of the baseline that can be run
+    # on any machine, any day, without a quota.
+    "baseline-retrieval": EvalConfig(
+        name="baseline-retrieval",
+        system="naive",
+        generate=False,
+        k=max(metrics.KS),
+        note="the baseline retriever alone: dense top-10, no LLM call at all",
     ),
 }
 
@@ -229,38 +259,57 @@ def answer_naive(
     backend: Any,
     config: EvalConfig,
 ) -> Outcome:
-    """Embed, search, one chat call. No router, no tools, no second pass."""
-    started = time.monotonic()
-    before = backend.usage()
-    try:
-        chunks = retriever.search(question.question, k=config.k)
-        text = backend.chat(
-            build_prompt(question.question, chunks),
-            role=config.chat_role,
-            temperature=config.temperature,
-            max_tokens=config.max_tokens,
-        ).strip()
-        error = ""
-    except Exception as exc:  # noqa: BLE001 - one bad question must not end the run
-        chunks, text, error = [], "", f"{type(exc).__name__}: {exc}"
+    """Embed, search, one chat call. No router, no tools, no second pass.
 
-    refused = REFUSAL.lower() in text.lower()
-    after = backend.usage()
+    With ``config.generate`` off the chat call is not made, and the outcome
+    carries the retrieved chunks and nothing else -- no answer, no route, no
+    citations. :func:`filing.eval.metrics.score` reads that emptiness and
+    reports the generation columns as unmeasured rather than as zero.
+    """
+    started = time.monotonic()
+    # Not merely "if a backend was passed": with generation off the backend is
+    # not consulted at all, not even for its call counter, so a retrieval-only
+    # run holds no opinion about which generator is configured and cannot be
+    # made to build one.
+    before = backend.usage() if config.generate else None
+    scored: list[tuple[Any, float]] = []
+    text = ""
+    error = ""
+    try:
+        scored = retriever.search_scored(question.question, k=config.k)
+        if config.generate:
+            text = backend.chat(
+                build_prompt(question.question, [c for c, _ in scored]),
+                role=config.chat_role,
+                temperature=config.temperature,
+                max_tokens=config.max_tokens,
+            ).strip()
+    except Exception as exc:  # noqa: BLE001 - one bad question must not end the run
+        scored, text, error = [], "", f"{type(exc).__name__}: {exc}"
+
+    chunks = [c for c, _ in scored]
+    refused = bool(text) and REFUSAL.lower() in text.lower()
+    calls = backend.usage().http_calls - before.http_calls if before is not None else 0
     return Outcome(
         qid=question.id,
         # The baseline has no router. It reads text, always -- unless it
         # declines to answer, which is the one routing decision it can make.
-        route="refuse" if refused else "text",
+        # A retrieval-only run makes no such decision and says so with "".
+        route=("refuse" if refused else "text") if config.generate else "",
         answer=text,
         refused=refused,
         retrieved=tuple(
             RetrievedChunk(
-                chunk_id=c.chunk_id, accn=c.accn, char_start=c.char_start, char_end=c.char_end
+                chunk_id=c.chunk_id,
+                accn=c.accn,
+                char_start=c.char_start,
+                char_end=c.char_end,
+                score=round(score, 6),
             )
-            for c in chunks
+            for c, score in scored
         ),
         citations=() if refused else parse_citations(text, chunks),
-        llm_calls=after.http_calls - before.http_calls,
+        llm_calls=calls,
         seconds=time.monotonic() - started,
         error=error,
     )
@@ -305,6 +354,11 @@ class RunReport:
             "scores": self.card.to_json() if self.card else {},
             "outcomes": [o.to_json() for o in self.outcomes],
         }
+
+
+def title_for(ec: EvalConfig) -> str:
+    """How a scorecard names itself. The generator, or the fact there isn't one."""
+    return f"{ec.name} ({ec.chat_model or 'retrieval only, no generation'}, k={ec.k})"
 
 
 def run(
@@ -358,7 +412,7 @@ def run(
             if ret is None:
                 ret = NaiveRetriever(cfg)
                 ret.require()
-            if be is None:
+            if be is None and ec.generate:
                 from filing.llm.factory import build_backend
 
                 be = build_backend(cfg)
@@ -370,7 +424,14 @@ def run(
             # report a full day's quota -- the one number a budgeted harness
             # must not lie about. The per-outcome cost is still in the file.
             report.llm_calls += hit.llm_calls
-            if cache:
+            # Errors are never cached. A rate limit, a dropped connection and a
+            # timeout are all facts about the afternoon, not about the system,
+            # and caching one turns a resumable run into a run that replays its
+            # own failures for as long as the fingerprint lives. The cost of
+            # being wrong here is asymmetric: re-answering a question that
+            # would have succeeded wastes one call, while remembering a 429
+            # forever silently caps the score.
+            if cache and not hit.error:
                 cache.put(hit)
         report.errors += bool(hit.error)
         if on_question:
@@ -379,7 +440,7 @@ def run(
     report.seconds = time.monotonic() - started
     report.outcomes = outcomes
     known = {c.chunk_id for o in outcomes for c in o.retrieved}
-    report.card = metrics.score(questions, outcomes, known_chunks=known)
+    report.card = metrics.score(questions, outcomes, known_chunks=known, generated=ec.generate)
 
     if write:
         root.mkdir(parents=True, exist_ok=True)
@@ -387,7 +448,6 @@ def run(
             json.dumps(report.to_json(), ensure_ascii=False, indent=1), encoding="utf-8"
         )
         (root / f"{ec.name}.md").write_text(
-            metrics.to_markdown(report.card, title=f"{ec.name} ({ec.chat_model}, k={ec.k})"),
-            encoding="utf-8",
+            metrics.to_markdown(report.card, title=title_for(ec)), encoding="utf-8"
         )
     return report

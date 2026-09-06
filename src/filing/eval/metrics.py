@@ -231,7 +231,7 @@ class SliceScore:
     hit_rate: dict[int, float] = field(default_factory=dict)
     recall: dict[int, float] = field(default_factory=dict)
     ndcg: dict[int, float] = field(default_factory=dict)
-    router_accuracy: float = 0.0
+    router_accuracy: float | None = None
     abstention: float | None = None
     over_answered: float | None = None
     citations_made: int = 0
@@ -269,6 +269,7 @@ def _score_group(
     questions: list[EvalQuestion],
     outcomes: dict[str, Outcome],
     known_chunks: set[str] | None,
+    generated: bool = True,
 ) -> SliceScore:
     s = SliceScore(name=name, n=len(questions))
     if not questions:
@@ -289,12 +290,12 @@ def _score_group(
             s.errors += 1
         s.llm_calls += o.llm_calls
         s.seconds += o.seconds
-        routed.append(float(o.route == q.route))
-
-        if q.slice == "numeric":
-            em.append(float(not o.refused and numeric_match(o.answer, q.value or 0.0)))
-        if q.slice == "unanswerable":
-            abstained.append(float(o.refused))
+        if generated:
+            routed.append(float(o.route == q.route))
+            if q.slice == "numeric":
+                em.append(float(not o.refused and numeric_match(o.answer, q.value or 0.0)))
+            if q.slice == "unanswerable":
+                abstained.append(float(o.refused))
 
         # Retrieval is scored on every answerable question, including numeric
         # ones -- that is the whole point of indexing the financial statements
@@ -314,7 +315,8 @@ def _score_group(
             c = by_id.get(cid)
             supported.append(float(c is not None and q.is_gold(c.accn, c.char_start, c.char_end)))
 
-    s.router_accuracy = _mean(routed)
+    if routed:
+        s.router_accuracy = _mean(routed)
     if em:
         s.exact_match = _mean(em)
     if abstained:
@@ -336,18 +338,30 @@ def score(
     outcomes: list[Outcome],
     *,
     known_chunks: set[str] | None = None,
+    generated: bool = True,
 ) -> Scorecard:
     """Score a whole run. ``known_chunks`` lets a citation resolve to a chunk the
     answer did not retrieve -- a hallucinated id and a real-but-unretrieved id
     are different failures and the results file should be able to tell them
-    apart."""
+    apart.
+
+    ``generated=False`` scores a run on retrieval alone: exact match, routing
+    and abstention come back ``None`` rather than zero, because the difference
+    between "the system routed every question wrongly" and "the system does not
+    route" is the whole finding, and a table printing 0.0% for both lies about
+    one of them. It is a parameter and not something inferred from the outcomes
+    on purpose -- a run whose answers are all empty because every call failed
+    looks identical from here, and that one must score as the zero it is.
+    """
     by_id = {o.qid: o for o in outcomes}
     return Scorecard(
         slices={
-            name: _score_group(name, [q for q in questions if q.slice == name], by_id, known_chunks)
+            name: _score_group(
+                name, [q for q in questions if q.slice == name], by_id, known_chunks, generated
+            )
             for name in SLICES
         },
-        overall=_score_group("overall", questions, by_id, known_chunks),
+        overall=_score_group("overall", questions, by_id, known_chunks, generated),
     )
 
 

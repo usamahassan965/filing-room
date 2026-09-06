@@ -324,6 +324,16 @@ class NaiveRetriever:
         return self._chunks
 
     def search(self, question: str, *, k: int = NAIVE_K) -> list[Chunk]:
+        return [c for c, _ in self.search_scored(question, k=k)]
+
+    def search_scored(self, question: str, *, k: int = NAIVE_K) -> list[tuple[Chunk, float]]:
+        """The same search, keeping the cosine similarity beside each chunk.
+
+        The score changes no metric -- every retrieval number here is computed
+        from rank and overlap, not from similarity -- but it is what tells a
+        miss apart from a near miss when reading the outcomes back, and it costs
+        nothing to carry.
+        """
         vector = self.backend.embed([question], input_type="query")[0]
         known = self.chunks
-        return [known[i] for i, _ in self.dense.search(vector, limit=k) if i in known]
+        return [(known[i], score) for i, score in self.dense.search(vector, limit=k) if i in known]

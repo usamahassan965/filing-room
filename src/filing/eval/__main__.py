@@ -15,7 +15,7 @@ from pathlib import Path
 
 from filing.config import settings
 from filing.eval import dataset, metrics
-from filing.eval.runner import CONFIGS, get_config, results_dir, run
+from filing.eval.runner import CONFIGS, get_config, results_dir, run, title_for
 
 
 def _cmd_dataset(args: argparse.Namespace) -> int:
@@ -85,6 +85,23 @@ def _cmd_verify(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_depth(args: argparse.Namespace) -> int:
+    """Report how far down the ranking the evidence actually sits."""
+    from filing.eval import depth
+
+    cfg = settings()
+    slices = depth.measure(cfg, depth=args.depth, version=args.version)
+    print(depth.to_markdown(slices, title=f"dense only, top {args.depth}"))
+    for s in slices.values():
+        print(
+            f"{s.name}: gold chunk in top {args.depth} for {s.found}/{s.n}; "
+            f"right filing for {s.filing_found}/{s.n}"
+        )
+    path = depth.write(cfg, slices, root=results_dir(cfg))
+    print(f"wrote {path}")
+    return 0
+
+
 def _cmd_run(args: argparse.Namespace) -> int:
     cfg = settings()
     ec = get_config(args.config)
@@ -103,7 +120,7 @@ def _cmd_run(args: argparse.Namespace) -> int:
         on_question=tick,
     )
     print(file=sys.stderr)
-    print(metrics.to_markdown(report.card, title=f"{ec.name} ({report.config.chat_model})"))
+    print(metrics.to_markdown(report.card, title=title_for(report.config)))
     print(
         f"{report.answered} answered, {report.from_cache} from cache, "
         f"{report.llm_calls} LLM calls, {report.errors} errors, {report.seconds:.1f}s"
@@ -128,6 +145,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--version", default=dataset.DATASET_VERSION)
     p.add_argument("--show", type=int, default=0, help="print the first N questions")
     p.set_defaults(func=_cmd_dataset)
+
+    p = sub.add_parser("depth", help="how deep the evidence sits in the ranking")
+    p.add_argument("--depth", type=int, default=500)
+    p.add_argument("--version", default=dataset.DATASET_VERSION)
+    p.set_defaults(func=_cmd_depth)
 
     p = sub.add_parser("verify", help="re-read every gold span from the filing on disk")
     p.add_argument("--version", default=dataset.DATASET_VERSION)

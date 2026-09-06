@@ -6,10 +6,10 @@ against the source, and every answer traceable to the filing it came from.
 
 Runs on free API tiers. Full build plan: [`docs/build-plan.html`](docs/build-plan.html).
 
-**Status: M3 shipped — the filing text is retrievable, and the retrieval is
-measured rather than asserted.**
+**Status: M4 half-shipped — the eval set is frozen and the baseline's retrieval
+is measured. The generating half waits on a model we can call 150 times.**
 M0 the rig, M1 the corpus, M2 the fact store, M3 the text index and the entity
-graph. M4 (baseline + eval harness) is next.
+graph, M4 the frozen question set and the naive baseline.
 
 | Gate | What it produced | Check |
 |---|---|---|
@@ -17,8 +17,9 @@ graph. M4 (baseline + eval harness) is next.
 | **M1** the corpus | 20 companies, 407 filings, 1,044 MB, every hash verified | `filing corpus --check` — 6/6 |
 | **M2** the numbers | 514,649 facts, 25 metrics, 0 duplicate keys | `filing numbers` — 5/5 |
 | **M3** the text | 58,844 chunks, 32,218 indexed, 2,986 graph edges | `filing text` — 6/6 |
+| **M4** the yardstick | 150 frozen questions, 260 gold spans, naive index of 48,934 chunks | `filing.eval run --config baseline-retrieval` — 150/150, 0 API calls |
 
-419 tests, `ruff` clean.
+561 tests, `ruff` clean, and no test may open a socket off this machine.
 
 ---
 
@@ -58,6 +59,10 @@ filing chunks     # parse + split + chunk the filing text, cached to parquet
 filing index      # embed the narrative chunks into Qdrant, build BM25 beside
 filing graph      # entity/relation extraction into a NetworkX graph
 filing text       # M3 gate: 6 checks over the chunks, indexes and graph
+
+python -m filing.eval verify                        # the frozen 150 still land on their spans
+python -m filing.eval run --config baseline-retrieval   # score the retriever, no LLM at all
+python -m filing.eval depth --depth 500             # how far down the ranking the evidence sits
 ```
 
 `ingest` takes hours, and `index` takes two and a half on CPU. Everything else
@@ -246,6 +251,73 @@ Four things this gate taught:
 
 ---
 
+## M4 — the yardstick
+
+150 frozen questions — 80 numeric with gold read out of XBRL, 60 narrative with
+hand-checked gold spans, 10 unanswerable — tagged `v1.0` with a datasheet, and
+a deliberately naive baseline to measure against: 2,048-character chunks, one
+dense search, one LLM call. The write-up is
+[`docs/baseline.md`](docs/baseline.md).
+
+**The baseline is split in two, and the retrieval half is done.** A RAG answer
+fails two separable ways: the retriever never found the evidence, or the
+generator fumbled evidence it had. Only the second needs a model, and the free
+tier's chat quota turned out to be **20 requests per day** — a 150-question run
+is eight days, and a *re-run* is eight more, so `--config baseline` is not
+merely slow, it is unreproducible. `--config baseline-retrieval` blanks every
+chat field before fingerprinting and scores the retriever alone: 150 questions,
+104 seconds, **zero API calls**, and generation columns report `None` rather
+than `0.0%`, because "routed everything wrong" and "does not route" are
+different claims.
+
+| slice | n | hit@1 | hit@5 | hit@10 | nDCG@5 |
+|---|---|---|---|---|---|
+| numeric | 80 | 2.5% | 2.5% | 5.0% | 0.008 |
+| narrative | 60 | 10.0% | 15.0% | 30.0% | 0.105 |
+| overall | 150 | 5.7% | 7.9% | 15.7% | 0.050 |
+
+That is the **ceiling** on everything the generating half can score, which is
+why it was worth measuring first.
+
+**hit@10 says the retriever failed; depth says how.** `filing.eval depth` walks
+the ranking to 500 and asks where the gold chunk actually sits:
+
+| slice | n | hit@10 | hit@50 | hit@100 | hit@500 | median rank | right filing @10 |
+|---|---|---|---|---|---|---|---|
+| narrative | 60 | 30.0% | 55.0% | 63.3% | 86.7% | 24 | 70.0% |
+| numeric | 80 | 5.0% | 12.5% | 18.8% | 43.8% | 147 | 26.2% |
+
+Two different failures wearing one low number. On narrative the evidence is
+*present but mis-ranked* — median rank 24, and 30% → 55% between depth 10 and
+50 is headroom a reranker or a better chunking can actually collect. On numeric
+it is not close: median rank 147, and for 45 of 80 questions the gold chunk is
+absent from the top 500 of 48,934 entirely. Nothing downstream repairs that; no
+reranker reorders a list the passage is not in. This is the project's routing
+thesis stated as a measurement rather than an assumption — **numeric questions
+belong in SQL, and here is the 2.5% hit@5 that says so.**
+
+Three things this gate taught:
+
+- **A suspicious number gets a positive control before it gets published.** The
+  first control — querying with the gold text — returned 2 of 12 and looked
+  like a broken retriever. The clean one, a chunk's own text as its query,
+  returned rank 1 six times out of six at cosine 0.95–0.98. The plumbing was
+  fine; the control was confounded, because numeric gold spans have a **median
+  length of 6 characters** — the digits of the figure — so the first control
+  had queried with a six-character string. Narrative spans run 816.
+- **Errors are never cached.** A 429 is a fact about the afternoon, not about
+  the system. The asymmetry decides it: re-answering a question that would have
+  succeeded costs one call, while remembering a 429 forever silently caps the
+  score with no failing test anywhere.
+- **Hermeticity is enforced, not assumed.** A test that passed `None` for its
+  backend and trusted a warm cache turned into a *live* API call the moment a
+  cache miss appeared — and quietly spent the day's real quota inside `pytest`.
+  `tests/conftest.py` now fails any test that opens a socket off this machine,
+  and the two affected files went from 121s to 1.9s, nearly all of it retry
+  backoff against a wall.
+
+---
+
 ## Layout
 
 ```
@@ -267,20 +339,29 @@ src/filing/
 │   ├── edgar.py           the SEC client: rate limit, retry, hash on write
 │   ├── manifest.py        what was fetched, when, with which hash
 │   └── corpus.py          the M1 gate and docs/corpus.md
-└── stores/
-    ├── facts.py           XBRL payloads -> facts.duckdb
-    ├── metrics.py         the metric registry: tags, spans, derivations
-    ├── questions.py       50 questions with answers read from filings
-    ├── verify.py          finds a stored number in its own source document
-    ├── parse.py           filing HTML -> flat text + blocks + item sections
-    ├── chunks.py          sections -> chunks that keep their character offsets
-    ├── index.py           Qdrant collection + bm25s index, and what to index
-    ├── retrieve.py        RRF fusion, filtering, reranking, citation
-    ├── graph.py           entity/relation extraction over sentences
-    └── evalset.py         30 smoke questions, gold by predicate, the metrics
-tests/               419 tests, no network and no API key
-results/             one committed JSON per config, from M4 onward
-docs/                build plan, corpus notes
+├── stores/
+│   ├── facts.py           XBRL payloads -> facts.duckdb
+│   ├── metrics.py         the metric registry: tags, spans, derivations
+│   ├── questions.py       50 questions with answers read from filings
+│   ├── verify.py          finds a stored number in its own source document
+│   ├── parse.py           filing HTML -> flat text + blocks + item sections
+│   ├── chunks.py          sections -> chunks that keep their character offsets
+│   ├── index.py           Qdrant collection + bm25s index, and what to index
+│   ├── retrieve.py        RRF fusion, filtering, reranking, citation
+│   ├── graph.py           entity/relation extraction over sentences
+│   └── evalset.py         30 smoke questions, gold by predicate, the metrics
+└── eval/
+    ├── dataset.py         the frozen 150, their gold spans and their slices
+    ├── authoring.py       how the set was built, and how it re-verifies
+    ├── naive.py           the baseline: 2,048-char stride, dense top-k
+    ├── runner.py          config fingerprint, outcome cache, the run
+    ├── metrics.py         scoring — arithmetic only, nothing is asked a model
+    └── depth.py           how far down the ranking the evidence actually sits
+
+scripts/eval_v1_0/   the authoring record — rebuilds the frozen set byte for byte
+tests/               561 tests, no network and no API key
+results/             one committed JSON + markdown table per config
+docs/                build plan, corpus notes, the baseline write-up
 ```
 
 ## Backends

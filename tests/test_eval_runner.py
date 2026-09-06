@@ -16,7 +16,7 @@ import pytest
 
 from conftest import make_chunk
 from filing.config import Settings
-from filing.eval import dataset, runner
+from filing.eval import dataset, metrics, runner
 from filing.eval.dataset import EvalQuestion, Span
 from filing.eval.metrics import Outcome, RetrievedChunk
 from filing.eval.runner import OutcomeCache
@@ -53,8 +53,12 @@ class FakeRetriever:
         self.queries: list[str] = []
 
     def search(self, query: str, *, k: int = 5):
+        return [c for c, _ in self.search_scored(query, k=k)]
+
+    def search_scored(self, query: str, *, k: int = 5):
         self.queries.append(query)
-        return self.chunks[:k]
+        # Descending, so a test can tell the order came from the retriever.
+        return [(c, 0.9 - 0.1 * i) for i, c in enumerate(self.chunks[:k])]
 
 
 class ExplodingBackend:
@@ -63,6 +67,29 @@ class ExplodingBackend:
 
     def chat(self, *a, **kw) -> str:  # noqa: ANN002, ANN003
         raise RuntimeError("429 quota exhausted")
+
+
+class ForbiddenBackend:
+    """For tests whose claim is that nothing was reached for.
+
+    Passing ``None`` and trusting the cache expresses the same intent and is a
+    trap: on a cache miss the runner builds the *real* backend and the test
+    quietly spends live quota instead of failing. A double that raises on
+    contact turns that into a red test, which is what the assertion meant.
+    """
+
+    def usage(self) -> Usage:
+        raise AssertionError("the run reached for a chat backend; the cache should have served")
+
+    def chat(self, *a, **kw) -> str:  # noqa: ANN002, ANN003
+        raise AssertionError("the run made a chat call; the cache should have served")
+
+
+class ForbiddenRetriever:
+    def search(self, *a, **kw):  # noqa: ANN002, ANN003
+        raise AssertionError("the run reached for a retriever; the cache should have served")
+
+    search_scored = search
 
 
 def question(qid="num-001", slice_="numeric", **over) -> EvalQuestion:
@@ -272,9 +299,10 @@ def test_a_run_answers_scores_and_writes(env):
 
 
 def test_a_second_run_costs_nothing_and_needs_nothing(env):
-    runner.run(env, backend=FakeBackend(), retriever=FakeRetriever())
-    # No backend, no retriever: if the loop reached for either, this raises.
-    again = runner.run(env)
+    first = runner.run(env, backend=FakeBackend(), retriever=FakeRetriever())
+    assert first.answered == 2 and first.errors == 0  # or the cache is empty below
+    # Doubles that raise on contact, not None: see ForbiddenBackend.
+    again = runner.run(env, backend=ForbiddenBackend(), retriever=ForbiddenRetriever())
     assert again.from_cache == 2 and again.answered == 0
     assert again.llm_calls == 0
 
@@ -340,3 +368,95 @@ def test_the_results_file_records_the_config_in_full(env):
     assert written["config"]["chat_model"] == report.config.chat_model
     assert written["config"]["dataset_version"] == dataset.DATASET_VERSION
     assert written["config"]["prompt_version"] == runner.PROMPT_VERSION
+
+
+# ------------------------------------------------------- errors are not results
+
+
+def test_a_transient_error_is_never_cached(env):
+    """The bug this exists to prevent cost a day of quota to find.
+
+    A rate limit came back as an ``Outcome`` with an ``error``, the cache stored
+    it like any other, and every later run replayed the failure from disk
+    without retrying -- so the run that was meant to resume where it stopped
+    resumed by re-reporting its own 429s, permanently, for as long as the
+    fingerprint lived.
+    """
+    first = runner.run(env, backend=ExplodingBackend(), retriever=FakeRetriever())
+    assert first.errors == 2
+
+    be = FakeBackend()
+    again = runner.run(env, backend=be, retriever=FakeRetriever())
+    assert again.from_cache == 0, "a failed question came back from the cache"
+    assert again.answered == 2 and again.errors == 0
+    assert len(be.calls) == 2
+
+
+def test_a_partial_run_caches_only_what_worked(env):
+    """One good answer and one failure: the good one is banked, the bad one is not."""
+    backend = FakeBackend()
+    backend.chat = _fails_on_second(backend)
+    runner.run(env, backend=backend, retriever=FakeRetriever())
+    cached = list((runner.results_dir(env) / "cache").rglob("*.json"))
+    assert [p.stem for p in cached] == ["num-001"]
+
+
+def _fails_on_second(backend):
+    real = backend.chat
+
+    def chat(messages, **kw):
+        if len(backend.calls) >= 1:
+            raise RuntimeError("429 quota exhausted")
+        return real(messages, **kw)
+
+    return chat
+
+
+# ------------------------------------------------------------ retrieval only
+
+
+def test_retrieval_only_makes_no_chat_call_at_all(env):
+    ec = runner.get_config("baseline-retrieval")
+    report = runner.run(env, config=ec, backend=ForbiddenBackend(), retriever=FakeRetriever())
+    assert report.llm_calls == 0 and report.errors == 0
+    assert all(o.answer == "" and o.route == "" and not o.citations for o in report.outcomes)
+    assert all(o.retrieved for o in report.outcomes)
+
+
+def test_retrieval_only_reports_generation_as_unmeasured_not_zero(env):
+    """0.0% and "not attempted" are different claims and must not share a cell."""
+    ec = runner.get_config("baseline-retrieval")
+    report = runner.run(env, config=ec, backend=ForbiddenBackend(), retriever=FakeRetriever())
+    numeric = report.card.slices["numeric"]
+    assert numeric.exact_match is None
+    assert numeric.router_accuracy is None
+    assert report.card.slices["unanswerable"].abstention is None
+    assert numeric.hit_rate[1] == 1.0  # retrieval, however, was measured
+    assert "| -- |" in metrics.to_markdown(report.card)
+
+
+def test_the_retrieval_fingerprint_ignores_the_chat_model(env):
+    """Otherwise the same retrieval numbers would arrive under two identities."""
+    ec = runner.get_config("baseline-retrieval")
+    a = ec.resolved(env)
+    b = replace(ec, chat_model="something-else", chat_backend="ollama").resolved(env)
+    assert a.fingerprint("sha") == b.fingerprint("sha")
+    assert a.chat_model == "" and a.chat_backend == ""
+
+
+def test_retrieval_only_and_the_full_baseline_do_not_share_a_cache(env):
+    """Their outcomes differ, so a cache hit across them would be a wrong answer."""
+    sha = "sha"
+    full = runner.get_config("baseline").resolved(env).fingerprint(sha)
+    retrieval = runner.get_config("baseline-retrieval").resolved(env).fingerprint(sha)
+    assert full != retrieval
+
+
+def test_a_retrieved_chunk_carries_its_score(env):
+    report = runner.run(
+        env,
+        config=runner.get_config("baseline-retrieval"),
+        backend=ForbiddenBackend(),
+        retriever=FakeRetriever(),
+    )
+    assert report.outcomes[0].retrieved[0].score == 0.9
