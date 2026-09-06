@@ -1,33 +1,39 @@
-# The baseline, half of it
+# The baseline
 
-What the naive system retrieves, measured over all 150 questions of eval set
-v1.0 for zero model calls — and why that half was worth separating from the
-half that needs a generator.
+What the naive system scores over all 150 questions of eval set v1.0 — and why
+it is reported as two runs rather than one, since a RAG answer fails in two
+separable ways and only one of them needs a model.
 
 Code: `src/filing/eval/naive.py`, `runner.py`, `depth.py`, `metrics.py`.
 Tests: `tests/test_eval_runner.py`, `test_eval_depth.py`, `test_eval_metrics.py`.
 Results: `results/baseline-retrieval.json`, `results/retrieval-depth.json`.
 
 ```bash
+python -m filing.eval run --config baseline             # 150 questions, 54s, generates
 python -m filing.eval run --config baseline-retrieval   # 150 questions, 104s, 0 API calls
 python -m filing.eval depth                             # where the evidence actually ranks
 ```
 
 ## Why there are two baselines
 
-M4 asks for one number, and the free tier would not produce it: the chat quota
-turned out to be **20 requests a day**, so a 150-question run takes eight days
-and any re-run takes eight more. That is not a slow gate, it is an unclosable
-one, because the gate's own wording asks for a run that is *reproducible*.
-
-But a RAG answer fails in two separable ways. Either the retriever never found
-the evidence, or it found it and the generator fumbled it. Only the second needs
-a model. So the baseline was split at that seam:
+A RAG answer fails in two separable ways. Either the retriever never found the
+evidence, or it found it and the generator fumbled it. Only the second needs a
+model, and conflating them means every future improvement is argued about
+rather than attributed. So the baseline is split at that seam:
 
 | config | what it does | cost |
 |---|---|---|
 | `baseline` | retrieve, then one chat call | 150 requests |
 | `baseline-retrieval` | retrieve, and stop | nothing |
+
+The split also decided which model generates. The free tier caps
+`gemini-3.5-flash` at **20 requests a day**, so a 150-question run on it takes
+eight days and a re-run takes eight more — an unclosable gate, since M4's own
+wording asks for a run that fits the rate-limit budget and is reproducible. The
+baseline therefore generates with `gemini-3.5-flash-lite`, which answers the
+same 150 in under a minute. The results file records the model, so the weaker
+generator is a stated fact rather than a hidden one, and a baseline being
+beatable is the point of having one.
 
 `baseline-retrieval` is not a lesser measurement. It is the **ceiling** on every
 number the full baseline can produce, since no generator cites evidence it was
@@ -41,6 +47,37 @@ a chat backend; and the scorecard reports exact-match, routing and abstention as
 are different claims and a table that prints 0.0% for both is lying about one.
 
 ## What it found
+
+```
+| slice        |  n | exact | router | cite ok | cite gold | abstain |
+| numeric      | 80 |  7.5% |     -- |  100.0% |     22.2% |      -- |
+| narrative    | 60 |    -- |  51.7% |  100.0% |     12.9% |      -- |
+| unanswerable | 10 |    -- | 100.0% |      -- |        -- |  100.0% |
+| overall      |150 |  7.5% |  27.3% |  100.0% |     13.9% |  100.0% |
+```
+
+Three readings, in descending order of how much they should worry you.
+
+**The system always cites, and rarely cites right.** `cite ok` is 100% and
+`cite gold` is 13.9%: every answer resolves to a real chunk in the store, and
+seven times in eight that chunk is not the one holding the evidence. A citation
+that resolves is not a citation that supports, and only the second is worth
+anything to a reader checking a filing.
+
+**Numeric exact (7.5%) is higher than numeric hit@5 (2.5%).** The generator is
+getting numbers right more often than the evidence for them is retrieved, which
+has two possible causes that call for opposite responses: the gold spans are
+under-annotated and the same figure appears in chunks not marked gold, or the
+model is reciting figures it saw in pretraining. If it is the second, that 7.5%
+is contamination rather than capability. Separating them is M5 work, and it is
+the reason `cite gold` is reported next to `exact` instead of `exact` alone.
+
+**Abstention is the one thing it does perfectly.** All ten unanswerable
+questions are refused. That is worth stating plainly, because a naive system
+that hedges everything would also score 100% here — and this one does not, since
+it answers the other 140.
+
+Underneath all of it sits the retrieval table, which is the ceiling:
 
 ```
 | slice        |  n | hit@1 | hit@5 | hit@10 | ndcg@5 | LLM calls |
@@ -99,15 +136,15 @@ measurement, and its size is 2.5% hit@5.
 
 ## What this does not measure
 
-Nothing about answers. No exact match, no citation resolution, no abstention on
-the ten unanswerable questions — the generation columns are `--` here on
-purpose, and stay that way until a generator we can call 150 times exists.
-Retrieval quality is also measured only against *this* gold, which is a span in
-a filing rather than a chunk id, so the numbers move if the chunker changes and
-do not move if the gold is re-cut — which is the property the whole eval set was
-built for.
+Answer quality beyond exact match. A numeric answer is right or it is not, but
+the narrative slice is scored by routing and citation, not by whether the prose
+is any good — that needs a judge, and a judge is itself a model whose agreement
+with a human has to be measured before its verdicts mean anything. Retrieval
+quality is measured only against *this* gold, which is a span in a filing rather
+than a chunk id, so the numbers move if the chunker changes and do not move if
+the gold is re-cut — the property the whole eval set was built for.
 
-## Two defects this shook out
+## Three defects this shook out
 
 **The runner cached failures.** A 429 came back as an outcome carrying an
 `error`, and the cache stored it like any other result, so a run designed to
@@ -125,3 +162,28 @@ emptied the cache, a hermetic-looking test burned real requests and reported the
 `tests/conftest.py` fails any test that opens a socket to a non-localhost
 address. A suite's hermeticity should be enforced, not assumed. It also made the
 suite faster: two files went from 121s to 1.9s, nearly all of it retry backoff.
+
+**The runner read the backend from the environment, not from the config.** A
+config named `baseline-local-alt` declared `chat_backend="ollama"`, was
+fingerprinted, cached and written under `llama3.2:3b`, and sent all 180 of its
+calls to Gemini — because the runner built its client from `LLM_BACKEND` in the
+environment while the config's own field was used for nothing but the label.
+The run completed cleanly, produced plausible numbers, and was wrong in the only
+way an eval harness must never be: a results file that misnames the model that
+produced it is worse than no file, because nobody re-checks a number that looks
+fine. It surfaced by accident — a 503 quoting *"this model is currently
+experiencing high demand"*, which is not a sentence a localhost server says.
+
+The fix is one argument, and the test is worth more than the fix: it asserts
+that the backend the runner constructs is the backend the fingerprint records,
+so the label and the call can never drift apart again. The offending run and its
+outcome cache were deleted rather than relabelled — the numbers were real, but
+their provenance was not, and a cache keyed on a lie poisons every run that
+inherits it.
+
+There is a redeeming detail. The call cache is content-addressed on backend,
+model and payload, so those Gemini calls were stored under Gemini's key all
+along. When `baseline` later ran for real, 146 of its 150 answers replayed from
+that cache and only the 4 that had failed with 503 were re-issued — four live
+calls for a full 150-question baseline. The clause the gate asks for,
+*reproducible from cache*, was demonstrated by the accident that broke it.

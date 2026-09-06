@@ -6,8 +6,9 @@ against the source, and every answer traceable to the filing it came from.
 
 Runs on free API tiers. Full build plan: [`docs/build-plan.html`](docs/build-plan.html).
 
-**Status: M4 half-shipped — the eval set is frozen and the baseline's retrieval
-is measured. The generating half waits on a model we can call 150 times.**
+**Status: M4 shipped — 150 frozen questions, and a naive baseline that scores
+7.5% exact on numbers while retrieving the right evidence 7.9% of the time.
+That gap is M5's whole brief.**
 M0 the rig, M1 the corpus, M2 the fact store, M3 the text index and the entity
 graph, M4 the frozen question set and the naive baseline.
 
@@ -17,9 +18,9 @@ graph, M4 the frozen question set and the naive baseline.
 | **M1** the corpus | 20 companies, 407 filings, 1,044 MB, every hash verified | `filing corpus --check` — 6/6 |
 | **M2** the numbers | 514,649 facts, 25 metrics, 0 duplicate keys | `filing numbers` — 5/5 |
 | **M3** the text | 58,844 chunks, 32,218 indexed, 2,986 graph edges | `filing text` — 6/6 |
-| **M4** the yardstick | 150 frozen questions, 260 gold spans, naive index of 48,934 chunks | `filing.eval run --config baseline-retrieval` — 150/150, 0 API calls |
+| **M4** the yardstick | 150 frozen questions, 260 gold spans, naive index of 48,934 chunks | `filing.eval run --config baseline` — 150/150, 4 live calls |
 
-561 tests, `ruff` clean, and no test may open a socket off this machine.
+568 tests, `ruff` clean, and no test may open a socket off this machine.
 
 ---
 
@@ -259,16 +260,41 @@ a deliberately naive baseline to measure against: 2,048-character chunks, one
 dense search, one LLM call. The write-up is
 [`docs/baseline.md`](docs/baseline.md).
 
-**The baseline is split in two, and the retrieval half is done.** A RAG answer
-fails two separable ways: the retriever never found the evidence, or the
-generator fumbled evidence it had. Only the second needs a model, and the free
-tier's chat quota turned out to be **20 requests per day** — a 150-question run
-is eight days, and a *re-run* is eight more, so `--config baseline` is not
-merely slow, it is unreproducible. `--config baseline-retrieval` blanks every
-chat field before fingerprinting and scores the retriever alone: 150 questions,
-104 seconds, **zero API calls**, and generation columns report `None` rather
-than `0.0%`, because "routed everything wrong" and "does not route" are
-different claims.
+**The baseline is reported as two runs.** A RAG answer fails two separable
+ways: the retriever never found the evidence, or the generator fumbled evidence
+it had. Only the second needs a model, and conflating them means every later
+improvement gets argued about instead of attributed.
+
+| slice | n | exact | router | cite ok | cite gold | abstain |
+|---|---|---|---|---|---|---|
+| numeric | 80 | 7.5% | — | 100% | 22.2% | — |
+| narrative | 60 | — | 51.7% | 100% | 12.9% | — |
+| unanswerable | 10 | — | 100% | — | — | **100%** |
+| overall | 150 | 7.5% | 27.3% | 100% | 13.9% | 100% |
+
+**It always cites, and it rarely cites right.** `cite ok` 100% against `cite
+gold` 13.9%: every answer resolves to a real chunk, and seven times in eight it
+is not the chunk holding the evidence. A citation that resolves is not a
+citation that supports, and a reader checking a filing only cares about the
+second. The one thing it does perfectly is refuse — all ten unanswerable
+questions abstain, and not by hedging, since it answers the other 140.
+
+One number needs chasing rather than celebrating: numeric `exact` (7.5%) is
+*higher* than numeric `hit@5` (2.5%), so the model gets figures right more often
+than the evidence for them is retrieved. Either the gold is under-annotated or
+flash-lite is reciting Apple's revenue from pretraining — and if it is the
+second, that 7.5% is contamination, not capability.
+
+The generator is `gemini-3.5-flash-lite`, chosen by the gate rather than by
+preference: the free tier caps `gemini-3.5-flash` at **20 requests per day**, so
+150 questions is an eight-day baseline and a re-run is eight more, which fails
+M4's own requirement that a full run fit the rate-limit budget. The results file
+names the model, so the weaker generator is stated rather than hidden.
+
+`--config baseline-retrieval` blanks every chat field before fingerprinting and
+scores the retriever alone: 150 questions, 104 seconds, **zero API calls**, and
+generation columns report `None` rather than `0.0%`, because "routed everything
+wrong" and "does not route" are different claims.
 
 | slice | n | hit@1 | hit@5 | hit@10 | nDCG@5 |
 |---|---|---|---|---|---|
@@ -315,6 +341,16 @@ Three things this gate taught:
   `tests/conftest.py` now fails any test that opens a socket off this machine,
   and the two affected files went from 121s to 1.9s, nearly all of it retry
   backoff against a wall.
+- **A results file that misnames its model is worse than no results file.** A
+  config declaring `chat_backend="ollama"` was fingerprinted, cached and written
+  under `llama3.2:3b` while all 180 of its calls went to Gemini, because the
+  runner built its client from the environment and used the config's field only
+  as a label. It completed cleanly and the numbers looked fine, which is exactly
+  what made it dangerous — nobody re-checks a plausible number. It surfaced by
+  accident, through a 503 quoting *"this model is currently experiencing high
+  demand"*, which is not a sentence a localhost server says. The fix is one
+  argument; the test asserts the constructed backend equals the fingerprinted
+  one, so the label and the call cannot drift apart again.
 
 ---
 
@@ -359,7 +395,7 @@ src/filing/
     └── depth.py           how far down the ranking the evidence actually sits
 
 scripts/eval_v1_0/   the authoring record — rebuilds the frozen set byte for byte
-tests/               561 tests, no network and no API key
+tests/               568 tests, no network and no API key
 results/             one committed JSON + markdown table per config
 docs/                build plan, corpus notes, the baseline write-up
 ```
