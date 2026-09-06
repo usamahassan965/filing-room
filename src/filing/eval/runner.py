@@ -334,6 +334,11 @@ class RunReport:
     seconds: float = 0.0
     card: Scorecard | None = None
     outcomes: list[Outcome] = field(default_factory=list)
+    # Whether this run covered the whole frozen set. In the JSON as well as in
+    # the filename, so a file that gets copied, renamed or pasted into a table
+    # still carries the scope its numbers are only meaningful under.
+    full: bool = True
+    written: Path | None = None
 
     def to_json(self) -> dict[str, Any]:
         return {
@@ -345,6 +350,9 @@ class RunReport:
                 "counts": self.counts,
             },
             "run": {
+                # First field on purpose: a reader who checks one thing should
+                # hit the scope before the scores.
+                "full_set": self.full,
                 "answered": self.answered,
                 "from_cache": self.from_cache,
                 "llm_calls": self.llm_calls,
@@ -356,9 +364,10 @@ class RunReport:
         }
 
 
-def title_for(ec: EvalConfig) -> str:
+def title_for(ec: EvalConfig, *, partial: bool = False) -> str:
     """How a scorecard names itself. The generator, or the fact there isn't one."""
-    return f"{ec.name} ({ec.chat_model or 'retrieval only, no generation'}, k={ec.k})"
+    scope = ", PARTIAL RUN" if partial else ""
+    return f"{ec.name} ({ec.chat_model or 'retrieval only, no generation'}, k={ec.k}{scope})"
 
 
 def run(
@@ -382,6 +391,10 @@ def run(
     questions = [q for q in dataset.read(path) if q.slice in slices]
     if limit:
         questions = questions[:limit]
+    # Full means "every question the frozen set holds", not "every question
+    # this call asked for" -- so it is decided against the dataset, not against
+    # whether the caller happened to pass a flag.
+    is_full = len(questions) == len(dataset.read(path))
     sha = dataset.fingerprint(path)
     fp = ec.fingerprint(sha)
 
@@ -437,6 +450,7 @@ def run(
         if on_question:
             on_question(i, len(questions), hit)
 
+    report.full = is_full
     report.seconds = time.monotonic() - started
     report.outcomes = outcomes
     known = {c.chunk_id for o in outcomes for c in o.retrieved}
@@ -444,10 +458,21 @@ def run(
 
     if write:
         root.mkdir(parents=True, exist_ok=True)
-        (root / f"{ec.name}.json").write_text(
+        # A subset run never takes the canonical filename. `--limit 3` and the
+        # full 150 are different experiments, and the one thing that must not
+        # happen is the small one landing at results/<config>.json, where every
+        # later reader -- a commit, a README table, me next week -- takes it for
+        # the run the gate asks for. It has happened twice: a 3-question
+        # baseline.json survived a rate-limited afternoon, and a --limit 3
+        # smoke test overwrote baseline-local-alt.json. Neither announced
+        # itself, because a results file carries its numbers, not its scope.
+        stem = ec.name if is_full else f"{ec.name}.partial"
+        (root / f"{stem}.json").write_text(
             json.dumps(report.to_json(), ensure_ascii=False, indent=1), encoding="utf-8"
         )
-        (root / f"{ec.name}.md").write_text(
-            metrics.to_markdown(report.card, title=title_for(ec)), encoding="utf-8"
+        (root / f"{stem}.md").write_text(
+            metrics.to_markdown(report.card, title=title_for(ec, partial=not is_full)),
+            encoding="utf-8",
         )
+        report.written = root / f"{stem}.json"
     return report

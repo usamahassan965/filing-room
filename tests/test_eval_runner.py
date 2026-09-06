@@ -460,3 +460,32 @@ def test_a_retrieved_chunk_carries_its_score(env):
         retriever=FakeRetriever(),
     )
     assert report.outcomes[0].retrieved[0].score == 0.9
+
+
+def test_a_subset_run_never_takes_the_canonical_filename(env):
+    """`--limit 3` must not land at results/<config>.json.
+
+    A results file carries its numbers, not its scope, so nothing downstream
+    can tell a three-question smoke test from the run the gate asks for once
+    it is sitting at the canonical path. This has happened twice in this repo.
+    """
+    root = runner.results_dir(env)
+    full = runner.run(env, backend=FakeBackend(), retriever=FakeRetriever())
+    assert full.full and full.written == root / "baseline.json"
+
+    part = runner.run(env, backend=FakeBackend(), retriever=FakeRetriever(), limit=1)
+    assert not part.full
+    assert part.written == root / "baseline.partial.json"
+    assert "PARTIAL RUN" in (root / "baseline.partial.md").read_text(encoding="utf-8")
+
+    # and the full run's file is still the full run's
+    body = json.loads((root / "baseline.json").read_text(encoding="utf-8"))
+    assert body["run"]["full_set"] is True and body["run"]["answered"] == full.answered
+
+
+def test_the_scope_is_recorded_inside_the_file_too(env):
+    """A file that is copied or renamed keeps the claim its numbers need."""
+    root = runner.results_dir(env)
+    runner.run(env, backend=FakeBackend(), retriever=FakeRetriever(), limit=1)
+    body = json.loads((root / "baseline.partial.json").read_text(encoding="utf-8"))
+    assert body["run"]["full_set"] is False

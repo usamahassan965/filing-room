@@ -38,3 +38,6 @@ results/cache/
 
 # Local editor/agent state, not project configuration.
 .claude/settings.local.json
+
+# A subset run is a real artifact but never a committed one -- see runner.run.
+results/*.partial.*

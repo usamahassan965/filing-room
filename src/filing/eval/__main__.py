@@ -120,13 +120,18 @@ def _cmd_run(args: argparse.Namespace) -> int:
         on_question=tick,
     )
     print(file=sys.stderr)
-    print(metrics.to_markdown(report.card, title=title_for(report.config)))
+    print(metrics.to_markdown(report.card, title=title_for(report.config, partial=not report.full)))
     print(
         f"{report.answered} answered, {report.from_cache} from cache, "
         f"{report.llm_calls} LLM calls, {report.errors} errors, {report.seconds:.1f}s"
     )
     print(f"fingerprint {report.fingerprint[:16]}")
-    print(f"wrote {results_dir(cfg) / (ec.name + '.json')}")
+    if not report.full:
+        n = sum(report.counts.values())
+        print(f"PARTIAL: {n} of the frozen set. Not the gate's run; not comparable to one.")
+    # report.written, not a path rebuilt here -- the run decides where it went,
+    # and a message naming a file nobody wrote is the bug it is meant to prevent.
+    print(f"wrote {report.written}")
     return 1 if report.errors else 0
 
 
