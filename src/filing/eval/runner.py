@@ -144,6 +144,16 @@ CONFIGS: dict[str, EvalConfig] = {
     "baseline": EvalConfig(
         name="baseline",
         system="naive",
+        # chat_fast, not chat, and the gate is the reason. M4 asks for a full
+        # baseline run that "fits inside the rate-limit budget and is
+        # reproducible from cache" -- and the free tier caps gemini-3.5-flash
+        # at 20 requests per DAY, so 150 questions is an eight-day baseline and
+        # a re-run is eight more. A number nobody can reproduce is not a
+        # baseline, it is an anecdote. flash-lite answers the same 150 in about
+        # fifteen minutes, and the results file records which model produced
+        # them, so the weaker generator is stated rather than hidden. That the
+        # baseline is beatable is the point of a baseline.
+        chat_role="chat_fast",
         note="fixed 2,048-char chunks over the whole filing, dense top-5, one LLM call",
     ),
     # The same retriever with the generator removed. It exists because the
