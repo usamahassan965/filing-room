@@ -6,7 +6,16 @@ against the source, and every answer traceable to the filing it came from.
 
 Runs on free API tiers. Full build plan: [`docs/build-plan.html`](docs/build-plan.html).
 
-**Status: M0 complete — the rig.** No domain code yet, by design.
+**Status: M2 shipped — the numbers are queryable and checked.**
+M0 the rig, M1 the corpus, M2 the fact store. M3 (filing text) is next.
+
+| Gate | What it produced | Check |
+|---|---|---|
+| **M0** the rig | one model interface, three backends, limiter, cache, tracing | `filing smoke` — 5/5 |
+| **M1** the corpus | 20 companies, 407 filings, 1,044 MB, every hash verified | `filing corpus --check` — 6/6 |
+| **M2** the numbers | 514,649 facts, 25 metrics, 0 duplicate keys | `filing numbers` — 5/5 |
+
+192 tests, `ruff` clean.
 
 ---
 
@@ -30,10 +39,38 @@ also the shape CI wants:
 .conda/Scripts/phoenix serve      # serves localhost:6006, same as the container
 ```
 
-Everything except the vector store works this way, so M0 closes without Docker
-at all.
+Everything except the vector store works this way.
 
-## What M0 gives you
+## The commands
+
+```bash
+filing smoke      # M0 gate: chat + embed + rerank + cache dedup + tracing
+filing probe      # which model IDs are still live
+filing cache      # cache stats, and --clear
+filing ingest     # download the corpus (SEC, rate-limited to 8 req/s)
+filing corpus     # M1 gate: what was fetched, --check re-verifies every hash
+filing facts      # build data/facts.duckdb from the downloaded XBRL
+filing numbers    # M2 gate: 5 checks over the fact store
+```
+
+`ingest` is the only one that takes hours. Everything downstream of it is
+rebuildable in under a minute.
+
+## What is in the repo, and what is not
+
+`data/manifest.duckdb` **is committed** (3.4 MB). It is the only record of what
+was fetched, when, and with which hash, and re-deriving it means pulling 1.1 GB
+back through a host that rate-limits to 10 requests a second.
+
+`data/facts.duckdb` **is not** (15 MB). It is a pure function of the JSON on
+disk and `filing facts` rebuilds it in about 25 seconds.
+
+The filings themselves are not, either. Clone, set `SEC_USER_AGENT`, and run
+`filing ingest` — the manifest tells it exactly what to fetch.
+
+---
+
+## M0 — the rig
 
 | Piece | Where | Why it exists |
 |---|---|---|
@@ -45,41 +82,24 @@ at all.
 | Three backends | `llm/gemini.py`, `llm/nvidia.py`, `llm/fallback_ollama.py` | One interface, three providers. `LLM_BACKEND` picks. |
 | Local reranker | `llm/rerank_local.py` | A real cross-encoder, no key and no quota — the one verb Gemini does not serve. |
 
-## Gate M0 — definition of done
+`smoke` runs five checks and exits non-zero if any fails: **chat**, **embed** (a
+vector of the dimension the registry claims), **rerank** (the cross-encoder puts
+the *relevant* passage first, not merely any passage), **cache dedup** (the same
+prompt twice issues one HTTP request, asserted on a counter rather than inferred
+from timing), and **tracing** (at least three spans reached the collector).
 
-Each of these is a command, not a claim.
+The offline half runs in `pytest` with the network stubbed, so CI needs no API
+key. Only `chat` and `embed` genuinely need one.
 
-```bash
-.conda/python.exe -m filing.cli smoke     # chat + embed + rerank + cache + trace
-.conda/python.exe -m pytest               # limiter, cache, registry invariants
-.conda/python.exe -m filing.cli probe     # which model IDs are still live
-```
-
-`smoke` runs five checks and exits non-zero if any fails:
-
-1. **chat** — a completion comes back
-2. **embed** — a vector of the dimension the registry claims
-3. **rerank** — the cross-encoder puts the *relevant* passage first, not merely
-   any passage
-4. **cache dedup** — the same prompt twice issues one HTTP request
-   (asserted on a counter, not inferred from timing)
-5. **tracing** — at least three spans reached the collector
-
-The offline half of that runs in `pytest` with the network stubbed, so CI needs
-no API key — 51 tests covering the limiter under a fake clock, cache dedup,
-registry invariants, OTLP export against a stub collector, Gemini's taskType and
-renormalisation, and the cross-encoder's actual ranking. Only `chat` and `embed`
-genuinely need a key.
-
-## When a model ID dies
+### When a model ID dies
 
 Expected, not exceptional. Run `filing probe`, find a candidate marked `live`,
 and copy it into `MODEL_REGISTRY` in `src/filing/config.py`. That is the entire
 fix — no other file names a model.
 
-This is not a hypothetical either. On the first live run every Gemini 2.x chat
-ID in the registry answered 404 — *"no longer available to new users"* — while
-embeddings kept working. The fix was two registry lines and no code.
+Not hypothetical: on the first live run every Gemini 2.x chat ID in the registry
+answered 404 — *"no longer available to new users"* — while embeddings kept
+working. The fix was two registry lines and no code.
 
 One thing that run taught, which the code now encodes: **a model listing is not
 a probe.** `ListModels` cheerfully returned `gemini-2.5-flash` for a key that
@@ -88,11 +108,96 @@ trusting the catalog. It also avoids `*-latest` aliases as primaries — those
 float under you, and the one time it mattered `gemini-flash-latest` answered 503
 while the pinned ID was fine.
 
-The same lever handles a whole provider dying, which is not hypothetical: this
-project moved off NVIDIA NIM mid-M0 when its account verification proved
+The same lever handles a whole provider dying, which is also not hypothetical:
+this project moved off NVIDIA NIM mid-M0 when its account verification proved
 impassable. That cost one new backend file and one registry entry; the limiter,
-cache, tracing, and every test above carried over untouched. Containing that
-blast radius is what M0 was for.
+cache, tracing, and every test carried over untouched. Containing that blast
+radius is what M0 was for.
+
+## M1 — the corpus
+
+20 companies across four sectors, five fiscal years, 10-K and 10-Q, plus the
+full XBRL company-facts payload per company. 407 filings, 1,044 MB.
+[`docs/corpus.md`](docs/corpus.md) is generated, not written.
+
+Two things this gate taught, both of which are now enforced in code:
+
+- **A gate that only counts can pass while a company contributes nothing.**
+  The first `corpus --check` was green while Exxon had zero filings: its
+  submissions live under a *different CIK* than the one the ticker map gives,
+  because the operating company was reorganised under a new holding company. The
+  check now asserts per-company minimums, not a corpus-wide total.
+- **The manifest is the source of truth, not the filesystem.** There are 21
+  company-facts payloads on disk for a 20-company universe — the extra is
+  Exxon's old CIK. A directory glob would load both and produce two half-Exxons
+  that each look complete. `tests/test_facts_store.py` asserts the build reads
+  the manifest.
+
+## M2 — the numbers
+
+`data/facts.duckdb`: 514,649 facts, 2,827 concepts, 25 named metrics, and views
+that answer the questions the agent will ask (`annual`, `growth`,
+`facts_current`, `restatements`). `filing numbers` runs five checks over it.
+
+The load goes through CSV staging and `COPY`, not `executemany` — DuckDB's
+Python `executemany` does roughly 380 rows/s, which is 22 minutes for this
+table. `COPY` does it in 17 seconds.
+
+What this gate taught, in the order it hurt:
+
+- **A tag is not a period.** `NetIncomeLoss` carries quarters, halves,
+  nine-month stubs and full years under one name. Summing the tag over a year
+  triple-counts. Every fact gets a `span`, classified by nearest canonical
+  length with a 25-day tolerance — because a 4-4-5 retail half-year is 168 days
+  and a fixed range around 182 discards it.
+- **`fy`/`fp` describe the filing, not the fact.** They disagree with the year
+  of `period_end` in 54.9% of rows. Stored as `filed_fy`/`filed_fp`; never a key.
+- **A declared UNIQUE constraint is not the check.** SQL treats NULLs as
+  distinct, and `period_start` is NULL for the 195,325 instants, so the
+  constraint silently exempts 38% of the table. The check is a `GROUP BY`, which
+  treats NULLs as equal.
+- **"Latest value wins" is right per fact and wrong per statement.** 11,359 keys
+  are restated. Taking the newest value for each one independently assembles a
+  balance sheet out of two different filings that has no reason to balance —
+  Costco's FY2014 and FY2016 numbers, mixed. The identity check groups by `accn`.
+- **The balance-sheet identity has four right-hand terms**, not two: total
+  liabilities, equity including NCI, the pre-ASC-810 `MinorityInterest` line,
+  and mezzanine equity. With all four it closes on 1,717 statements with zero
+  violations.
+- **Sign is documented, never mutated.** Capex is reported positive, so the
+  metric carries `sign="outflow"` and `free_cash_flow` is a subtraction.
+
+### Two resolution rules, because there are two kinds of ambiguity
+
+A metric that arrives under several tags resolves either by coverage or by
+priority, and which one is correct depends on *why* there are several tags.
+
+- **Coverage** (`n_facts DESC`) for a **succession** — one tag replaced another.
+  Revenue's tags are the pre- and post-ASC-606 names for the same line, so the
+  one with the most facts is simply the one in force for most of the window.
+- **Priority** (registry order) for **near-synonyms** — several tags coexist and
+  mean subtly different things. Equity is the only such metric: the
+  parent-only, including-NCI and total variants are all live, all common, and
+  picking the most frequent picks whichever the bigger companies happen to use.
+
+### How the numbers are checked
+
+Not against a spreadsheet I typed. `filing numbers` asks 50 questions whose
+answers were read out of the filings, and separately takes a sample of stored
+values and **searches for each one in the filing document it claims to come
+from** — at every scale a statement might use (units, thousands, millions) and
+both grouped and parenthesised, because an accounting statement writes a loss as
+`(1,234)`.
+
+49 of 50 resolve. The one that does not is honest and worth stating: that check
+can only sample facts whose accession number matches a filing we actually
+downloaded, and **only 31% of the store does**. The manifest covers FY2020–2024;
+company-facts reaches back to 2009 and forward into 2026. Facts outside the
+window are real and correct, they simply have no local document to be read out
+of. This constrains M6 — an answer resting on a pre-2020 fact cannot cite a
+locator — and the retriever will be scoped accordingly.
+
+---
 
 ## Layout
 
@@ -100,17 +205,29 @@ blast radius is what M0 was for.
 src/filing/
 ├── config.py        settings + MODEL_REGISTRY — the only place model IDs live
 ├── tracing.py       phoenix / openinference wiring
-├── cli.py           smoke, probe, cache
-└── llm/
-    ├── base.py            the three-verb interface
-    ├── limiter.py         sliding-window rate limiter
-    ├── cache.py           content-addressed call cache
-    ├── nvidia.py          NIM backend
-    ├── fallback_ollama.py local backend
-    └── factory.py         backend selection
-tests/               limiter proof, cache dedup, registry invariants
+├── cli.py           every command above
+├── llm/
+│   ├── base.py            the three-verb interface
+│   ├── limiter.py         sliding-window rate limiter
+│   ├── cache.py           content-addressed call cache
+│   ├── gemini.py          default backend
+│   ├── nvidia.py          NIM backend
+│   ├── fallback_ollama.py local backend
+│   ├── rerank_local.py    cross-encoder
+│   └── factory.py         backend selection
+├── ingest/
+│   ├── universe.py        universe.yaml -> companies
+│   ├── edgar.py           the SEC client: rate limit, retry, hash on write
+│   ├── manifest.py        what was fetched, when, with which hash
+│   └── corpus.py          the M1 gate and docs/corpus.md
+└── stores/
+    ├── facts.py           XBRL payloads -> facts.duckdb
+    ├── metrics.py         the metric registry: tags, spans, derivations
+    ├── questions.py       50 questions with answers read from filings
+    └── verify.py          finds a stored number in its own source document
+tests/               192 tests, no network and no API key
 results/             one committed JSON per config, from M4 onward
-docs/                build plan, corpus notes, trace samples
+docs/                build plan, corpus notes
 ```
 
 ## Backends
@@ -171,5 +288,5 @@ Two things about Phoenix cost an afternoon each, so they are written down:
   Every entry point calls `flush_tracing()` on the way out; without it the
   export is attempted at interpreter shutdown and lands nowhere.
 
-`tests/test_tracing.py` asserts both on a stub OTLP collector, so neither can
-regress quietly, and neither test needs Docker or an API key.
+`tests/test_tracing.py` asserts both on a stub OTLP collector, so neither test
+needs Docker or an API key.
