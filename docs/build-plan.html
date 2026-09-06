@@ -132,6 +132,9 @@ svg.gantt{display:block; width:100%; height:auto; min-width:620px}
 .dod li.part::before{content:"◧"}
 .dod li.part{color:var(--ink-2)}
 .gid.shipped{background:var(--accent); color:var(--surface); border-color:var(--accent)}
+/* Half: filled on one side only, the same claim the ◧ makes in the list. */
+.gid.half{background:linear-gradient(90deg,var(--accent) 50%,var(--surface) 50%); color:var(--ink)}
+.stamp.part{color:var(--ink-2)}
 .stamp{
   font-family:"JetBrains Mono",monospace; font-size:9.5px; letter-spacing:.12em;
   text-transform:uppercase; color:var(--accent); margin:8px 0 0; font-weight:500;
@@ -433,7 +436,7 @@ footer a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
 
   <!-- M4 -->
   <div class="gate">
-    <div class="rail"><div class="gid">M4</div><p class="days">DAYS 14–17</p></div>
+    <div class="rail"><div class="gid half">M4</div><p class="days">DAYS 14–17</p><p class="stamp part">Half shipped</p></div>
     <div class="card">
       <h3>Baseline and eval harness</h3>
       <p class="goal">The gate that makes every later claim measurable. Build the naive system you intend to beat, and freeze the questions before you know how the agent behaves.</p>
