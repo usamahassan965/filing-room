@@ -29,12 +29,11 @@ from filing.ingest.universe import Company, Universe, load_universe
 
 log = logging.getLogger(__name__)
 
-# What M3 will spend parsing this corpus, per megabyte of filing HTML, on one
-# CPU. An assumption, not a measurement -- docling is not installed until M3 --
-# and it is a single named constant precisely so that M3 replaces one number
-# with a real rate instead of re-deriving the arithmetic. Flagged as an
-# assumption everywhere it is reported.
-ASSUMED_PARSE_MB_PER_MIN = 1.5
+# What the M3 parse pass costs per megabyte of filing HTML on one CPU. This was
+# an assumption of 1.5 MB/min until M3 measured it on a stratified nine-file
+# sample: ``filing.stores.parse.flatten`` does 19.9 MB in 2.88 s. See
+# docs/parsing.md for the sample and for what the alternatives cost.
+PARSE_MB_PER_MIN = 414.0
 
 
 @dataclass
@@ -243,7 +242,7 @@ def write_corpus_doc(cfg: Settings | None = None, path: Path | None = None) -> P
         uni = load_universe(cfg=cfg)
 
     mb = stats.filing_bytes / 1e6
-    parse_min = mb / ASSUMED_PARSE_MB_PER_MIN
+    parse_min = mb / PARSE_MB_PER_MIN
 
     lines: list[str] = []
     add = lines.append
@@ -273,16 +272,16 @@ def write_corpus_doc(cfg: Settings | None = None, path: Path | None = None) -> P
     add(f"| companyfacts bytes | {_human(stats.facts_bytes)} |")
     add(f"| **Total on disk** | **{_human(stats.filing_bytes + stats.facts_bytes)}** |")
     add("")
-    add("## Estimated parse time (M3)")
+    add("## Parse time (M3)")
     add("")
-    add(f"At an assumed **{ASSUMED_PARSE_MB_PER_MIN} MB/min** of filing HTML on one CPU:")
+    add(f"At a measured **{PARSE_MB_PER_MIN:,.0f} MB/min** of filing HTML on one CPU:")
     add("")
-    add(f"- {mb:,.0f} MB of filings -> **~{parse_min / 60:,.1f} hours** for a full pass.")
+    add(f"- {mb:,.0f} MB of filings -> **~{parse_min:,.1f} minutes** for a full pass.")
     add("")
-    add("That rate is an *assumption*, not a measurement -- docling is not installed until M3.")
-    add("It lives in one named constant (`ASSUMED_PARSE_MB_PER_MIN` in")
-    add("`src/filing/ingest/corpus.py`); M3 replaces it with a measured rate and this file")
-    add("is regenerated. Parsing is cached to parquet, so the cost is paid once.")
+    add("This was an assumed 1.5 MB/min through M2, which put the pass at 11.6 hours and")
+    add("made the parquet block cache look like a schedule necessity. The measurement")
+    add("(`PARSE_MB_PER_MIN` in `src/filing/ingest/corpus.py`, method in `docs/parsing.md`)")
+    add("says otherwise; the cache stays, for idempotent re-indexing rather than for time.")
     add("")
     add("## By company")
     add("")

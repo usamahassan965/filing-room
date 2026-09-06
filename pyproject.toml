@@ -30,6 +30,17 @@ dependencies = [
     # YAML because it is a file a human edits to change the scope of the project.
     "duckdb>=1.1",
     "pyyaml>=6.0",
+    # M3. docling parses the filing HTML into a structured document; the cheap
+    # HTML path is measured against it in docs/parsing.md before either is
+    # trusted with 1 GB. bm25s is the lexical half of hybrid retrieval and
+    # qdrant-client the dense half; networkx holds the entity graph, which is
+    # small enough (20 companies) that a graph database would be ceremony.
+    "docling>=2.0",
+    "qdrant-client>=1.12",
+    "bm25s>=0.2",
+    "PyStemmer>=2.2",
+    "networkx>=3.4",
+    "selectolax>=0.3",
 ]
 
 [project.optional-dependencies]
