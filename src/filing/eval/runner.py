@@ -175,12 +175,14 @@ CONFIGS: dict[str, EvalConfig] = {
     # That is the whole point: it separates the retriever's ceiling from the
     # generator's, which a single run cannot do.
     #
-    # All three free tiers were probed live before being written down here.
-    # Cohere meters CALLS (1,000 a month), so a 150-question run costs 15% of
-    # the month and finishes in about ten minutes. Groq and OVHcloud meter
-    # throughput instead, at roughly two questions a minute each, so their runs
-    # take about an hour -- slow, but an hour is not eight days, which is what
-    # ruled `gemini-3.5-flash` out of the baseline in the first place.
+    # All three free tiers were probed live, and two of them still surprised
+    # the run. Cohere meters CALLS (1,000 a month): 150 questions is 15% of the
+    # month and finishes in nine minutes. Groq meters TOKENS PER DAY (200,000,
+    # per model) -- roughly 47 questions -- so its full run is a three-day run
+    # and `--limit` is the only honest way to score it in one sitting. OVHcloud
+    # meters a shared anonymous pool that belongs to nobody, so it is available
+    # exactly when it is available. None of that is visible from a docs page,
+    # and only the Cohere number was visible before the run started.
     "baseline-cohere": EvalConfig(
         name="baseline-cohere",
         system="naive",

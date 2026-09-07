@@ -390,15 +390,49 @@ its way past a passage it was never handed.
 | provider | the binding limit | what it costs a 150-question run |
 |---|---|---|
 | Cohere | **calls** — 20 rpm, 1,000 a *month* | 9 minutes, and 15% of the month |
-| Groq | **tokens** — 8,000/min against 1,000 requests/day | ~1 hour; requests are never the problem |
+| Groq | **tokens/day** — 200,000 per model | ~47 questions; a full run takes three days |
 | OVHcloud | **a shared anonymous pool** | unavailable — see below |
 
-Groq's row is the one worth stating carefully. The documented headline is 1,000
-requests a day, which at 150 questions sounds like a sixth of the budget and a
-fast run. The live `x-ratelimit` headers say something else: 8,000 tokens per
-minute, resetting in 607 ms. At ~3.2k tokens a question that is roughly two
-questions a minute, so the registry's `rpm=2` is not caution — it is the actual
-ceiling, and it comes from the response headers rather than from a docs page.
+Groq's row is the one that cost something to learn. The documented headline is
+1,000 requests a day, which at 150 questions sounds like a sixth of the budget.
+The live `x-ratelimit` headers correct that — 8,000 tokens per minute, resetting
+in 570 ms, so the registry's `rpm=2` is the real pace and not caution. Headers
+beat docs, which was the lesson going in.
+
+The run then found the limit that beats both. At question 72 of 150 it stopped
+on `200,000 tokens per day, per model` — a cap that appears in **no header**,
+is not the requests-per-day number the docs lead with, and shows up only in the
+body of the 429 that ends you. At ~4.2k tokens a question that is 47 questions a
+day, so a 150-question baseline on Groq's free tier is a three-day run.
+
+Which sharpens the M0 lesson rather than repeating it. "Probe, don't read the
+listicle" got the per-minute pace right and still missed the constraint that
+mattered, because a probe measures what a single call is allowed and a *run*
+measures what a thousand calls are allowed.
+
+So Groq is scored over the 72 questions that completed, with the other two
+generators re-scored on the **same 72** from cache for zero calls. The runner
+refuses to write a subset under a config's canonical filename — these land as
+`*.partial.json` and print `PARTIAL: not the gate's run; not comparable to one`
+— which is the machinery that makes stating it this way cheaper than rounding
+it up.
+
+| on the same 72 questions | exact (12 numeric) | router | cite ok | cite gold |
+|---|---|---|---|---|
+| `gemini-3.5-flash-lite` | 33.3% | 43.1% | 100% | 14.7% |
+| `command-a-03-2025` | 33.3% | **51.4%** | 100% | 9.9% |
+| `openai/gpt-oss-120b` | 33.3% | 48.6% | 100% | **15.6%** |
+
+**All three get the same four of twelve right.** Not similar rates — the same
+questions, and every retrieval column identical to the last digit across all
+three. A 111-billion-parameter open model, a frontier-adjacent commercial one
+and Google's cheapest tier are separated by 8 points of routing and 6 of
+citation groundedness, and by nothing at all on the metric the gate actually
+calls correctness. That is the M4 finding arriving from a second direction:
+when the evidence is not in the top 5, no generator reasons its way to it, and
+when it is, all of them read it. Swapping the model is not the lever. This is
+also why the bake-off was worth an afternoon and is not worth a week — the
+question it answers is answered.
 
 **Free with no account is not free.** OVHcloud was on the list for one property:
 it answers unauthenticated requests, so no country list can take it away — which

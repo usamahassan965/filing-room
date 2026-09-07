@@ -125,17 +125,19 @@ MODEL_REGISTRY: dict[Backend, dict[str, ModelSpec]] = {
             note="local cross-encoder, so the generator is the only variable",
         ),
     },
-    # Groq bills tokens per MINUTE, not per day: the live header says 8,000 TPM
-    # against 1,000 requests a day. At ~3.2k tokens a question that is the
-    # binding constraint -- roughly two questions a minute, so an rpm of 2 is
-    # not caution, it is the actual ceiling. The 150-question run takes an hour
-    # and costs a fifteenth of the daily request budget.
+    # Groq's headers are necessary and not sufficient. They advertise 8,000
+    # tokens per MINUTE and 1,000 requests per day, and say nothing at all about
+    # the cap that actually stops a run: 200,000 tokens per DAY, per model,
+    # which appears in no header and only in the body of the 429 that ends you.
+    # At ~4.2k tokens a question that is 47 questions a day, so a 150-question
+    # baseline is a three-day run on the free tier. rpm=2 comes from the TPM
+    # header and is still right; it is just not the limit you hit second.
     "groq": {
         "chat": ModelSpec(
             id="openai/gpt-oss-120b",
             alternates=("qwen/qwen3.8-27b", "openai/gpt-oss-20b"),
             rpm=2,
-            note="8,000 tokens/min is the real limit; requests are never the problem",
+            note="200,000 tokens/DAY is the cap that ends a run; no header mentions it",
         ),
         "chat_fast": ModelSpec(id="qwen/qwen3.6-27b", alternates=("openai/gpt-oss-20b",), rpm=2),
         # No embed entry, deliberately. Groq's catalogue is chat, speech and
