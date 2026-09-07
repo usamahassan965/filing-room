@@ -240,6 +240,24 @@ METRICS: tuple[Metric, ...] = (
     ),
     Metric("assets", "Total assets", "stock", "USD", ("Assets",)),
     Metric(
+        "assets_current",
+        "Total current assets",
+        "stock",
+        "USD",
+        ("AssetsCurrent",),
+        note="Added in M5, and the reason is worth recording because it is not "
+        "a corpus finding. This registry was written for ratios, and the "
+        "ratios M2 cared about -- margins, ROE, leverage -- never reach the "
+        "current section, so it was never registered. The eval set is what "
+        "asked: ten of its eighty numeric questions name `AssetsCurrent` or "
+        "`LiabilitiesCurrent`, which a registry-constrained SQL layer "
+        "structurally cannot answer no matter how good the router is. Adding "
+        "them makes the current ratio expressible and closes that hole; a "
+        "reader is entitled to know the test is what revealed it, and to "
+        "judge for themselves whether that is coverage or test-fitting. "
+        "20/20 companies tag it.",
+    ),
+    Metric(
         "liabilities",
         "Total liabilities",
         "stock",
@@ -252,6 +270,19 @@ METRICS: tuple[Metric, ...] = (
         "accounting identity, so it is exact, not an estimate -- but only if "
         "the equity term is the whole right-hand side, which is why it "
         "subtracts total equity and mezzanine rather than the parent's share.",
+    ),
+    Metric(
+        "liabilities_current",
+        "Total current liabilities",
+        "stock",
+        "USD",
+        ("LiabilitiesCurrent",),
+        note="The other half of the current ratio, registered for the reason "
+        "given on `assets_current`. Note the contrast with `liabilities` "
+        "directly above: total liabilities needs a derivation because only "
+        "13/20 tag it, while the current split is tagged by all twenty -- the "
+        "companies that skip the total are precisely the ones that report "
+        "current and noncurrent separately and let the balance sheet balance.",
     ),
     Metric(
         "equity",

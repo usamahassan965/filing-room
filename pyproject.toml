@@ -41,6 +41,12 @@ dependencies = [
     "PyStemmer>=2.2",
     "networkx>=3.4",
     "selectolax>=0.3",
+    # M5. LangGraph for the agent, and for one reason: the graph is a value you
+    # can print, so "plan -> route -> retrieve -> grade -> repair" is a
+    # structure a reader can inspect rather than a call stack they have to
+    # reconstruct. The repair loop's bound lives in the graph, not in a
+    # while-loop somebody has to trust.
+    "langgraph>=0.2",
 ]
 
 [project.optional-dependencies]
