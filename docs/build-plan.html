@@ -322,7 +322,7 @@ footer a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
             <li class="done">Calling the same prompt twice issues <b>one</b> HTTP request (assert on a counter)</li>
             <li class="done">A trace with ≥3 spans is visible at <code>localhost:6006</code> — asserted by querying them back out, not by eyeballing the UI</li>
             <li class="done">The fallback's contract holds <i>offline</i> — 12 tests drive it through a fake OpenAI-compatible transport, so interface drift fails the build instead of surfacing during an outage</li>
-            <li class="pending"><code>LLM_BACKEND=ollama</code> passes the identical smoke test <i>— pending the 1.5 GB installer + 2.3 GB of weights</i></li>
+            <li class="done"><code>LLM_BACKEND=ollama</code> passes the identical smoke test &mdash; <b>5/5</b> on <code>qwen2.5:3b</code> + <code>nomic-embed-text</code>, with rerank correctly logging its degraded cosine stand-in</li>
           </ul>
         </div>
       </div>

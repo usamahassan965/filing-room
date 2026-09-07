@@ -20,7 +20,7 @@ graph, M4 the frozen question set and the naive baseline.
 | **M3** the text | 58,844 chunks, 32,218 indexed, 2,986 graph edges | `filing text` — 6/6 |
 | **M4** the yardstick | 150 frozen questions, 260 gold spans, naive index of 48,934 chunks | `filing.eval run --config baseline` — 150/150, 4 live calls |
 
-555 tests, `ruff` clean, and no test may open a socket off this machine.
+590 tests, `ruff` clean, and no test may open a socket off this machine.
 
 ---
 
@@ -93,7 +93,7 @@ The filings themselves are not, either. Clone, set `SEC_USER_AGENT`, and run
 | Sliding-window limiter | `llm/limiter.py` | Per model, not per provider. Proven by unit test, not by hope. |
 | Content-hash cache | `llm/cache.py` | Five weeks of eval re-runs on a finite free-tier budget. |
 | Tracing | `tracing.py` | On from the first commit, because M5–M7 read these spans. |
-| Three backends | `llm/gemini.py`, `llm/fallback_ollama.py`, `llm/local.py` | One interface; hosted, self-hosted, in-process. `LLM_BACKEND` picks. |
+| Six backends | `llm/gemini.py`, `llm/openai_compat.py`, `llm/fallback_ollama.py`, `llm/local.py` | One interface; hosted, self-hosted, in-process. `LLM_BACKEND` picks. Three of the six share one file. |
 | Local reranker | `llm/rerank_local.py` | A real cross-encoder, no key and no quota — the one verb Gemini does not serve. |
 
 `smoke` runs five checks and exits non-zero if any fails: **chat**, **embed** (a
@@ -356,6 +356,88 @@ Three things this gate taught:
 
 ---
 
+## M4.5 — the provider bake-off
+
+M0 claimed that swapping providers is a registry entry, not a refactor. Nothing
+had tested that claim: the project had run on one hosted provider since the
+first commit, and a claim nobody has tried is a comment, not an interface.
+
+Three free tiers went in — Cohere, Groq, OVHcloud — chosen for how differently
+they meter rather than for how they benchmark, because the interesting question
+is what the *shape* of a free tier does to a 150-question run. All three speak
+OpenAI, so all three arrive as one file, [`llm/openai_compat.py`](src/filing/llm/openai_compat.py),
+keyed by provider name. There is no `CohereBackend` and no `GroqBackend`. The
+claim holds.
+
+**Same retriever, different generator.** `baseline-cohere`, `baseline-groq` and
+`baseline-ovh` reuse the naive baseline's index, top-5 and prompt unchanged, so
+the generator is the only variable. That the ablation is clean is checked rather
+than asserted: every retrieval metric below is *byte-identical* to `baseline`.
+
+| config | generator | exact (num) | router | abstain | cite ok | cite gold | wall |
+|---|---|---|---|---|---|---|---|
+| `baseline` | `gemini-3.5-flash-lite` | 7.5% | 27.3% | 100% | 100% | **13.9%** | 0.9 min |
+| `baseline-cohere` | `command-a-03-2025` | **8.8%** | **31.3%** | 100% | 100% | 9.5% | 8.9 min |
+
+A bigger model is a better reader and a worse citer: `command-a` gains 1.3 points
+of exact match and 4 of routing over flash-lite, and gives back 4.4 points of
+citation groundedness. Both refuse all ten unanswerables. Neither changes the
+picture M4 established — the retriever is the ceiling, and no generator argues
+its way past a passage it was never handed.
+
+**What each free tier actually meters, measured rather than read.**
+
+| provider | the binding limit | what it costs a 150-question run |
+|---|---|---|
+| Cohere | **calls** — 20 rpm, 1,000 a *month* | 9 minutes, and 15% of the month |
+| Groq | **tokens** — 8,000/min against 1,000 requests/day | ~1 hour; requests are never the problem |
+| OVHcloud | **a shared anonymous pool** | unavailable — see below |
+
+Groq's row is the one worth stating carefully. The documented headline is 1,000
+requests a day, which at 150 questions sounds like a sixth of the budget and a
+fast run. The live `x-ratelimit` headers say something else: 8,000 tokens per
+minute, resetting in 607 ms. At ~3.2k tokens a question that is roughly two
+questions a minute, so the registry's `rpm=2` is not caution — it is the actual
+ceiling, and it comes from the response headers rather than from a docs page.
+
+**Free with no account is not free.** OVHcloud was on the list for one property:
+it answers unauthenticated requests, so no country list can take it away — which
+mattered after `build.nvidia.com` turned out to be a wall this project could not
+climb. The property is real and the availability is not. The anonymous pool is
+shared and small, and across ~10 minutes of spaced probes it returned `429` on
+every request and on every model in the registry entry — `Qwen3.5-397B`,
+`Qwen3.5-9B`, `Llama-3.3-70B`, `gpt-oss-120b` alike, which is what makes it a
+pool-level throttle rather than a wiring problem. The config stays in the runner
+because the finding is the point: a tier with no credential also has no queue of
+your own, and 150 sequential questions is more than an unowned queue will carry.
+
+Three things this gate taught:
+
+- **An absent header and an empty one are different requests.** The OpenAI SDK
+  requires an `api_key` string, so a keyless provider gets a placeholder, and
+  `Authorization: Bearer no-key-required` is *worse* than sending nothing:
+  OVHcloud stops reading the request as anonymous and starts reading it as a
+  **failed** credential. That is `403 authentication failed` on all 150
+  questions of a run, which looks exactly like a key problem and is the precise
+  opposite of one. The header is now stripped at the transport layer by an httpx
+  request hook, and the proof it worked is that the 403 became a 429 — rejected
+  became accepted-then-throttled.
+- **A 403 is not always about the credential.** Groq sits behind Cloudflare bot
+  protection, which fingerprints the client *before* the origin ever sees the
+  key: a default Python `User-Agent` earns `403 Error 1010 — access denied based
+  on your browser's signature`. Two providers, two 403s, two causes, neither of
+  them the key. Both are now regression tests, because the cost of rediscovering
+  either is an afternoon.
+- **A metric that disagrees with every answer is the metric's fault.**
+  `gpt-oss-120b` scored 0% on citations while citing correctly on every single
+  answer, because it writes its brackets as U+3010/U+3011 — the CJK lenticular
+  pair — and `parse_citations` matched ASCII only. The prompt asks for
+  "bracketed numbers" and never promises a codepoint, so the model obeyed the
+  contract and the regex did not. Published, that would have been a confident
+  finding about a model, drawn entirely from a broken ruler.
+
+---
+
 ## Layout
 
 ```
@@ -396,22 +478,34 @@ src/filing/
     └── depth.py           how far down the ranking the evidence actually sits
 
 scripts/eval_v1_0/   the authoring record — rebuilds the frozen set byte for byte
-tests/               555 tests, no network and no API key
+tests/               590 tests, no network and no API key
 results/             one committed JSON + markdown table per config
 docs/                build plan, corpus notes, the baseline write-up
 ```
 
 ## Backends
 
-`LLM_BACKEND` picks one. All three satisfy the same `chat` / `embed` / `rerank`
+`LLM_BACKEND` picks one. They all satisfy the same `chat` / `embed` / `rerank`
 interface, and `filing smoke` is the identical test against each. Exact model IDs
 are deliberately not repeated here — `MODEL_REGISTRY` in `src/filing/config.py` is
 the only place they live, and `filing probe` prints the live ones.
 
-| | chat | embed | rerank |
-|---|---|---|---|
-| **`gemini`** (default) | Gemini Flash | `gemini-embedding-001` | **local cross-encoder** |
-| `ollama` | Llama 3.1 8B, local | `nomic-embed-text` | cosine stand-in — **degraded** |
+| | chat | embed | rerank | what it meters |
+|---|---|---|---|---|
+| **`gemini`** (default) | Gemini Flash | `gemini-embedding-001` | **local cross-encoder** | requests/day, per model |
+| `cohere` | `command-a` | `embed-v4.0` | local cross-encoder | calls — 1,000 a month |
+| `groq` | `gpt-oss-120b` | — none served | local cross-encoder | tokens — 8,000 a minute |
+| `ovh` | `Qwen3.5-397B` | `bge-m3` | local cross-encoder | a shared anonymous pool |
+| `ollama` | Llama 3.1 8B, local | `nomic-embed-text` | cosine stand-in — **degraded** | nothing; it is your CPU |
+
+The last four arrive through one file. `cohere`, `groq` and `ovh` are the same
+`OpenAICompatBackend` under three registry entries — see
+[M4.5](#m45--the-provider-bake-off) for what that bought and what it cost.
+
+Groq's embed cell is a dash rather than a zero. It serves no embedding model, so
+the registry omits the entry and `model_for("embed", "groq")` raises naming the
+roles Groq does serve. A `dim=0` placeholder would have made the registry total
+and made it lie, and a registry that lies is worse than one that raises.
 
 The Ollama row is honest about being worse: cosine "reranking" is the retriever's
 own opinion asked twice, so it cannot correct the retriever's mistakes. It logs a
@@ -432,6 +526,16 @@ produced that way.
 - **Rate limits are per model.** Gemini's free tier allows roughly 10 rpm for the
   chat model and 100 for embeddings. One shared limiter would drag indexing down
   to the speed of the slowest model in the registry.
+- **Cloudflare answers before the origin does.** Groq fingerprints the client
+  at the edge, so a default Python `User-Agent` gets `403 Error 1010` *before*
+  the key is checked — an authentication-shaped failure with no authentication
+  in it. `openai_compat.py` sends a browser UA, and a test asserts it reaches
+  the client, because this one is invisible in every stack trace it causes.
+- **A keyless provider must be sent no header, not a blank one.** OVHcloud reads
+  `Authorization: Bearer <anything>` as a credential and fails it; it reads a
+  *missing* header as anonymous and serves. The OpenAI SDK insists on an
+  `api_key` string, so the header is removed on the way to the socket by an
+  httpx request event hook.
 - **Not every provider verb is OpenAI-shaped.** NVIDIA NIM's reranker used a
   different host, body and response, so it needed its own code path and a
   hand-written span the OpenAI instrumentor could not see. That backend is gone,
