@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import logging
 import sys
+import uuid
 from typing import Annotated
 
 import typer
@@ -55,6 +56,25 @@ _RERANK_PASSAGES = [
     "The board declared a quarterly dividend of $0.25 per share payable in November.",
 ]
 _RERANK_EXPECTED = 1  # the supply-chain passage
+
+
+def _run_marker() -> str:
+    """A token that makes this run's chat and embed payloads unlike any other's.
+
+    Without it the gate grades the cache. The cache key is a hash of the
+    payload, so the second `filing smoke` of the day replays the first one's
+    answers: chat, embed and dedup all pass, the footer reads `http calls: 0,
+    cache hits: 4`, and a revoked key, a retired model ID or an expired free
+    tier still reports 5/5. That is the one failure a smoke test exists to
+    catch, and it was the one failure it could not see.
+
+    So the first chat and embed of every run carry a fresh marker and therefore
+    must miss, which is asserted rather than hoped for; check 4 then repeats
+    the *marked* prompt, so dedup is still proved -- on a payload this run put
+    there, not one left over from last week. The cost is two live calls per
+    smoke run, which is the price of the gate meaning anything.
+    """
+    return uuid.uuid4().hex[:8]
 
 
 def _check(ok: bool, label: str, detail: str = "") -> bool:
@@ -95,22 +115,44 @@ def smoke(
 
     results: list[bool] = []
     try:
-        # 1 -- chat
+        marker = _run_marker()
+
+        # 1 -- chat, and it has to be *this run's* chat: a fresh marker in the
+        # payload means a cache hit here is a bug, not a saving.
         prompt = [
-            {"role": "system", "content": "Answer in one short sentence."},
+            {
+                "role": "system",
+                "content": f"Answer in one short sentence. Ignore this run marker: {marker}.",
+            },
             {"role": "user", "content": "What is a 10-K filing?"},
         ]
+        hits_before = client.usage().cache_hits
         answer = client.chat(prompt, role="chat_fast", max_tokens=80)
-        results.append(_check(bool(answer.strip()), "chat", answer[:90].replace("\n", " ")))
+        live = client.usage().cache_hits == hits_before
+        results.append(
+            _check(
+                bool(answer.strip()) and live,
+                "chat",
+                (answer[:70].replace("\n", " ") + ("" if live else "  [CACHED -- not a check]")),
+            )
+        )
 
-        # 2 -- embed (query and passage go through different code paths)
-        vectors = client.embed(["annual report risk factors"], input_type="passage")
+        # 2 -- embed (query and passage go through different code paths), same
+        # marker, same reason.
+        hits_before = client.usage().cache_hits
+        vectors = client.embed([f"annual report risk factors {marker}"], input_type="passage")
+        live = client.usage().cache_hits == hits_before
         dim = len(vectors[0]) if vectors else 0
         expected_dim = model_for("embed", chosen).dim
         ok_dim = dim > 0 and (expected_dim is None or dim == expected_dim)
-        results.append(_check(ok_dim, "embed", f"dim={dim} expected={expected_dim}"))
+        results.append(
+            _check(ok_dim and live, "embed", f"dim={dim} expected={expected_dim} live={live}")
+        )
 
-        # 3 -- rerank, and it has to be *right*, not merely non-empty
+        # 3 -- rerank, and it has to be *right*, not merely non-empty. No
+        # marker here: reranking is a local forward pass on every backend, so
+        # a cache hit cannot hide a dead credential or a retired model ID,
+        # and re-running the cross-encoder to learn that would just be slow.
         rankings = client.rerank(_RERANK_QUERY, _RERANK_PASSAGES, top_n=3)
         top = rankings[0].index if rankings else -1
         results.append(
@@ -121,15 +163,20 @@ def smoke(
             )
         )
 
-        # 4 -- cache: the same prompt must not reach the network twice
+        # 4 -- cache: the same prompt must not reach the network twice. The
+        # prompt is check 1's, marker and all, so this proves dedup on an entry
+        # this process wrote seconds ago rather than on whatever was already
+        # warm.
         before = client.http_calls
+        hits_before = client.usage().cache_hits
         repeat = client.chat(prompt, role="chat_fast", max_tokens=80)
         delta = client.http_calls - before
+        hit = client.usage().cache_hits > hits_before
         results.append(
             _check(
-                delta == 0 and repeat == answer,
+                delta == 0 and hit and repeat == answer,
                 "cache dedup",
-                f"http_calls delta={delta} (must be 0)",
+                f"http_calls delta={delta} (must be 0) hit={hit}",
             )
         )
 

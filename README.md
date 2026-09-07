@@ -20,7 +20,7 @@ graph, M4 the frozen question set and the naive baseline.
 | **M3** the text | 58,844 chunks, 32,218 indexed, 2,986 graph edges | `filing text` — 6/6 |
 | **M4** the yardstick | 150 frozen questions, 260 gold spans, naive index of 48,934 chunks | `filing.eval run --config baseline` — 150/150, 4 live calls |
 
-590 tests, `ruff` clean, and no test may open a socket off this machine.
+595 tests, `ruff` clean, and no test may open a socket off this machine.
 
 ---
 
@@ -101,6 +101,16 @@ vector of the dimension the registry claims), **rerank** (the cross-encoder puts
 the *relevant* passage first, not merely any passage), **cache dedup** (the same
 prompt twice issues one HTTP request, asserted on a counter rather than inferred
 from timing), and **tracing** (at least three spans reached the collector).
+
+Chat and embed carry a fresh run marker, so they cannot be served from cache.
+That is a bug fix, not a flourish: the gate used to pass at `http calls: 0,
+cache hits: 4`, replaying the previous run's answers, which meant a revoked key,
+a retired model ID or an exhausted free tier all still printed **5/5**. A smoke
+test that a warm cache can satisfy is testing the disk. The marker costs two
+live calls per run and buys the only thing the command is for; check 4 then
+repeats the *marked* prompt, so dedup is still proved, on an entry this process
+wrote seconds earlier. Rerank keeps its cache deliberately — it is a local
+forward pass on every backend, so no credential can be hiding behind it.
 
 The offline half runs in `pytest` with the network stubbed, so CI needs no API
 key. Only `chat` and `embed` genuinely need one.
@@ -512,7 +522,7 @@ src/filing/
     └── depth.py           how far down the ranking the evidence actually sits
 
 scripts/eval_v1_0/   the authoring record — rebuilds the frozen set byte for byte
-tests/               590 tests, no network and no API key
+tests/               595 tests, no network and no API key
 results/             one committed JSON + markdown table per config
 docs/                build plan, corpus notes, the baseline write-up
 ```
