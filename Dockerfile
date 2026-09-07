@@ -1,11 +1,32 @@
+# syntax=docker/dockerfile:1
 # One image, two entrypoints: the API and the page that reads it.
 #
 # Three decisions worth the comment.
 #
 # 1. CPU torch, installed from PyTorch's own index *before* anything else. The
 #    default sentence-transformers dependency resolves to a CUDA build and
-#    drags ~2.5 GB of kernels onto a machine that will never have a GPU. This
-#    line is the difference between a 1.4 GB image and a 4 GB one.
+#    drags ~2.5 GB of kernels onto a machine that will never have a GPU.
+#
+#    The measured result, once this file had actually been built:
+#
+#        1.32 GB  pip install -e ".[ui]"
+#        1.03 GB  torch + torchvision (cpu)
+#         227 MB  the two models, baked in -- see (2)
+#         107 MB  apt: git, curl
+#        ------
+#        3.76 GB  filing-api:latest
+#
+#    An earlier version of this comment claimed the CPU index was "the
+#    difference between a 1.4 GB image and a 4 GB one". The 4 GB was about
+#    right; the 1.4 GB was invented before anything was built, and is off by
+#    2.4 GB. The saving is real -- a CUDA torch layer alone runs past 2.5 GB --
+#    but it is a saving off the top, not a small image.
+#
+#    The remaining fat is in the dependency layer: docling pulls rapidocr,
+#    which pulls opencv-python at 74 MB, for a code path the *served* container
+#    never runs. Parsing happens once, at `filing ingest` time, on a laptop.
+#    Moving docling to an extra alongside [ui] is the largest single win left
+#    and is deliberately not bundled into the torchvision fix below.
 #
 # 2. The two local models are baked in at build time. A container whose first
 #    request goes to huggingface.co is a container that fails on a plane, in a
@@ -20,7 +41,6 @@ FROM python:3.12-slim AS base
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
     HF_HOME=/opt/hf
 
 WORKDIR /app
@@ -32,11 +52,30 @@ RUN apt-get update \
 
 # CPU torch first -- see (1). Pinned to the index, not to a version, because
 # the CPU index only ever serves CPU wheels.
-RUN pip install --index-url https://download.pytorch.org/whl/cpu torch
+#
+# torchvision has to come from that index too, and the first version of this
+# line left it out. transformers imports `torchvision.io` eagerly, so pip
+# resolved it from PyPI on the next instruction -- at the *correct* paired
+# version, 0.29.0 against torch 2.14.0, which is what made the mistake hard to
+# see. Version pairing is not the thing that matters. The PyPI wheel is linked
+# against the CUDA build's ABI, so its compiled `torchvision::nms` fails to
+# register against a CPU torch and `import sentence_transformers` dies with
+# "operator torchvision::nms does not exist" -- twenty minutes into the build,
+# on the line that downloads the models.
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --index-url https://download.pytorch.org/whl/cpu torch torchvision
 
 # Dependencies before source, so editing a module does not reinstall docling.
+# The pip cache is a BuildKit cache mount rather than a layer: this step
+# pulls ~250 MB from PyPI, and the container gets about a fifth of the
+# host's throughput to it -- 70 kB/s against 380. A rebuild that has to
+# redo this step therefore costs twenty minutes of re-downloading wheels
+# that have not changed. A cache mount is not committed to the image, so
+# it buys that back without the size PIP_NO_CACHE_DIR was set to avoid,
+# which is why that variable is gone: it would have won over the mount.
 COPY pyproject.toml README.md ./
-RUN mkdir -p src/filing && touch src/filing/__init__.py \
+RUN --mount=type=cache,target=/root/.cache/pip \
+    mkdir -p src/filing && touch src/filing/__init__.py \
  && pip install -e ".[ui]"
 
 # See (2). Downloaded under HF_HOME, which the runtime reads from the same env.
