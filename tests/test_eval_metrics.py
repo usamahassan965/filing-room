@@ -251,3 +251,61 @@ def test_outcome_round_trips_through_json():
         llm_calls=1,
     )
     assert Outcome.from_json(o.to_json()) == o
+
+
+# ------------------------------------------- the metric's edge, held honestly
+
+
+def test_a_question_answered_from_duckdb_is_excluded_not_scored_zero():
+    """The tempting false zero.
+
+    A supported citation is one whose chunk overlaps a gold character span. An
+    XBRL fact has no span -- the value in DuckDB and the number printed in the
+    filing are one fact reached two ways, and only one way carries offsets. So
+    a question the agent answered from `sql` retrieved no text chunks, and
+    scoring that as hit@5 = 0 would report a retrieval failure where there was
+    no retrieval attempt. It reads, in a results table, as "the retriever
+    missed" next to an exact_match of 97.5%.
+    """
+    card = metrics.score([q_numeric()], [Outcome(qid="num-001", route="sql", answer="$1,000")])
+    num = card.slices["numeric"]
+    assert num.retrieval_n == 0
+    assert num.hit_rate == {}  # unmeasured, and the table renders it "--"
+    assert num.exact_match == 1.0  # the claim that does survive
+
+
+def test_a_text_route_that_retrieved_nothing_still_scores_zero():
+    """The other half, or the exclusion would be an excuse.
+
+    Only a route to a spanless store is outside the metric. A question that
+    went to the text retriever and came back empty-handed failed at exactly the
+    thing hit@k measures.
+    """
+    card = metrics.score([q_numeric()], [Outcome(qid="num-001", route="text", answer="$1,000")])
+    num = card.slices["numeric"]
+    assert num.retrieval_n == 1
+    assert num.hit_rate[5] == 0.0
+
+
+def test_the_retrieval_denominator_travels_with_the_numbers():
+    """A hit@5 over a subset the system selected for itself needs its `n` in
+    view: the questions that reached the text retriever are precisely the ones
+    the SQL branch could not answer, so the subset is biased by construction."""
+    qs = [q_numeric(qid="num-001"), q_numeric(qid="num-002")]
+    outs = [
+        Outcome(qid="num-001", route="sql", answer="$1,000"),
+        Outcome(qid="num-002", route="text", answer="$1,000", retrieved=(chunk(end=50),)),
+    ]
+    card = metrics.score(qs, outs)
+    assert card.slices["numeric"].n == 2
+    assert card.slices["numeric"].retrieval_n == 1
+    assert "ret n" in metrics.to_markdown(card)
+
+
+def test_the_baseline_is_untouched_by_the_exclusion():
+    """It has no route to a spanless store, so its published numbers cannot
+    move -- which is what makes the two systems still comparable."""
+    outs = [Outcome(qid="num-001", route="text", answer="$1,000", retrieved=(chunk(end=50),))]
+    card = metrics.score([q_numeric()], outs)
+    assert card.slices["numeric"].retrieval_n == 1
+    assert card.slices["numeric"].hit_rate[5] == 1.0

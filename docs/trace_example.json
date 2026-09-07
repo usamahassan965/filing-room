@@ -1,0 +1,105 @@
+{
+  "note": "One question through the M5 agent graph, captured in-process by filing.agent.trace and regenerable with `python -m filing.eval trace --qid <id>`.",
+  "qid": "num-001",
+  "question": "What did ABBV report for Revenues for the fiscal year ended 2018-12-31?",
+  "route": "sql",
+  "plan": [
+    {
+      "text": "What did ABBV report for Revenues for the fiscal year ended 2018-12-31?",
+      "route": "sql",
+      "ticker": "ABBV",
+      "concept": "Revenues",
+      "period_end": "2018-12-31",
+      "why": "The user is asking for a specific reported financial figure (Revenues) for a specific company (ABBV) and fiscal year-end date."
+    }
+  ],
+  "repairs": 0,
+  "repair_log": [],
+  "llm_calls": 2,
+  "seconds": 9.453,
+  "answer": "ABBV reported Revenues of 32,753,000,000 USD for the period ending 2018-12-31 [1].",
+  "refused": false,
+  "evidence": [
+    {
+      "kind": "fact",
+      "citation": "ABBV 10-K 2018-12-31 Revenues [0001551152-21-000008]",
+      "score": 1.0,
+      "value": 32753000000.0,
+      "unit": "USD",
+      "tag": "Revenues",
+      "body": "ABBV reported Revenues of 32,753,000,000 USD for the period ending 2018-12-31 (tag Revenues)."
+    }
+  ],
+  "spans": [
+    {
+      "name": "agent.question",
+      "ms": 5543.572,
+      "status": "UNSET",
+      "attributes": {
+        "qid": "num-001",
+        "question": "What did ABBV report for Revenues for the fiscal year ended 2018-12-31?",
+        "route": "sql",
+        "repairs": 0,
+        "llm_calls": 2,
+        "refused": false
+      },
+      "children": [
+        {
+          "name": "agent.plan",
+          "ms": 4833.511,
+          "status": "UNSET",
+          "attributes": {
+            "filing.question": "What did ABBV report for Revenues for the fiscal year ended 2018-12-31?",
+            "filing.plan.route": "sql",
+            "filing.plan.heuristic": false
+          }
+        },
+        {
+          "name": "agent.route",
+          "ms": 0.0,
+          "status": "UNSET",
+          "attributes": {
+            "filing.route": "sql",
+            "filing.route.downgraded": false
+          }
+        },
+        {
+          "name": "agent.retrieve.sql",
+          "ms": 59.445,
+          "status": "UNSET",
+          "attributes": {
+            "filing.sql.tag": "Revenues",
+            "filing.sql.rows": 1
+          }
+        },
+        {
+          "name": "agent.rerank",
+          "ms": 0.0,
+          "status": "UNSET",
+          "attributes": {
+            "filing.rerank.in": 1,
+            "filing.rerank.applied": false
+          }
+        },
+        {
+          "name": "agent.grade",
+          "ms": 0.0,
+          "status": "UNSET",
+          "attributes": {
+            "filing.grade.ok": true,
+            "filing.grade.reason": "fact found: Revenues 2018-12-31"
+          }
+        },
+        {
+          "name": "agent.synthesise",
+          "ms": 625.278,
+          "status": "UNSET",
+          "attributes": {
+            "filing.evidence.count": 1,
+            "filing.synthesise.called": true
+          }
+        }
+      ]
+    }
+  ]
+}

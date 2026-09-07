@@ -309,6 +309,32 @@ def test_the_graph_is_compiled_once_for_the_run_not_once_per_question(env, monke
     assert len(built) == 1
 
 
+def test_a_retrieval_only_run_still_gets_a_reranker(env, monkeypatch):
+    """The stage that goes missing when nobody checks.
+
+    `generate=False` means no plan call and no synthesis call. It does not mean
+    no rerank: every backend's `rerank` is the same local cross-encoder forward
+    pass, so the stage is free and the ablation is supposed to include it. But
+    the rerank node's guard is `backend is None`, and a retrieval-only run used
+    to have no backend at all -- so the fused candidates went straight through
+    and the config measured a pipeline one stage shorter than its own note
+    claimed. Asserting on the backend it asks for, because the symptom was a
+    number that looked plausible.
+    """
+    asked: list[str | None] = []
+
+    def fake_build(cfg, name=None):  # noqa: ANN001
+        asked.append(name)
+        return FakeBackend(["unused"])
+
+    monkeypatch.setattr("filing.llm.factory.build_backend", fake_build)
+    monkeypatch.setattr(
+        runner, "build_agent_tools", lambda cfg, *, backend, config: tools(backend, sql=FakeSql())
+    )
+    runner.run(env, config="agent-retrieval", use_cache=False, write=False)
+    assert asked == ["local"]  # not the environment's hosted default
+
+
 def test_a_fact_citation_is_dropped_rather_than_counted_as_unresolvable():
     """`parse_citations` skips evidence with no chunk id, which is the seam."""
     fact = Evidence(kind="fact", body="b", citation="c", accn="a", value=1.0)

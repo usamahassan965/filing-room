@@ -263,7 +263,10 @@ CONFIGS: dict[str, EvalConfig] = {
         generate=False,
         k=max(metrics.KS),
         chunker="semantic",
-        note="the agent's hybrid retriever and reranker alone, no LLM call at all",
+        note=(
+            "the agent's hybrid retriever and local cross-encoder reranker, "
+            "with the plan and synthesise calls switched off -- no hosted call at all"
+        ),
     ),
 }
 
@@ -664,6 +667,17 @@ def run(
                 # its numbers is worse than no file. Empty falls back to the
                 # environment, which is what the plain `baseline` config wants.
                 be = build_backend(cfg, ec.chat_backend or None)
+            if be is None and ec.system == "agent":
+                # A retrieval-only agent run still needs a backend, because the
+                # reranker lives on one -- and every backend's `rerank` is the
+                # same local cross-entropy forward pass, hosted or not, so this
+                # costs no quota and needs no key. Without it the rerank node
+                # sees `backend is None`, passes the fused candidates straight
+                # through, and the ablation silently measures a pipeline one
+                # stage shorter than the one it is named after.
+                from filing.llm.factory import build_backend
+
+                be = build_backend(cfg, "local")
             if ec.system == "agent":
                 from filing.agent.graph import build_graph
 

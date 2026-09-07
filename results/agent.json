@@ -1,0 +1,4251 @@
+{
+ "config": {
+  "name": "agent",
+  "system": "agent",
+  "k": 5,
+  "chat_role": "chat_fast",
+  "chat_backend": "gemini",
+  "chat_model": "gemini-3.5-flash-lite",
+  "embed_backend": "local",
+  "embed_model": "BAAI/bge-small-en-v1.5",
+  "chunker": "semantic",
+  "collection": "filing__local__BAAI_bge-small-en-v1-5__384__semantic",
+  "generate": true,
+  "dataset_version": "v1.0",
+  "prompt_version": "p1",
+  "temperature": 0.0,
+  "max_tokens": 512,
+  "note": "plan/route -> sql|text|graph -> rerank -> grade -> repair(<=2) -> synthesise"
+ },
+ "fingerprint": "138d174874a6d2db0184414919fd1eb9c0ed15241f34524ff97a5f69f41cd4b4",
+ "dataset": {
+  "path": "C:\\Users\\Usama\\vscode_projects\\Filing_Agentic_RAG\\data\\eval\\questions_v1.0.jsonl",
+  "sha256": "38ee1f9188cda1597dffbcfdaeea7daaccb6e762b248b1aec3cdb185de35692f",
+  "counts": {
+   "numeric": 80,
+   "narrative": 60,
+   "unanswerable": 10
+  }
+ },
+ "run": {
+  "full_set": true,
+  "answered": 0,
+  "from_cache": 150,
+  "llm_calls": 0,
+  "errors": 0,
+  "seconds": 2.22
+ },
+ "scores": {
+  "overall": {
+   "name": "overall",
+   "n": 150,
+   "retrieval_n": 60,
+   "exact_match": 0.975,
+   "hit_rate": {
+    "1": 0.15,
+    "5": 0.4,
+    "10": 0.4
+   },
+   "recall": {
+    "1": 0.1388888888888889,
+    "5": 0.3722222222222222,
+    "10": 0.3722222222222222
+   },
+   "ndcg": {
+    "1": 0.15,
+    "5": 0.2666847805704054,
+    "10": 0.2666847805704054
+   },
+   "router_accuracy": 0.8333333333333334,
+   "abstention": 1.0,
+   "over_answered": 0.0,
+   "citations_made": 75,
+   "citations_resolvable": 1.0,
+   "citations_supported": 0.28,
+   "errors": 0,
+   "llm_calls": 290,
+   "seconds": 1480.8770000000368
+  },
+  "slices": {
+   "numeric": {
+    "name": "numeric",
+    "n": 80,
+    "retrieval_n": 1,
+    "exact_match": 0.975,
+    "hit_rate": {
+     "1": 0.0,
+     "5": 0.0,
+     "10": 0.0
+    },
+    "recall": {
+     "1": 0.0,
+     "5": 0.0,
+     "10": 0.0
+    },
+    "ndcg": {
+     "1": 0.0,
+     "5": 0.0,
+     "10": 0.0
+    },
+    "router_accuracy": 0.9875,
+    "abstention": null,
+    "over_answered": null,
+    "citations_made": 0,
+    "citations_resolvable": null,
+    "citations_supported": null,
+    "errors": 0,
+    "llm_calls": 161,
+    "seconds": 613.8770000000077
+   },
+   "narrative": {
+    "name": "narrative",
+    "n": 60,
+    "retrieval_n": 59,
+    "exact_match": null,
+    "hit_rate": {
+     "1": 0.15254237288135594,
+     "5": 0.4067796610169492,
+     "10": 0.4067796610169492
+    },
+    "recall": {
+     "1": 0.14124293785310735,
+     "5": 0.37853107344632764,
+     "10": 0.37853107344632764
+    },
+    "ndcg": {
+     "1": 0.15254237288135594,
+     "5": 0.27120486159702245,
+     "10": 0.27120486159702245
+    },
+    "router_accuracy": 0.6,
+    "abstention": null,
+    "over_answered": null,
+    "citations_made": 75,
+    "citations_resolvable": 1.0,
+    "citations_supported": 0.28,
+    "errors": 0,
+    "llm_calls": 113,
+    "seconds": 733.969000000041
+   },
+   "unanswerable": {
+    "name": "unanswerable",
+    "n": 10,
+    "retrieval_n": 0,
+    "exact_match": null,
+    "hit_rate": {},
+    "recall": {},
+    "ndcg": {},
+    "router_accuracy": 1.0,
+    "abstention": 1.0,
+    "over_answered": 0.0,
+    "citations_made": 0,
+    "citations_resolvable": null,
+    "citations_supported": null,
+    "errors": 0,
+    "llm_calls": 16,
+    "seconds": 133.03099999998813
+   }
+  }
+ },
+ "outcomes": [
+  {
+   "qid": "nar-001",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "69280c6c-64a5-55c9-9eee-ae2653480c28",
+     "accn": "0000104169-24-000141",
+     "char_start": 104229,
+     "char_end": 105878,
+     "score": 1.97588
+    },
+    {
+     "chunk_id": "3ced9daa-f2b3-5c80-ac46-61ace66849a0",
+     "accn": "0000104169-24-000178",
+     "char_start": 111399,
+     "char_end": 113168,
+     "score": 1.819648
+    },
+    {
+     "chunk_id": "829fa6ab-a05f-510b-a8a7-86fe9c1af97e",
+     "accn": "0000104169-25-000021",
+     "char_start": 220144,
+     "char_end": 221242,
+     "score": 1.771222
+    },
+    {
+     "chunk_id": "b91540ca-6a4a-5906-b1a0-e8e930d5be1b",
+     "accn": "0000104169-20-000042",
+     "char_start": 95994,
+     "char_end": 97788,
+     "score": 1.540094
+    },
+    {
+     "chunk_id": "1309cc93-330a-5a64-aab9-effdd7fff7ef",
+     "accn": "0000104169-24-000056",
+     "char_start": 230115,
+     "char_end": 231894,
+     "score": 1.431604
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 53.15700000000652,
+   "error": ""
+  },
+  {
+   "qid": "nar-002",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "913c0018-a54e-5f7d-ba40-ae4c57295b02",
+     "accn": "0000104169-22-000012",
+     "char_start": 204723,
+     "char_end": 206294,
+     "score": 4.43884
+    },
+    {
+     "chunk_id": "1309cc93-330a-5a64-aab9-effdd7fff7ef",
+     "accn": "0000104169-24-000056",
+     "char_start": 230115,
+     "char_end": 231894,
+     "score": 4.071038
+    },
+    {
+     "chunk_id": "8dff3df8-9a0f-5932-beee-a7db3c92c3f9",
+     "accn": "0000104169-23-000020",
+     "char_start": 210767,
+     "char_end": 212375,
+     "score": 4.059365
+    },
+    {
+     "chunk_id": "ef9bd537-4d47-57c3-98ac-179d1953e118",
+     "accn": "0000104169-24-000056",
+     "char_start": 235377,
+     "char_end": 237131,
+     "score": 2.694163
+    },
+    {
+     "chunk_id": "4ae3a338-6f31-577a-863d-59520af5e79e",
+     "accn": "0000104169-23-000020",
+     "char_start": 216393,
+     "char_end": 218183,
+     "score": 2.624465
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 11.35899999999674,
+   "error": ""
+  },
+  {
+   "qid": "nar-003",
+   "route": "text",
+   "answer": "Walmart shares ROI because management believes it is a meaningful metric that helps investors assess how effectively Walmart is deploying its assets [1]. Both ROI and ROA are included as metrics to assess returns on assets [1].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "06af0bae-1eec-5151-b611-f944781b2385",
+     "accn": "0000104169-21-000033",
+     "char_start": 175198,
+     "char_end": 176272,
+     "score": 6.145768
+    },
+    {
+     "chunk_id": "61c5c453-cdb0-5068-9135-bf35a36fc3a4",
+     "accn": "0000104169-20-000076",
+     "char_start": 76298,
+     "char_end": 77345,
+     "score": 6.097948
+    },
+    {
+     "chunk_id": "3ea88a48-876f-51c5-bbab-8810cc2df840",
+     "accn": "0000104169-24-000141",
+     "char_start": 81394,
+     "char_end": 82865,
+     "score": 5.701017
+    },
+    {
+     "chunk_id": "e0185e27-d2f4-53a9-a5f6-46fc902f123d",
+     "accn": "0000104169-20-000011",
+     "char_start": 165649,
+     "char_end": 167316,
+     "score": 5.622596
+    },
+    {
+     "chunk_id": "3731ec12-317c-530c-b78e-4e3b7089fca5",
+     "accn": "0000104169-22-000083",
+     "char_start": 87064,
+     "char_end": 88725,
+     "score": 5.593907
+    }
+   ],
+   "citations": [
+    "06af0bae-1eec-5151-b611-f944781b2385"
+   ],
+   "llm_calls": 2,
+   "seconds": 11.405999999988126,
+   "error": ""
+  },
+  {
+   "qid": "nar-004",
+   "route": "text",
+   "answer": "Cost of revenue consists primarily of the cost of semiconductors (including wafer fabrication, assembly, testing and packaging), board and device costs, manufacturing support costs (including labor and overhead), final test yield fallout, inventory and warranty provisions, memory and component costs, tariffs, and shipping costs [3][5]. It also includes acquisition-related costs, development costs for license and service arrangements, IP-related costs, and stock-based compensation related to personnel associated with manufacturing operations [3][5].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "07e6cfe4-f92e-5a2d-95a1-bfa62cf0f9c3",
+     "accn": "0001045810-21-000010",
+     "char_start": 179292,
+     "char_end": 181087,
+     "score": 4.489885
+    },
+    {
+     "chunk_id": "42118875-975b-5b06-a3c7-6efc8f70b780",
+     "accn": "0001045810-21-000131",
+     "char_start": 87889,
+     "char_end": 89478,
+     "score": 3.193628
+    },
+    {
+     "chunk_id": "d44b223a-e0b8-5259-a826-1ad621ec7207",
+     "accn": "0001045810-23-000017",
+     "char_start": 200278,
+     "char_end": 201997,
+     "score": 2.392979
+    },
+    {
+     "chunk_id": "941d079d-5b4c-570d-b23a-2c57b598f493",
+     "accn": "0001045810-20-000065",
+     "char_start": 68504,
+     "char_end": 69933,
+     "score": 2.010061
+    },
+    {
+     "chunk_id": "64133815-0bfd-583d-b5df-2549a312a246",
+     "accn": "0001045810-24-000029",
+     "char_start": 223010,
+     "char_end": 224808,
+     "score": 1.950929
+    }
+   ],
+   "citations": [
+    "d44b223a-e0b8-5259-a826-1ad621ec7207",
+    "64133815-0bfd-583d-b5df-2549a312a246"
+   ],
+   "llm_calls": 2,
+   "seconds": 13.047000000020489,
+   "error": ""
+  },
+  {
+   "qid": "nar-005",
+   "route": "text",
+   "answer": "NVIDIA recognizes the revenue from the license and the revenue from the development services as a single performance obligation over the period in which the development services are performed [1][4][5]. Progress to completion is measured based on actual cost incurred to date as a percentage of the estimated total cost required to complete each project [1][4][5].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "618f56f7-1fa8-5ee7-8725-b307655bd7c6",
+     "accn": "0001045810-20-000010",
+     "char_start": 139472,
+     "char_end": 140829,
+     "score": 5.386539
+    },
+    {
+     "chunk_id": "1c41e482-981b-501c-b2db-eb6f87a5bc5a",
+     "accn": "0001045810-24-000029",
+     "char_start": 216999,
+     "char_end": 218672,
+     "score": 3.952461
+    },
+    {
+     "chunk_id": "32cb9aa4-68ed-5454-9085-a7e829f22537",
+     "accn": "0001045810-25-000023",
+     "char_start": 225485,
+     "char_end": 227177,
+     "score": 3.82061
+    },
+    {
+     "chunk_id": "785561fe-dd2c-5ec7-a7f1-da313a4e15dc",
+     "accn": "0001045810-22-000036",
+     "char_start": 177422,
+     "char_end": 178741,
+     "score": 3.082275
+    },
+    {
+     "chunk_id": "5be344fc-1343-5d37-95fe-02d518dec297",
+     "accn": "0001045810-21-000010",
+     "char_start": 172051,
+     "char_end": 173847,
+     "score": 0.481116
+    }
+   ],
+   "citations": [
+    "618f56f7-1fa8-5ee7-8725-b307655bd7c6",
+    "785561fe-dd2c-5ec7-a7f1-da313a4e15dc",
+    "5be344fc-1343-5d37-95fe-02d518dec297"
+   ],
+   "llm_calls": 2,
+   "seconds": 11.827999999979511,
+   "error": ""
+  },
+  {
+   "qid": "nar-006",
+   "route": "text",
+   "answer": "Under the September 2020 purchase agreement valued at $40 billion, NVIDIA was to pay $2 billion in cash at signing, $10 billion in cash at closing, and issue 44.3 million shares of common stock with an aggregate value of $21.5 billion [1]. The $2 billion paid at signing was allocated as $1.36 billion for advanced consideration for the acquisition, $0.17 billion for the prepayment of intellectual property licenses, and $0.47 billion for royalties [1].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "1fa389da-380c-55c0-8432-1f9ae3f44be1",
+     "accn": "0001045810-21-000010",
+     "char_start": 33831,
+     "char_end": 35652,
+     "score": 4.658894
+    },
+    {
+     "chunk_id": "862b0b6c-6575-57a8-83db-849ac7f1081f",
+     "accn": "0001045810-22-000036",
+     "char_start": 159275,
+     "char_end": 159847,
+     "score": 4.178786
+    },
+    {
+     "chunk_id": "20381138-4516-5aa9-9938-621226b2cdb2",
+     "accn": "0001045810-20-000189",
+     "char_start": 85201,
+     "char_end": 87088,
+     "score": 3.922211
+    },
+    {
+     "chunk_id": "65687404-2e43-5fad-a885-32f960e75c11",
+     "accn": "0001045810-21-000010",
+     "char_start": 153008,
+     "char_end": 154895,
+     "score": 3.686427
+    },
+    {
+     "chunk_id": "a4d1ba12-e2b5-5034-ae01-5d44255dbc8a",
+     "accn": "0001045810-22-000036",
+     "char_start": 33854,
+     "char_end": 35441,
+     "score": 3.297992
+    }
+   ],
+   "citations": [
+    "1fa389da-380c-55c0-8432-1f9ae3f44be1"
+   ],
+   "llm_calls": 2,
+   "seconds": 8.969000000011874,
+   "error": ""
+  },
+  {
+   "qid": "nar-007",
+   "route": "text",
+   "answer": "In fiscal year 2020, NVIDIA returned $390 million in quarterly cash dividends [1][3][4]. The company did not repurchase any shares during fiscal year 2020 [1][3][4].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "8b4a1f03-342b-5d19-bed5-f015d903a4a7",
+     "accn": "0001045810-20-000010",
+     "char_start": 118496,
+     "char_end": 120185,
+     "score": 7.385473
+    },
+    {
+     "chunk_id": "25aa3263-5b75-5be2-90e9-d4ffd53db183",
+     "accn": "0001045810-22-000147",
+     "char_start": 86716,
+     "char_end": 88393,
+     "score": 7.381785
+    },
+    {
+     "chunk_id": "dcf2039f-1a70-5fbd-ae80-38f1fe07dca7",
+     "accn": "0001045810-20-000010",
+     "char_start": 155015,
+     "char_end": 156780,
+     "score": 7.263321
+    },
+    {
+     "chunk_id": "82d6cb92-76f0-5e44-9790-78fa822bd027",
+     "accn": "0001045810-20-000010",
+     "char_start": 130328,
+     "char_end": 131646,
+     "score": 7.06243
+    },
+    {
+     "chunk_id": "25fb9315-9e4f-593e-8520-558156181cc9",
+     "accn": "0001045810-20-000065",
+     "char_start": 101220,
+     "char_end": 102577,
+     "score": 6.80618
+    }
+   ],
+   "citations": [
+    "8b4a1f03-342b-5d19-bed5-f015d903a4a7",
+    "dcf2039f-1a70-5fbd-ae80-38f1fe07dca7",
+    "82d6cb92-76f0-5e44-9790-78fa822bd027"
+   ],
+   "llm_calls": 2,
+   "seconds": 11.937000000005355,
+   "error": ""
+  },
+  {
+   "qid": "nar-008",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "9e8c3b35-55a9-59be-accc-76877a6d3a3e",
+     "accn": "0001534701-24-000132",
+     "char_start": 144459,
+     "char_end": 145980,
+     "score": 7.626183
+    },
+    {
+     "chunk_id": "3f622581-090d-5dfe-bd79-e2445f843d73",
+     "accn": "0001534701-24-000104",
+     "char_start": 119271,
+     "char_end": 120549,
+     "score": 7.532324
+    },
+    {
+     "chunk_id": "68dc94a9-1aaa-5bda-a081-67dab4d42b81",
+     "accn": "0001534701-24-000166",
+     "char_start": 173580,
+     "char_end": 175263,
+     "score": 7.064539
+    },
+    {
+     "chunk_id": "d93a108f-537d-5d1f-9485-990fcfc2dbc4",
+     "accn": "0001534701-24-000166",
+     "char_start": 170802,
+     "char_end": 171779,
+     "score": 6.487343
+    },
+    {
+     "chunk_id": "22fadddb-76ef-5575-a92e-3d1a5beb932d",
+     "accn": "0001534701-25-000074",
+     "char_start": 308308,
+     "char_end": 310052,
+     "score": 6.48021
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 10.780999999988126,
+   "error": ""
+  },
+  {
+   "qid": "nar-009",
+   "route": "text",
+   "answer": "At December 31, 2023, borrowings outstanding under the Advance Term Loan agreements with WRB totaled $290 million [1]. On December 31, 2024, WRB distributed its Advance Term Loan with a principal balance of $290 million to Phillips 66 Company, which reduced the related party debt balance and the investment in WRB by $290 million [1].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "ebe02538-fdd2-59d3-aaa1-1416883649be",
+     "accn": "0001534701-25-000074",
+     "char_start": 299357,
+     "char_end": 300125,
+     "score": 9.627329
+    },
+    {
+     "chunk_id": "294d6092-6fdd-551e-8d9b-15447441e0df",
+     "accn": "0001534701-24-000166",
+     "char_start": 167489,
+     "char_end": 169203,
+     "score": 9.454509
+    },
+    {
+     "chunk_id": "1263da8e-e893-5d99-9cf0-cf1efadc62ac",
+     "accn": "0001534701-24-000078",
+     "char_start": 281385,
+     "char_end": 281903,
+     "score": 7.845615
+    },
+    {
+     "chunk_id": "e2724a8b-9cb1-5055-9577-6be0dc7e11a5",
+     "accn": "0001534701-23-000123",
+     "char_start": 158303,
+     "char_end": 159901,
+     "score": 7.829208
+    },
+    {
+     "chunk_id": "8860c755-e21a-55dd-9154-9109a3b82b2c",
+     "accn": "0001534701-21-000209",
+     "char_start": 143200,
+     "char_end": 144538,
+     "score": 7.459814
+    }
+   ],
+   "citations": [
+    "ebe02538-fdd2-59d3-aaa1-1416883649be"
+   ],
+   "llm_calls": 2,
+   "seconds": 10.5,
+   "error": ""
+  },
+  {
+   "qid": "nar-010",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "78dbfa6d-c566-5246-85e1-8f2cfdc56dcf",
+     "accn": "0001534701-23-000123",
+     "char_start": 167411,
+     "char_end": 169068,
+     "score": 8.050611
+    },
+    {
+     "chunk_id": "58000044-47a1-58e1-816d-853d7992ee15",
+     "accn": "0001534701-24-000078",
+     "char_start": 297619,
+     "char_end": 298668,
+     "score": 8.050076
+    },
+    {
+     "chunk_id": "c1df4bf1-24f6-5cf6-bf13-cda7f5d41334",
+     "accn": "0001534701-23-000148",
+     "char_start": 178748,
+     "char_end": 180423,
+     "score": 7.974582
+    },
+    {
+     "chunk_id": "adfa2daf-47cc-5a63-b081-6cf02030e254",
+     "accn": "0001534701-22-000185",
+     "char_start": 204748,
+     "char_end": 205848,
+     "score": 7.298342
+    },
+    {
+     "chunk_id": "9d665f26-56d0-5467-82ad-41994cd85b81",
+     "accn": "0001534701-23-000053",
+     "char_start": 284885,
+     "char_end": 286682,
+     "score": 7.287629
+    }
+   ],
+   "citations": [],
+   "llm_calls": 1,
+   "seconds": 37.187999999994645,
+   "error": ""
+  },
+  {
+   "qid": "nar-011",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "c61582a9-4c53-57e4-ab70-cd1e2f45335c",
+     "accn": "0000027419-24-000032",
+     "char_start": 118447,
+     "char_end": 119246,
+     "score": -0.207697
+    },
+    {
+     "chunk_id": "47ab8ba8-4c0d-5e8d-bef0-a8bd29d18cad",
+     "accn": "0000027419-25-000018",
+     "char_start": 136025,
+     "char_end": 136825,
+     "score": -0.241281
+    },
+    {
+     "chunk_id": "f180eefb-fc0d-5074-946a-c19d4aebe977",
+     "accn": "0000027419-23-000015",
+     "char_start": 104952,
+     "char_end": 105750,
+     "score": -0.256377
+    },
+    {
+     "chunk_id": "3883dd58-d153-51a7-9517-cf2106679b44",
+     "accn": "0000060667-22-000038",
+     "char_start": 161609,
+     "char_end": 163084,
+     "score": -0.370373
+    },
+    {
+     "chunk_id": "1d47e2bb-44a8-5e55-80b8-5c56c8aa323a",
+     "accn": "0000104169-22-000012",
+     "char_start": 239841,
+     "char_end": 241596,
+     "score": -0.447722
+    }
+   ],
+   "citations": [],
+   "llm_calls": 1,
+   "seconds": 25.578999999997905,
+   "error": ""
+  },
+  {
+   "qid": "nar-012",
+   "route": "refuse",
+   "answer": "Phillips 66 Partners held an effective ownership interest of 42.25% in Gray Oak Pipeline, LLC [3][4][5]. INSUFFICIENT EVIDENCE is provided regarding who else owns the entity.",
+   "refused": true,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 2.14000000001397,
+   "error": ""
+  },
+  {
+   "qid": "nar-013",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "ad097358-1ff9-5c82-bb9e-97491ddbad29",
+     "accn": "0000034088-24-000018",
+     "char_start": 63979,
+     "char_end": 65755,
+     "score": 2.269204
+    },
+    {
+     "chunk_id": "eaa51cee-6aac-5922-b963-f096086cb4bb",
+     "accn": "0000034088-23-000020",
+     "char_start": 64563,
+     "char_end": 66331,
+     "score": 2.053236
+    },
+    {
+     "chunk_id": "dc92761d-8401-53e2-9511-e4ef7d767453",
+     "accn": "0000034088-25-000010",
+     "char_start": 70108,
+     "char_end": 71529,
+     "score": 1.818196
+    },
+    {
+     "chunk_id": "577c24a2-63a2-5ecf-a43f-e9ca3d0c799b",
+     "accn": "0000034088-22-000011",
+     "char_start": 63934,
+     "char_end": 65197,
+     "score": 1.782673
+    },
+    {
+     "chunk_id": "3e5dba6b-bdc6-5e72-92fd-aad5bb4be2bd",
+     "accn": "0000034088-21-000012",
+     "char_start": 65096,
+     "char_end": 66361,
+     "score": 1.589127
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 8.796999999991385,
+   "error": ""
+  },
+  {
+   "qid": "nar-014",
+   "route": "text",
+   "answer": "ExxonMobil states that one of the specific factors affecting the performance of major projects is its ability to influence the performance of project operators where ExxonMobil does not perform that role [1][2][3].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "3bdb6193-4ae6-598f-bf29-206f3d133e83",
+     "accn": "0000034088-21-000012",
+     "char_start": 72703,
+     "char_end": 74333,
+     "score": 3.3956
+    },
+    {
+     "chunk_id": "ae0d551d-fc2e-5b26-90be-97937604f05a",
+     "accn": "0000034088-25-000010",
+     "char_start": 91136,
+     "char_end": 92933,
+     "score": 1.359304
+    },
+    {
+     "chunk_id": "2e0171c9-f104-5e92-ba82-be97964af993",
+     "accn": "0000034088-22-000011",
+     "char_start": 75335,
+     "char_end": 77071,
+     "score": 0.958463
+    },
+    {
+     "chunk_id": "b5da8ba2-951c-52f0-9a3d-9d7ef1c6ce67",
+     "accn": "0000034088-23-000020",
+     "char_start": 139430,
+     "char_end": 140664,
+     "score": 0.705218
+    },
+    {
+     "chunk_id": "b446f589-f935-540c-af04-e6b149ee5d87",
+     "accn": "0000034088-21-000012",
+     "char_start": 74334,
+     "char_end": 75690,
+     "score": 0.429728
+    }
+   ],
+   "citations": [
+    "3bdb6193-4ae6-598f-bf29-206f3d133e83",
+    "ae0d551d-fc2e-5b26-90be-97937604f05a",
+    "2e0171c9-f104-5e92-ba82-be97964af993"
+   ],
+   "llm_calls": 2,
+   "seconds": 10.546999999991385,
+   "error": ""
+  },
+  {
+   "qid": "nar-015",
+   "route": "text",
+   "answer": "Qualcomm states that its research, development, and other investments in new and expanded product areas, industries, and applications may not generate operating income or contribute to future results of operations that meet expectations [2][3][4][5]. Additionally, its growth depends in part on its ability to extend technologies into these areas, develop cost-effective products, and have third parties incorporate them into devices [4][5].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "7fe7cc82-fd5e-5000-b92f-f01acb668f57",
+     "accn": "0000050863-22-000007",
+     "char_start": 237926,
+     "char_end": 239292,
+     "score": 1.656691
+    },
+    {
+     "chunk_id": "97bbb7d9-00d1-57f7-b3e0-9ec8c62be060",
+     "accn": "0000804328-25-000011",
+     "char_start": 67670,
+     "char_end": 69298,
+     "score": 1.145203
+    },
+    {
+     "chunk_id": "df92e42b-56fb-5481-8e98-23bd948e7827",
+     "accn": "0000804328-25-000011",
+     "char_start": 88700,
+     "char_end": 89689,
+     "score": 1.101433
+    },
+    {
+     "chunk_id": "525204f3-8c13-5d26-a932-8cd9e848bb1d",
+     "accn": "0000804328-23-000023",
+     "char_start": 111631,
+     "char_end": 113363,
+     "score": 0.471514
+    },
+    {
+     "chunk_id": "ba3f9945-617b-5e30-9d11-2002e9cd936e",
+     "accn": "0000804328-23-000055",
+     "char_start": 126017,
+     "char_end": 127732,
+     "score": 0.46981
+    }
+   ],
+   "citations": [
+    "97bbb7d9-00d1-57f7-b3e0-9ec8c62be060",
+    "df92e42b-56fb-5481-8e98-23bd948e7827",
+    "525204f3-8c13-5d26-a932-8cd9e848bb1d",
+    "ba3f9945-617b-5e30-9d11-2002e9cd936e"
+   ],
+   "llm_calls": 2,
+   "seconds": 9.75,
+   "error": ""
+  },
+  {
+   "qid": "nar-016",
+   "route": "text",
+   "answer": "Qualcomm states that a significant portion of its income qualifies for preferential treatment as FDII (foreign-derived intangible income) [2]. The effective tax rate for FDII is 13% [3].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "d41bc6a7-2c16-5f78-b92c-034126c914d5",
+     "accn": "0001728949-22-000012",
+     "char_start": 72938,
+     "char_end": 74472,
+     "score": 4.360037
+    },
+    {
+     "chunk_id": "82437fbc-5305-5a6a-85d9-31d398b3a908",
+     "accn": "0000804328-24-000075",
+     "char_start": 232969,
+     "char_end": 234113,
+     "score": 3.551058
+    },
+    {
+     "chunk_id": "596b3e27-8c0c-5a76-9317-13c1f96da221",
+     "accn": "0000804328-22-000021",
+     "char_start": 250851,
+     "char_end": 251758,
+     "score": 3.488449
+    },
+    {
+     "chunk_id": "d50d9c47-4518-579d-a39e-e8b2b00775ae",
+     "accn": "0001728949-22-000012",
+     "char_start": 208111,
+     "char_end": 209311,
+     "score": 3.469032
+    },
+    {
+     "chunk_id": "350bd503-f038-58dd-bd28-5fd37583afb4",
+     "accn": "0000804328-24-000017",
+     "char_start": 195326,
+     "char_end": 197033,
+     "score": 3.417094
+    }
+   ],
+   "citations": [
+    "82437fbc-5305-5a6a-85d9-31d398b3a908",
+    "596b3e27-8c0c-5a76-9317-13c1f96da221"
+   ],
+   "llm_calls": 2,
+   "seconds": 11.328000000008615,
+   "error": ""
+  },
+  {
+   "qid": "nar-017",
+   "route": "text",
+   "answer": "The increase in cash, cash equivalents, and short-term investments was primarily driven by the acquisition of Xilinx on February 14, 2022, which provided $2.4 billion of cash and $1.6 billion of short-term investments [1].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "a34c416e-163b-5b6d-b247-90ab5ab6f11b",
+     "accn": "0000002488-22-000078",
+     "char_start": 92034,
+     "char_end": 93736,
+     "score": 6.258167
+    },
+    {
+     "chunk_id": "b4e18b07-54af-5235-bf0d-7c14fb1af5d7",
+     "accn": "0000002488-22-000170",
+     "char_start": 108757,
+     "char_end": 110368,
+     "score": 5.610102
+    },
+    {
+     "chunk_id": "7498693c-00b3-5e32-aab9-2d80ff9742dc",
+     "accn": "0000002488-24-000012",
+     "char_start": 268778,
+     "char_end": 270226,
+     "score": 4.480277
+    },
+    {
+     "chunk_id": "05b0be10-6a34-5de8-985c-a759edcf325c",
+     "accn": "0000002488-23-000076",
+     "char_start": 83082,
+     "char_end": 84614,
+     "score": 4.331055
+    },
+    {
+     "chunk_id": "74adb9db-c893-5979-9f5e-b95f4c360d59",
+     "accn": "0000002488-23-000195",
+     "char_start": 96161,
+     "char_end": 97739,
+     "score": 4.19
+    }
+   ],
+   "citations": [
+    "a34c416e-163b-5b6d-b247-90ab5ab6f11b"
+   ],
+   "llm_calls": 2,
+   "seconds": 11.905999999988126,
+   "error": ""
+  },
+  {
+   "qid": "nar-018",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "77d7dbb0-3ce1-5a25-ba3d-d677aa504557",
+     "accn": "0000002488-22-000078",
+     "char_start": 110166,
+     "char_end": 111938,
+     "score": 4.27332
+    },
+    {
+     "chunk_id": "92bb7e8a-21e8-5d10-b59c-00550f73290f",
+     "accn": "0000050863-21-000010",
+     "char_start": 390117,
+     "char_end": 391898,
+     "score": 4.199074
+    },
+    {
+     "chunk_id": "3acb2772-09fc-5a9a-89da-a15e571eabc0",
+     "accn": "0000002488-21-000116",
+     "char_start": 72182,
+     "char_end": 73926,
+     "score": 2.825656
+    },
+    {
+     "chunk_id": "fa83c489-1c12-500e-bb21-3b55ec178ce8",
+     "accn": "0000002488-24-000163",
+     "char_start": 86738,
+     "char_end": 87738,
+     "score": 2.811504
+    },
+    {
+     "chunk_id": "4dded01a-9e23-5ba4-94b1-3d7dcdd63e7b",
+     "accn": "0000002488-24-000123",
+     "char_start": 80204,
+     "char_end": 81253,
+     "score": 2.778036
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 12.171999999991385,
+   "error": ""
+  },
+  {
+   "qid": "nar-019",
+   "route": "text",
+   "answer": "To support its ability to sustain and grow profitability, AMD pointed to the continued positive momentum of consumer and commercial products (including newly released desktop, mobile, and graphics processors), greater market acceptance of server products, successful adoption of new game console processor products, and continued leadership in the development of HPC products [1][2]. Additionally, the company relied on its history of profitable operating results—including current period results—along with increasingly favorable forecasts of continued future profitability [1][2].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "2eeac56f-6fdf-5d06-aaf4-ef65dc943ce7",
+     "accn": "0001628280-21-001185",
+     "char_start": 227495,
+     "char_end": 228873,
+     "score": 3.885397
+    },
+    {
+     "chunk_id": "694ad93c-7dd1-5710-b051-6f8a4fc4094e",
+     "accn": "0001628280-21-001185",
+     "char_start": 219713,
+     "char_end": 221498,
+     "score": 2.875162
+    },
+    {
+     "chunk_id": "aa617ea1-d0e3-5908-863c-b7cb841ad9fe",
+     "accn": "0000002488-20-000164",
+     "char_start": 86718,
+     "char_end": 88489,
+     "score": 1.899645
+    },
+    {
+     "chunk_id": "be1b1a44-ccf4-56fa-aacf-0895ca2c69e0",
+     "accn": "0001628280-21-001185",
+     "char_start": 155239,
+     "char_end": 156666,
+     "score": 1.69235
+    },
+    {
+     "chunk_id": "de5b0c32-5757-503b-a6a1-dcab551f141a",
+     "accn": "0000002488-20-000103",
+     "char_start": 69369,
+     "char_end": 70983,
+     "score": 1.689179
+    }
+   ],
+   "citations": [
+    "2eeac56f-6fdf-5d06-aaf4-ef65dc943ce7",
+    "694ad93c-7dd1-5710-b051-6f8a4fc4094e"
+   ],
+   "llm_calls": 2,
+   "seconds": 9.594000000011874,
+   "error": ""
+  },
+  {
+   "qid": "nar-020",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "1d47e2bb-44a8-5e55-80b8-5c56c8aa323a",
+     "accn": "0000104169-22-000012",
+     "char_start": 239841,
+     "char_end": 241596,
+     "score": 1.924
+    },
+    {
+     "chunk_id": "caecda6e-1593-5604-9b23-ea4e52de0869",
+     "accn": "0000104169-21-000033",
+     "char_start": 222715,
+     "char_end": 224455,
+     "score": 1.678551
+    },
+    {
+     "chunk_id": "72ffd484-e37f-50cf-9266-68c01ed9c3af",
+     "accn": "0000034088-20-000073",
+     "char_start": 62475,
+     "char_end": 64125,
+     "score": 1.356091
+    },
+    {
+     "chunk_id": "93a1a399-8a4f-5f18-9640-380d32fe92ad",
+     "accn": "0000104169-20-000011",
+     "char_start": 214380,
+     "char_end": 215868,
+     "score": 1.319485
+    },
+    {
+     "chunk_id": "9692047b-cd6a-51e9-b90e-a10f9f3b7b38",
+     "accn": "0001728949-20-000067",
+     "char_start": 287129,
+     "char_end": 288836,
+     "score": 0.70447
+    }
+   ],
+   "citations": [],
+   "llm_calls": 1,
+   "seconds": 22.48399999999674,
+   "error": ""
+  },
+  {
+   "qid": "nar-021",
+   "route": "text",
+   "answer": "A 10% change in the self-insurance liability would have affected net earnings by approximately $82 million for 2020 [1].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "9a817b2c-6a56-557c-adcf-23797e7b8252",
+     "accn": "0000060667-21-000026",
+     "char_start": 169477,
+     "char_end": 170105,
+     "score": 5.9724
+    },
+    {
+     "chunk_id": "3fa5ca77-61d7-5aab-ba3a-960c14572990",
+     "accn": "0000060667-20-000036",
+     "char_start": 165228,
+     "char_end": 165835,
+     "score": 5.149415
+    },
+    {
+     "chunk_id": "1709bb49-fefe-5f0f-844e-e0ec6742127f",
+     "accn": "0000060667-24-000033",
+     "char_start": 171829,
+     "char_end": 172450,
+     "score": 4.992311
+    },
+    {
+     "chunk_id": "7da2baaf-813a-547f-ad4e-c67e449b9fff",
+     "accn": "0000060667-25-000049",
+     "char_start": 164868,
+     "char_end": 165489,
+     "score": 4.973126
+    },
+    {
+     "chunk_id": "fd0709fb-dde3-511f-8699-b8cf91c94a21",
+     "accn": "0000060667-22-000038",
+     "char_start": 168434,
+     "char_end": 169041,
+     "score": 4.864807
+    }
+   ],
+   "citations": [
+    "9a817b2c-6a56-557c-adcf-23797e7b8252"
+   ],
+   "llm_calls": 2,
+   "seconds": 10.23399999999674,
+   "error": ""
+  },
+  {
+   "qid": "nar-022",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "7f389676-41f8-5053-b97b-bf4c05be020d",
+     "accn": "0000200406-23-000102",
+     "char_start": 281719,
+     "char_end": 283338,
+     "score": 2.894657
+    },
+    {
+     "chunk_id": "0ca14def-7c3d-5c73-8d8e-29cc22dc1589",
+     "accn": "0000200406-23-000082",
+     "char_start": 298061,
+     "char_end": 299711,
+     "score": 2.806684
+    },
+    {
+     "chunk_id": "0ae71d1e-8b54-5256-bda3-1c2631cf7f13",
+     "accn": "0000354950-25-000085",
+     "char_start": 170456,
+     "char_end": 172196,
+     "score": 2.719049
+    },
+    {
+     "chunk_id": "1d244074-e2c3-57ba-9c33-a60b99256e11",
+     "accn": "0000354950-22-000239",
+     "char_start": 48873,
+     "char_end": 50482,
+     "score": 2.627019
+    },
+    {
+     "chunk_id": "8744bb7e-23ca-55d5-8891-98d82509722a",
+     "accn": "0000002488-24-000056",
+     "char_start": 75226,
+     "char_end": 77026,
+     "score": 2.426818
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 8.485000000015134,
+   "error": ""
+  },
+  {
+   "qid": "nar-023",
+   "route": "text",
+   "answer": "Home Depot defines purchase obligations as all legally binding contracts such as firm commitments for inventory purchases, media and sponsorship spend, software and license commitments, and legally binding service contracts [2]. Inventory purchase orders that are cancellable by their terms are not considered to be firm inventory commitments and are therefore excluded [2].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "8ff54ba8-29c3-58b6-b043-a900f2f4fec5",
+     "accn": "0000027419-20-000008",
+     "char_start": 101022,
+     "char_end": 102812,
+     "score": 2.743527
+    },
+    {
+     "chunk_id": "454ed197-e216-5289-8fb5-bf7741b67449",
+     "accn": "0000354950-25-000085",
+     "char_start": 191438,
+     "char_end": 193174,
+     "score": 2.226457
+    },
+    {
+     "chunk_id": "984ecdd0-9ddc-56a4-87f9-3d374af4d09d",
+     "accn": "0001730168-20-000226",
+     "char_start": 291090,
+     "char_end": 292878,
+     "score": 1.633077
+    },
+    {
+     "chunk_id": "6fad139c-6e68-52a1-a333-2c39ebb79c1c",
+     "accn": "0000104169-23-000020",
+     "char_start": 236484,
+     "char_end": 238125,
+     "score": 0.687129
+    },
+    {
+     "chunk_id": "00584158-48af-55e6-826c-1eef29e4601e",
+     "accn": "0000002488-25-000012",
+     "char_start": 145842,
+     "char_end": 147743,
+     "score": 0.257305
+    }
+   ],
+   "citations": [
+    "454ed197-e216-5289-8fb5-bf7741b67449"
+   ],
+   "llm_calls": 2,
+   "seconds": 8.452999999979511,
+   "error": ""
+  },
+  {
+   "qid": "nar-024",
+   "route": "text",
+   "answer": "In March 2020, Home Depot expanded its commercial paper programs from $3.0 billion to $6.0 billion [1][2][3][5]. These programs were backed by back-up credit facilities for borrowings up to $6.5 billion, which consisted of a 364-day $3.5 billion credit facility entered into in March 2020, a five-year $2.0 billion credit facility, and a 364-day $1.0 billion credit facility [1][2][3][5].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "a5615607-2e33-5a4e-a443-7e20b83ac718",
+     "accn": "0000354950-21-000089",
+     "char_start": 164940,
+     "char_end": 166538,
+     "score": 5.396731
+    },
+    {
+     "chunk_id": "5e0b8f7e-d950-5fa1-9b55-abb4d46f6c8e",
+     "accn": "0000354950-20-000041",
+     "char_start": 63179,
+     "char_end": 64889,
+     "score": 4.731302
+    },
+    {
+     "chunk_id": "f17a3650-8899-5216-984d-3c3a4c6748f5",
+     "accn": "0000354950-20-000103",
+     "char_start": 78515,
+     "char_end": 80245,
+     "score": 4.710914
+    },
+    {
+     "chunk_id": "aa372763-5b18-5c9f-ae5e-519547998958",
+     "accn": "0001562762-20-000162",
+     "char_start": 169269,
+     "char_end": 171035,
+     "score": 3.862133
+    },
+    {
+     "chunk_id": "b4ff3375-6f04-50aa-a137-bd482e767ac7",
+     "accn": "0000354950-20-000015",
+     "char_start": 140457,
+     "char_end": 141961,
+     "score": 3.302572
+    }
+   ],
+   "citations": [
+    "a5615607-2e33-5a4e-a443-7e20b83ac718",
+    "5e0b8f7e-d950-5fa1-9b55-abb4d46f6c8e",
+    "f17a3650-8899-5216-984d-3c3a4c6748f5",
+    "b4ff3375-6f04-50aa-a137-bd482e767ac7"
+   ],
+   "llm_calls": 2,
+   "seconds": 9.65600000001723,
+   "error": ""
+  },
+  {
+   "qid": "nar-025",
+   "route": "text",
+   "answer": "Home Depot evaluates its long-lived assets each quarter for indicators of potential impairment [1]. Indicators include current period losses combined with a history of losses, a decision to relocate or close a store or other location before the end of its previously estimated useful life, or when changes in other circumstances indicate the carrying amount of an asset may not be recoverable [1].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "45525d39-07d2-51f6-8013-436971a193ec",
+     "accn": "0000354950-22-000070",
+     "char_start": 170927,
+     "char_end": 171872,
+     "score": 4.517076
+    },
+    {
+     "chunk_id": "93a1a399-8a4f-5f18-9640-380d32fe92ad",
+     "accn": "0000104169-20-000011",
+     "char_start": 214380,
+     "char_end": 215868,
+     "score": 3.974471
+    },
+    {
+     "chunk_id": "1d47e2bb-44a8-5e55-80b8-5c56c8aa323a",
+     "accn": "0000104169-22-000012",
+     "char_start": 239841,
+     "char_end": 241596,
+     "score": 3.893574
+    },
+    {
+     "chunk_id": "caecda6e-1593-5604-9b23-ea4e52de0869",
+     "accn": "0000104169-21-000033",
+     "char_start": 222715,
+     "char_end": 224455,
+     "score": 3.849602
+    },
+    {
+     "chunk_id": "d85ed7f3-25ec-59e9-9310-ef7df523c4cd",
+     "accn": "0000078003-25-000054",
+     "char_start": 356611,
+     "char_end": 358390,
+     "score": 3.685053
+    }
+   ],
+   "citations": [
+    "45525d39-07d2-51f6-8013-436971a193ec"
+   ],
+   "llm_calls": 2,
+   "seconds": 6.75,
+   "error": ""
+  },
+  {
+   "qid": "nar-026",
+   "route": "text",
+   "answer": "Target discloses non-GAAP adjusted diluted earnings per share (Adjusted EPS) to provide additional transparency and useful period-to-period comparisons of the results of its operations [1][2][3][5]. This metric excludes certain discretely managed or other specific items [1][2][3][5].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "38af419c-c2db-539d-9920-f593bc877d83",
+     "accn": "0000027419-24-000129",
+     "char_start": 37775,
+     "char_end": 38840,
+     "score": 4.348032
+    },
+    {
+     "chunk_id": "50a1d0bf-22f3-5fba-96ee-09ddaec9ec41",
+     "accn": "0000027419-23-000035",
+     "char_start": 47606,
+     "char_end": 49214,
+     "score": 3.712861
+    },
+    {
+     "chunk_id": "e99a1048-f080-51b5-be11-6c15e1020251",
+     "accn": "0000027419-23-000015",
+     "char_start": 76551,
+     "char_end": 77721,
+     "score": 3.235393
+    },
+    {
+     "chunk_id": "42cda4f3-ba4b-5945-8b8f-28d99653eadf",
+     "accn": "0000078003-20-000070",
+     "char_start": 386953,
+     "char_end": 388673,
+     "score": 2.743528
+    },
+    {
+     "chunk_id": "6d3f553f-bf7e-57e6-83b6-c07557af8b1f",
+     "accn": "0000027419-21-000026",
+     "char_start": 47121,
+     "char_end": 48896,
+     "score": 2.69091
+    }
+   ],
+   "citations": [
+    "38af419c-c2db-539d-9920-f593bc877d83",
+    "50a1d0bf-22f3-5fba-96ee-09ddaec9ec41",
+    "e99a1048-f080-51b5-be11-6c15e1020251",
+    "6d3f553f-bf7e-57e6-83b6-c07557af8b1f"
+   ],
+   "llm_calls": 2,
+   "seconds": 8.89100000000326,
+   "error": ""
+  },
+  {
+   "qid": "nar-027",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 2.077999999979511,
+   "error": ""
+  },
+  {
+   "qid": "nar-028",
+   "route": "text",
+   "answer": "Research and development expense increased $928 million, or 25%, in fiscal year 2019 compared to the prior fiscal year [2]. The increase was primarily due to the CA Merger and higher stock-based compensation expense, offset by lower variable employee compensation expense [2].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "a178f986-e5b7-50ea-a628-e18ff5d1e8a8",
+     "accn": "0001730168-23-000077",
+     "char_start": 89069,
+     "char_end": 90550,
+     "score": 7.613906
+    },
+    {
+     "chunk_id": "5254436a-049e-5145-bdfe-ef3b0b060362",
+     "accn": "0001730168-20-000226",
+     "char_start": 266116,
+     "char_end": 267743,
+     "score": 7.016411
+    },
+    {
+     "chunk_id": "ff68d8fd-22cb-5cd7-bbad-8482fb8d8e2a",
+     "accn": "0001730168-20-000109",
+     "char_start": 125520,
+     "char_end": 127091,
+     "score": 6.465496
+    },
+    {
+     "chunk_id": "1c978aed-699c-5e41-a8bf-889fc56b84c6",
+     "accn": "0001730168-20-000226",
+     "char_start": 258332,
+     "char_end": 260128,
+     "score": 6.028358
+    },
+    {
+     "chunk_id": "c88f0b01-7ec9-5a75-9db6-995ce875b241",
+     "accn": "0000310158-21-000004",
+     "char_start": 415869,
+     "char_end": 416719,
+     "score": 6.008859
+    }
+   ],
+   "citations": [
+    "5254436a-049e-5145-bdfe-ef3b0b060362"
+   ],
+   "llm_calls": 2,
+   "seconds": 10.422000000020489,
+   "error": ""
+  },
+  {
+   "qid": "nar-029",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 5.907000000006519,
+   "error": ""
+  },
+  {
+   "qid": "nar-030",
+   "route": "text",
+   "answer": "For the fiscal quarter ended January 31, 2021, selling, general and administrative expense decreased primarily due to higher acquisition-related costs incurred in the first quarter of fiscal year 2020 from the Symantec Business acquisition, and lower compensation expense reflecting the full benefit of that completed integration [4]. For the fiscal quarter and two fiscal quarters ended May 2, 2021, the decreases were similarly driven by prior-year acquisition-related costs for the Symantec Business, lower compensation and stock-based compensation expense, and non-recurring litigation settlements included in fiscal year 2020 [5].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "c85dba0f-d232-5e3a-bb9c-2040c8464e95",
+     "accn": "0000310158-22-000003",
+     "char_start": 405778,
+     "char_end": 406848,
+     "score": 5.846038
+    },
+    {
+     "chunk_id": "c76b3546-16c0-5df5-b3cf-17d430d7e12f",
+     "accn": "0000310158-21-000009",
+     "char_start": 203527,
+     "char_end": 204513,
+     "score": 5.615286
+    },
+    {
+     "chunk_id": "a178f986-e5b7-50ea-a628-e18ff5d1e8a8",
+     "accn": "0001730168-23-000077",
+     "char_start": 89069,
+     "char_end": 90550,
+     "score": 5.545587
+    },
+    {
+     "chunk_id": "b793a4ed-cffc-5c29-9089-b28a7935e80e",
+     "accn": "0001730168-21-000045",
+     "char_start": 88792,
+     "char_end": 90572,
+     "score": 5.486565
+    },
+    {
+     "chunk_id": "3f7a6af5-25b2-5ae1-9f14-f3f8643361d6",
+     "accn": "0001730168-21-000116",
+     "char_start": 99933,
+     "char_end": 101584,
+     "score": 5.450963
+    }
+   ],
+   "citations": [
+    "b793a4ed-cffc-5c29-9089-b28a7935e80e",
+    "3f7a6af5-25b2-5ae1-9f14-f3f8643361d6"
+   ],
+   "llm_calls": 2,
+   "seconds": 15.671000000002095,
+   "error": ""
+  },
+  {
+   "qid": "nar-031",
+   "route": "text",
+   "answer": "Pursuant to the 2017 Indentures, Broadcom Cayman Finance Limited and Broadcom Corporation issued $13,550 million and $4,000 million aggregate principal amount of notes, respectively [1][2][3][4][5].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "47d2fe63-4ba0-5cac-afe6-0e604632aef6",
+     "accn": "0001730168-20-000164",
+     "char_start": 149611,
+     "char_end": 150894,
+     "score": 8.649575
+    },
+    {
+     "chunk_id": "f32e9fc2-0f71-5498-8e8f-eb05bcb26807",
+     "accn": "0001730168-21-000153",
+     "char_start": 257880,
+     "char_end": 259329,
+     "score": 8.520032
+    },
+    {
+     "chunk_id": "36067e46-474d-551c-8746-4a39eedbd225",
+     "accn": "0001730168-20-000109",
+     "char_start": 144164,
+     "char_end": 145759,
+     "score": 8.065475
+    },
+    {
+     "chunk_id": "a51e9fd8-9af0-51d0-b642-3c73286ac7aa",
+     "accn": "0001730168-21-000123",
+     "char_start": 122133,
+     "char_end": 123711,
+     "score": 7.85187
+    },
+    {
+     "chunk_id": "db3e3b3a-9c7d-598f-99ce-3df04bb696a6",
+     "accn": "0001730168-20-000226",
+     "char_start": 285352,
+     "char_end": 286791,
+     "score": 7.778989
+    }
+   ],
+   "citations": [
+    "47d2fe63-4ba0-5cac-afe6-0e604632aef6",
+    "f32e9fc2-0f71-5498-8e8f-eb05bcb26807",
+    "36067e46-474d-551c-8746-4a39eedbd225",
+    "a51e9fd8-9af0-51d0-b642-3c73286ac7aa",
+    "db3e3b3a-9c7d-598f-99ce-3df04bb696a6"
+   ],
+   "llm_calls": 2,
+   "seconds": 9.828999999997905,
+   "error": ""
+  },
+  {
+   "qid": "nar-032",
+   "route": "text",
+   "answer": "Eli Lilly's foreign currency risk exposure results primarily from the U.S. dollar against the euro, Japanese yen, and Chinese yuan [2, 3, 5]. To reduce the effect of fluctuating currency exchange rates, the company may enter into foreign currency forward or option derivative contracts, guided by a corporate risk-management policy that outlines the minimum and maximum hedge coverage [2, 3, 5].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "9ede74c3-b1c4-5ea9-82b3-581171cae5e6",
+     "accn": "0000310158-21-000004",
+     "char_start": 459284,
+     "char_end": 460362,
+     "score": 1.390938
+    },
+    {
+     "chunk_id": "d6b673f7-c158-5946-86ce-d581e5b08e06",
+     "accn": "0000059478-23-000082",
+     "char_start": 288305,
+     "char_end": 289911,
+     "score": 1.325194
+    },
+    {
+     "chunk_id": "4675654e-d6c0-55be-910e-d9385c0cddc9",
+     "accn": "0000059478-21-000083",
+     "char_start": 284470,
+     "char_end": 286048,
+     "score": 1.16999
+    },
+    {
+     "chunk_id": "9c7e5fd6-7d62-5e88-8d43-7af190a76c3a",
+     "accn": "0000059478-22-000250",
+     "char_start": 196941,
+     "char_end": 197893,
+     "score": 1.068237
+    },
+    {
+     "chunk_id": "779f1ea9-034a-5e3b-877b-8872c946fd32",
+     "accn": "0000059478-24-000065",
+     "char_start": 295679,
+     "char_end": 297294,
+     "score": 1.04175
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 13.030999999988126,
+   "error": ""
+  },
+  {
+   "qid": "nar-033",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "7944e7d4-f0b4-5659-bc39-77b5363d4366",
+     "accn": "0000059478-20-000155",
+     "char_start": 225741,
+     "char_end": 227338,
+     "score": 4.0611
+    },
+    {
+     "chunk_id": "7e9942e9-e8b5-5e57-9484-b2493833b4ea",
+     "accn": "0001551152-20-000015",
+     "char_start": 110150,
+     "char_end": 111931,
+     "score": 3.245984
+    },
+    {
+     "chunk_id": "c0554e01-f9c2-5470-9463-cdaeb34be12e",
+     "accn": "0000059478-21-000171",
+     "char_start": 244302,
+     "char_end": 245923,
+     "score": 2.754608
+    },
+    {
+     "chunk_id": "338b2e1e-3841-52b3-879d-4eca85a5ac74",
+     "accn": "0001730168-21-000116",
+     "char_start": 98588,
+     "char_end": 99976,
+     "score": 2.330446
+    },
+    {
+     "chunk_id": "dc46e545-406a-5210-ba80-f94044313b78",
+     "accn": "0001551152-21-000025",
+     "char_start": 168482,
+     "char_end": 170273,
+     "score": 1.93167
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 9.859000000025844,
+   "error": ""
+  },
+  {
+   "qid": "nar-034",
+   "route": "text",
+   "answer": "Government authorities use mandated discounts, price reporting requirements, mandated reference prices, restrictive formularies, and changes to available intellectual property protections [1][2][3][4][5]. Additionally, they employ worldwide cost containment efforts such as setting prices for certain single-source drugs and biologics under the Inflation Reduction Act [1][3][4][5].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "4d3292bf-d780-5f0b-9955-bab66ec8af86",
+     "accn": "0000059478-22-000250",
+     "char_start": 197824,
+     "char_end": 199409,
+     "score": 4.345864
+    },
+    {
+     "chunk_id": "b615525b-41fc-52bd-b89a-69710280f566",
+     "accn": "0000059478-22-000068",
+     "char_start": 260760,
+     "char_end": 262401,
+     "score": 2.763859
+    },
+    {
+     "chunk_id": "7f4a7dbe-ee42-560d-9570-1eb4cc1e4719",
+     "accn": "0000059478-24-000065",
+     "char_start": 267141,
+     "char_end": 268863,
+     "score": 2.65032
+    },
+    {
+     "chunk_id": "6e252c96-7542-58d5-a491-fa46b2fc69bc",
+     "accn": "0000059478-24-000187",
+     "char_start": 170117,
+     "char_end": 171835,
+     "score": 2.63092
+    },
+    {
+     "chunk_id": "81ad6b7d-b585-532c-ba1b-ce44fa6e4d8f",
+     "accn": "0000059478-25-000067",
+     "char_start": 275382,
+     "char_end": 277180,
+     "score": 2.62012
+    }
+   ],
+   "citations": [
+    "4d3292bf-d780-5f0b-9955-bab66ec8af86",
+    "b615525b-41fc-52bd-b89a-69710280f566",
+    "7f4a7dbe-ee42-560d-9570-1eb4cc1e4719",
+    "6e252c96-7542-58d5-a491-fa46b2fc69bc",
+    "81ad6b7d-b585-532c-ba1b-ce44fa6e4d8f"
+   ],
+   "llm_calls": 2,
+   "seconds": 9.140999999974156,
+   "error": ""
+  },
+  {
+   "qid": "nar-035",
+   "route": "text",
+   "answer": "AbbVie reviews the discount rate, the expected long-term rate of return on plan assets, and the health care cost trend rates annually [1]. These significant assumptions are used in calculating the valuation of the funded status and net periodic benefit cost for its pension and other post-employment benefit plans [1].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "a61c7256-74cb-5d05-abbb-f42a56d4ee16",
+     "accn": "0001551152-21-000008",
+     "char_start": 286741,
+     "char_end": 288529,
+     "score": 7.176267
+    },
+    {
+     "chunk_id": "79d3a066-98f7-589f-98ed-4031fb38528b",
+     "accn": "0001551152-23-000011",
+     "char_start": 280667,
+     "char_end": 282096,
+     "score": 7.037573
+    },
+    {
+     "chunk_id": "f711d38d-f2e6-5937-8938-30dc9f8fd732",
+     "accn": "0001551152-24-000011",
+     "char_start": 291205,
+     "char_end": 292634,
+     "score": 6.951481
+    },
+    {
+     "chunk_id": "575e8bdc-fa10-5ec6-af0e-f09f7023031f",
+     "accn": "0001551152-22-000007",
+     "char_start": 291613,
+     "char_end": 293043,
+     "score": 6.946534
+    },
+    {
+     "chunk_id": "07474a46-faf2-51ec-a3c4-2cdd0e0ddd28",
+     "accn": "0001551152-24-000011",
+     "char_start": 292635,
+     "char_end": 294102,
+     "score": 3.114528
+    }
+   ],
+   "citations": [
+    "a61c7256-74cb-5d05-abbb-f42a56d4ee16"
+   ],
+   "llm_calls": 2,
+   "seconds": 7.594000000011874,
+   "error": ""
+  },
+  {
+   "qid": "nar-036",
+   "route": "text",
+   "answer": "AbbVie records acquired intangible assets at fair value and valuations are usually based on a discounted cash flow analysis incorporating the stage of completion [1][2][3]. This discounted cash flow model requires assumptions about the timing and amount of future net cash flows, risk, cost of capital, terminal values, and market participants [1][2][3].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "ff6ad166-225b-5ec6-87de-678deab5409e",
+     "accn": "0001551152-21-000008",
+     "char_start": 291822,
+     "char_end": 293504,
+     "score": 7.1692
+    },
+    {
+     "chunk_id": "4215e831-6403-5243-965d-d5eef1e0792a",
+     "accn": "0001551152-23-000011",
+     "char_start": 285743,
+     "char_end": 287466,
+     "score": 7.129244
+    },
+    {
+     "chunk_id": "e34ed68f-f0da-50e2-bd1a-ca92d601b757",
+     "accn": "0001551152-25-000020",
+     "char_start": 293700,
+     "char_end": 295423,
+     "score": 7.126849
+    },
+    {
+     "chunk_id": "7d410927-7ff0-5abd-a94b-c83138e6c3cf",
+     "accn": "0000104169-20-000011",
+     "char_start": 215805,
+     "char_end": 216739,
+     "score": 5.629679
+    },
+    {
+     "chunk_id": "bb836378-a3f7-52c7-b05e-6a453e59171e",
+     "accn": "0000104169-22-000012",
+     "char_start": 241597,
+     "char_end": 242531,
+     "score": 5.629679
+    }
+   ],
+   "citations": [
+    "ff6ad166-225b-5ec6-87de-678deab5409e",
+    "4215e831-6403-5243-965d-d5eef1e0792a",
+    "e34ed68f-f0da-50e2-bd1a-ca92d601b757"
+   ],
+   "llm_calls": 2,
+   "seconds": 7.578000000008615,
+   "error": ""
+  },
+  {
+   "qid": "nar-037",
+   "route": "text",
+   "answer": "AbbVie stated that while the impact of COVID-19 on its operations to date had not been material, it experienced lower new patient starts across its therapeutic portfolio [4]. The company expected this matter could continue to negatively impact its results of operations throughout the duration of the outbreak, and noted that the extent of the impact on its financial condition and results of operations remains uncertain [4].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "0dcda1c7-80eb-5fdb-8cef-0441725df3d4",
+     "accn": "0001551152-20-000032",
+     "char_start": 206459,
+     "char_end": 208181,
+     "score": 6.442687
+    },
+    {
+     "chunk_id": "587dcd6a-f02a-545e-94ff-a0a51e52ffb0",
+     "accn": "0001551152-20-000015",
+     "char_start": 126815,
+     "char_end": 128537,
+     "score": 6.442687
+    },
+    {
+     "chunk_id": "c0b449c3-4313-505d-9cdd-10e6d151cdcb",
+     "accn": "0001551152-20-000023",
+     "char_start": 199756,
+     "char_end": 201478,
+     "score": 6.442687
+    },
+    {
+     "chunk_id": "2186c345-3c44-58e8-9734-279dda461919",
+     "accn": "0001551152-21-000008",
+     "char_start": 243699,
+     "char_end": 245252,
+     "score": 6.262446
+    },
+    {
+     "chunk_id": "144e98f3-e054-59f9-80c2-ee0de8d640a1",
+     "accn": "0001551152-20-000032",
+     "char_start": 167558,
+     "char_end": 169110,
+     "score": 6.247514
+    }
+   ],
+   "citations": [
+    "2186c345-3c44-58e8-9734-279dda461919"
+   ],
+   "llm_calls": 2,
+   "seconds": 7.937000000005355,
+   "error": ""
+  },
+  {
+   "qid": "nar-038",
+   "route": "text",
+   "answer": "Chevron identifies the price of crude oil as the most significant factor affecting its results of operations [1, 2, 3]. This factor can be influenced by general economic conditions and economic growth levels, industry production and inventory levels, technology advancements, production quotas or actions by OPEC or other producers, weather-related damage and disruptions, competing fuel prices, geopolitical risks, the pace of energy transition, customer and consumer preferences, and governmental regulations and policies [1, 2, 3].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "8fb79ce1-a9e0-5102-95c6-62981c54391e",
+     "accn": "0000093410-24-000013",
+     "char_start": 169697,
+     "char_end": 171163,
+     "score": 4.908427
+    },
+    {
+     "chunk_id": "3cfb2a48-edd1-5b1f-b46d-276ee6734c6c",
+     "accn": "0000093410-23-000009",
+     "char_start": 168962,
+     "char_end": 170467,
+     "score": 4.880778
+    },
+    {
+     "chunk_id": "b5a7f90f-32cf-5000-999e-32aae7907bb3",
+     "accn": "0000093410-25-000009",
+     "char_start": 164704,
+     "char_end": 166251,
+     "score": 4.690993
+    },
+    {
+     "chunk_id": "a7f8b05d-e315-526c-9551-9bbf169a346b",
+     "accn": "0000093410-23-000066",
+     "char_start": 83671,
+     "char_end": 84961,
+     "score": 3.704836
+    },
+    {
+     "chunk_id": "56ccc40a-ae7e-5c33-940a-6543c8eea8cd",
+     "accn": "0000093410-22-000019",
+     "char_start": 168025,
+     "char_end": 169061,
+     "score": 3.697366
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 6.312999999994645,
+   "error": ""
+  },
+  {
+   "qid": "nar-039",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "99cb4a3a-0272-5bae-91f8-2dae05cc3ff2",
+     "accn": "0000093410-24-000013",
+     "char_start": 183467,
+     "char_end": 184715,
+     "score": 4.954885
+    },
+    {
+     "chunk_id": "3f0abb49-07f5-5c9d-971b-4b30ed528bde",
+     "accn": "0000093410-22-000019",
+     "char_start": 177458,
+     "char_end": 178706,
+     "score": 4.949561
+    },
+    {
+     "chunk_id": "06a147a6-97ee-569e-a4c5-8f660822a914",
+     "accn": "0000093410-23-000009",
+     "char_start": 181815,
+     "char_end": 183063,
+     "score": 4.949561
+    },
+    {
+     "chunk_id": "672259d2-e845-5aae-bcff-d9a84e4dbfad",
+     "accn": "0000093410-21-000009",
+     "char_start": 179345,
+     "char_end": 180648,
+     "score": 4.851639
+    },
+    {
+     "chunk_id": "8fdb9276-1c2c-5cc5-bab4-edb10c4d6c00",
+     "accn": "0000093410-25-000009",
+     "char_start": 179845,
+     "char_end": 181123,
+     "score": 4.764147
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 6.0,
+   "error": ""
+  },
+  {
+   "qid": "nar-040",
+   "route": "text",
+   "answer": "SLB recognizes revenue for certain long-term construction-type contracts over time as work progresses on each contract [1][2][3][4]. Progress is measured by the ratio of actual costs incurred to date on the project in relation to total estimated project costs [1][2][3][4].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "efd176fd-a212-50ab-aba8-3fd884e09609",
+     "accn": "0001564590-22-002421",
+     "char_start": 163271,
+     "char_end": 165045,
+     "score": 6.938023
+    },
+    {
+     "chunk_id": "e878ac29-2cdc-52b9-a52f-812dd297766b",
+     "accn": "0000950170-25-007638",
+     "char_start": 150559,
+     "char_end": 152296,
+     "score": 5.929722
+    },
+    {
+     "chunk_id": "36676417-9288-53a5-b14d-378670719665",
+     "accn": "0000950170-24-006884",
+     "char_start": 154799,
+     "char_end": 156533,
+     "score": 5.924721
+    },
+    {
+     "chunk_id": "0f26cca3-8343-54db-88fe-6d8b4d675fff",
+     "accn": "0001564590-23-000762",
+     "char_start": 159869,
+     "char_end": 161604,
+     "score": 5.912018
+    },
+    {
+     "chunk_id": "122ecf2c-8657-528c-977a-243c43b18ce7",
+     "accn": "0000950170-25-007638",
+     "char_start": 152297,
+     "char_end": 154091,
+     "score": 3.307896
+    }
+   ],
+   "citations": [
+    "efd176fd-a212-50ab-aba8-3fd884e09609",
+    "e878ac29-2cdc-52b9-a52f-812dd297766b",
+    "36676417-9288-53a5-b14d-378670719665",
+    "0f26cca3-8343-54db-88fe-6d8b4d675fff"
+   ],
+   "llm_calls": 2,
+   "seconds": 12.578000000008615,
+   "error": ""
+  },
+  {
+   "qid": "nar-041",
+   "route": "text",
+   "answer": "SLB records allowances for receivables believed to be uncollectible, which includes amounts for resolving potential credit and other collection issues like disputed invoices [1][2][3]. Judgment is involved in recording and making these adjustments to the reserve in order to record accounts receivable at their net realizable value [1][2][3].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "6afb7edc-75b5-5db5-82a7-ad06f12a5b33",
+     "accn": "0000950170-24-006884",
+     "char_start": 150116,
+     "char_end": 151684,
+     "score": 5.957798
+    },
+    {
+     "chunk_id": "2d1f380c-a01c-53e7-9471-1ac7d1f4f364",
+     "accn": "0001564590-23-000762",
+     "char_start": 154751,
+     "char_end": 155798,
+     "score": 5.344233
+    },
+    {
+     "chunk_id": "1bfaab0e-cc3d-5925-83ab-04a80a99659f",
+     "accn": "0000950170-25-007638",
+     "char_start": 145285,
+     "char_end": 146469,
+     "score": 4.901605
+    },
+    {
+     "chunk_id": "43ec6cbb-5520-51ab-a86f-f6d2571a0fcc",
+     "accn": "0001564590-22-002421",
+     "char_start": 156604,
+     "char_end": 158214,
+     "score": 2.949254
+    },
+    {
+     "chunk_id": "08527e22-4cfc-5462-b659-9298801dbc44",
+     "accn": "0001564590-21-002477",
+     "char_start": 163788,
+     "char_end": 164859,
+     "score": 2.08182
+    }
+   ],
+   "citations": [
+    "6afb7edc-75b5-5db5-82a7-ad06f12a5b33",
+    "2d1f380c-a01c-53e7-9471-1ac7d1f4f364",
+    "1bfaab0e-cc3d-5925-83ab-04a80a99659f"
+   ],
+   "llm_calls": 2,
+   "seconds": 10.21899999998277,
+   "error": ""
+  },
+  {
+   "qid": "nar-042",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "c4629334-6be9-5743-b3bf-542c610089dd",
+     "accn": "0000200406-22-000022",
+     "char_start": 267148,
+     "char_end": 268944,
+     "score": 2.818871
+    },
+    {
+     "chunk_id": "98d5fee4-9a1b-5af1-94b1-35ba5b027160",
+     "accn": "0000200406-25-000038",
+     "char_start": 261745,
+     "char_end": 263542,
+     "score": 2.723996
+    },
+    {
+     "chunk_id": "328714eb-5701-5bce-9f70-d34fff55f52d",
+     "accn": "0000200406-21-000008",
+     "char_start": 257947,
+     "char_end": 259739,
+     "score": 2.71807
+    },
+    {
+     "chunk_id": "78aa6ad1-208c-5de9-95a8-00de4356eb14",
+     "accn": "0000200406-24-000013",
+     "char_start": 260037,
+     "char_end": 261834,
+     "score": 2.71476
+    },
+    {
+     "chunk_id": "9c727b48-efd4-5012-8833-8521d83e8345",
+     "accn": "0001562762-20-000162",
+     "char_start": 175648,
+     "char_end": 177430,
+     "score": 0.323025
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 24.17200000002049,
+   "error": ""
+  },
+  {
+   "qid": "nar-043",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "0d83299a-e68b-5c19-9b9e-d1b4ba0c9aeb",
+     "accn": "0001628280-23-027770",
+     "char_start": 252058,
+     "char_end": 252932,
+     "score": 7.263359
+    },
+    {
+     "chunk_id": "919fcccf-3f1e-54f7-99c6-44d9a062bad6",
+     "accn": "0000310158-21-000009",
+     "char_start": 211970,
+     "char_end": 213722,
+     "score": 5.869035
+    },
+    {
+     "chunk_id": "0d6f486e-054a-5545-bcac-ede6b5846955",
+     "accn": "0000310158-20-000030",
+     "char_start": 299487,
+     "char_end": 301277,
+     "score": 5.859818
+    },
+    {
+     "chunk_id": "ab3603d6-5384-520e-a6ab-61e6e5af14a5",
+     "accn": "0000310158-22-000030",
+     "char_start": 267994,
+     "char_end": 269780,
+     "score": 5.803716
+    },
+    {
+     "chunk_id": "717d7557-6f2a-5628-91e2-fded2f47585d",
+     "accn": "0001628280-23-036717",
+     "char_start": 276933,
+     "char_end": 278686,
+     "score": 5.802874
+    }
+   ],
+   "citations": [],
+   "llm_calls": 1,
+   "seconds": 25.905999999988126,
+   "error": ""
+  },
+  {
+   "qid": "nar-044",
+   "route": "text",
+   "answer": "Net periodic benefit cost for pension plans totaled $554 million in 2022, $748 million in 2021, and $450 million in 2020 [1].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "46205c01-1314-5255-986f-0318043fab52",
+     "accn": "0001628280-23-005061",
+     "char_start": 482838,
+     "char_end": 484408,
+     "score": 7.847504
+    },
+    {
+     "chunk_id": "cf78a78c-5991-5a7a-951e-c37655a335a3",
+     "accn": "0001628280-24-006850",
+     "char_start": 476972,
+     "char_end": 478385,
+     "score": 7.818034
+    },
+    {
+     "chunk_id": "ed2f459f-1a7a-535a-b1b4-42b7ad503107",
+     "accn": "0000310158-22-000003",
+     "char_start": 480091,
+     "char_end": 481447,
+     "score": 6.830894
+    },
+    {
+     "chunk_id": "1560d293-39f8-50dc-94ab-acad6b27bfef",
+     "accn": "0001628280-25-007732",
+     "char_start": 488277,
+     "char_end": 489690,
+     "score": 6.686095
+    },
+    {
+     "chunk_id": "4e8ed6d3-e294-5c78-8d15-75267af517f7",
+     "accn": "0000310158-21-000004",
+     "char_start": 492689,
+     "char_end": 494045,
+     "score": 6.589224
+    }
+   ],
+   "citations": [
+    "46205c01-1314-5255-986f-0318043fab52"
+   ],
+   "llm_calls": 2,
+   "seconds": 9.219000000011874,
+   "error": ""
+  },
+  {
+   "qid": "nar-045",
+   "route": "text",
+   "answer": "Pfizer states that claims of intellectual property infringement can be costly and time-consuming to resolve, may delay or prevent product launches, and may result in significant royalty payments, potential licensing agreements, or damages that may be enhanced as much as three-fold for willful infringement [3][4]. Additionally, Pfizer notes that challenging improperly granted intellectual property rights held by others through negotiation and litigation may not always be successful [1].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "e7729990-b466-50e4-a6a0-03effbea690c",
+     "accn": "0000078003-22-000027",
+     "char_start": 268607,
+     "char_end": 270167,
+     "score": 4.985564
+    },
+    {
+     "chunk_id": "061fcab6-17a5-503b-aebc-3ab8cd29b15c",
+     "accn": "0000078003-21-000038",
+     "char_start": 250016,
+     "char_end": 251844,
+     "score": 4.279377
+    },
+    {
+     "chunk_id": "5215f71b-1133-5039-9da6-693797d345db",
+     "accn": "0000078003-25-000054",
+     "char_start": 283944,
+     "char_end": 285423,
+     "score": 3.736927
+    },
+    {
+     "chunk_id": "db6fad08-87c1-5ef6-97b7-ac05d764d7c6",
+     "accn": "0000078003-23-000024",
+     "char_start": 266722,
+     "char_end": 268148,
+     "score": 3.718384
+    },
+    {
+     "chunk_id": "20b2f839-1594-56e9-a0dc-a26303766cb5",
+     "accn": "0001551152-24-000011",
+     "char_start": 166204,
+     "char_end": 167430,
+     "score": 3.257241
+    }
+   ],
+   "citations": [
+    "5215f71b-1133-5039-9da6-693797d345db",
+    "db6fad08-87c1-5ef6-97b7-ac05d764d7c6",
+    "e7729990-b466-50e4-a6a0-03effbea690c"
+   ],
+   "llm_calls": 2,
+   "seconds": 6.702999999979511,
+   "error": ""
+  },
+  {
+   "qid": "nar-046",
+   "route": "text",
+   "answer": "Pfizer lists supply delays, disruptions, and shortages caused by voluntary product recalls and natural or man-made disasters, such as the tornado that damaged its manufacturing facility in Rocky Mount, NC in July 2023 [1][3]. Additional disruptions include recalls due to the presence of nitrosamines above the FDA interim acceptable intake limit and potential supply constraints from heightened industry demand for certain components and raw materials [1][2].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "75c7ac13-aed9-558e-90de-326cec21df3b",
+     "accn": "0000078003-23-000088",
+     "char_start": 219294,
+     "char_end": 221006,
+     "score": 5.591631
+    },
+    {
+     "chunk_id": "78656e61-3306-5b2c-a4e6-fccb267bbdc9",
+     "accn": "0001628280-23-017196",
+     "char_start": 173587,
+     "char_end": 175099,
+     "score": 5.377313
+    },
+    {
+     "chunk_id": "3688d407-8bd9-50fc-b93e-977665513beb",
+     "accn": "0000078003-25-000054",
+     "char_start": 297784,
+     "char_end": 299113,
+     "score": 5.006697
+    },
+    {
+     "chunk_id": "e0df2dbd-017d-59b2-b587-2498bbc9fd01",
+     "accn": "0000078003-24-000039",
+     "char_start": 311038,
+     "char_end": 312617,
+     "score": 4.932601
+    },
+    {
+     "chunk_id": "a4ec5d0b-d850-5e50-b116-edff97a85b8d",
+     "accn": "0000078003-24-000107",
+     "char_start": 176731,
+     "char_end": 178207,
+     "score": 4.278864
+    }
+   ],
+   "citations": [
+    "75c7ac13-aed9-558e-90de-326cec21df3b",
+    "3688d407-8bd9-50fc-b93e-977665513beb",
+    "78656e61-3306-5b2c-a4e6-fccb267bbdc9"
+   ],
+   "llm_calls": 2,
+   "seconds": 7.64000000001397,
+   "error": ""
+  },
+  {
+   "qid": "nar-047",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "dbc8ceb5-76a4-5c7b-a9e9-21224da1a327",
+     "accn": "0000078003-20-000037",
+     "char_start": 221117,
+     "char_end": 222436,
+     "score": 3.127151
+    },
+    {
+     "chunk_id": "effd4dea-fcc3-5580-ac3e-815dea5a7bfc",
+     "accn": "0000078003-20-000060",
+     "char_start": 480594,
+     "char_end": 482496,
+     "score": 3.095981
+    },
+    {
+     "chunk_id": "697a83d3-ee09-5ac0-991a-033ba6cbdda0",
+     "accn": "0000078003-20-000070",
+     "char_start": 476397,
+     "char_end": 478297,
+     "score": 3.095981
+    },
+    {
+     "chunk_id": "2ad06fba-1eee-5cec-9e49-3a5ac73f4cef",
+     "accn": "0000078003-20-000060",
+     "char_start": 305416,
+     "char_end": 306988,
+     "score": 2.986323
+    },
+    {
+     "chunk_id": "0e9f9f2b-3f69-581e-8a0d-b5593e3cbedc",
+     "accn": "0000078003-20-000060",
+     "char_start": 382193,
+     "char_end": 383365,
+     "score": 2.854351
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 8.89100000000326,
+   "error": ""
+  },
+  {
+   "qid": "nar-048",
+   "route": "text",
+   "answer": "The Phase 3 JAVELIN Lung 100 trial did not meet the primary endpoints of overall survival and progression-free survival in the high PD-L1+ population for either of the avelumab dosing regimens evaluated [1].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "991ea439-c0a9-5b2c-9410-7b60323f7a38",
+     "accn": "0000078003-22-000027",
+     "char_start": 379172,
+     "char_end": 380299,
+     "score": 6.805614
+    },
+    {
+     "chunk_id": "02c6b3fc-1ef7-583b-a729-8ddd501b231f",
+     "accn": "0000078003-20-000037",
+     "char_start": 305930,
+     "char_end": 307542,
+     "score": 4.10043
+    },
+    {
+     "chunk_id": "1deafc88-2ca2-5b22-af45-26abd2b9c831",
+     "accn": "0000078003-20-000070",
+     "char_start": 367342,
+     "char_end": 368811,
+     "score": 1.533432
+    },
+    {
+     "chunk_id": "5a8b1745-252e-59ed-bc51-38c5366b73b2",
+     "accn": "0001551152-24-000020",
+     "char_start": 124753,
+     "char_end": 126262,
+     "score": 0.331327
+    },
+    {
+     "chunk_id": "9eebfa33-7fe4-5d6a-994b-5423ef867e7b",
+     "accn": "0001628280-23-015990",
+     "char_start": 214972,
+     "char_end": 216739,
+     "score": -0.41803
+    }
+   ],
+   "citations": [
+    "991ea439-c0a9-5b2c-9410-7b60323f7a38"
+   ],
+   "llm_calls": 2,
+   "seconds": 10.796999999991385,
+   "error": ""
+  },
+  {
+   "qid": "nar-049",
+   "route": "text",
+   "answer": "In connection with restructuring corporate enabling functions, Pfizer achieved gross cost savings of $1.0 billion in the two year period from 2021 through 2022 [2].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "cbdcd8b7-9256-5e89-933c-c7407075ef4e",
+     "accn": "0000078003-22-000027",
+     "char_start": 364773,
+     "char_end": 366512,
+     "score": 7.894464
+    },
+    {
+     "chunk_id": "55a1305a-450e-5224-a7df-352e48e51115",
+     "accn": "0000078003-23-000024",
+     "char_start": 359988,
+     "char_end": 361576,
+     "score": 6.773128
+    },
+    {
+     "chunk_id": "fdf7546e-d9d3-512f-9df6-20ce64a2f4ef",
+     "accn": "0000078003-20-000070",
+     "char_start": 381655,
+     "char_end": 383449,
+     "score": 6.584868
+    },
+    {
+     "chunk_id": "174eb302-4b31-5fd9-b07e-94b342faf65e",
+     "accn": "0000078003-22-000094",
+     "char_start": 253460,
+     "char_end": 255142,
+     "score": 6.558577
+    },
+    {
+     "chunk_id": "9d1af70b-ca82-5486-b777-41823036d8c6",
+     "accn": "0000078003-21-000093",
+     "char_start": 235632,
+     "char_end": 237420,
+     "score": 6.083127
+    }
+   ],
+   "citations": [
+    "55a1305a-450e-5224-a7df-352e48e51115"
+   ],
+   "llm_calls": 2,
+   "seconds": 11.171999999991385,
+   "error": ""
+  },
+  {
+   "qid": "nar-050",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "35783fd4-cf39-5341-83d4-01438beef335",
+     "accn": "0000200406-21-000070",
+     "char_start": 292273,
+     "char_end": 294019,
+     "score": 3.086855
+    },
+    {
+     "chunk_id": "858f913b-730b-5a94-b1fb-b2b950651a3b",
+     "accn": "0000200406-23-000056",
+     "char_start": 216448,
+     "char_end": 218218,
+     "score": 3.040825
+    },
+    {
+     "chunk_id": "cfb8959c-c145-5839-bc31-77ac2dcec770",
+     "accn": "0000200406-21-000036",
+     "char_start": 221623,
+     "char_end": 223400,
+     "score": 3.037724
+    },
+    {
+     "chunk_id": "891ece7c-aa20-5fe3-8cda-04a3ab5ea98d",
+     "accn": "0000200406-23-000102",
+     "char_start": 260357,
+     "char_end": 262117,
+     "score": 2.944852
+    },
+    {
+     "chunk_id": "c5f3a4c6-fe94-5f09-abe9-0993309cc673",
+     "accn": "0000200406-23-000082",
+     "char_start": 273941,
+     "char_end": 275740,
+     "score": 2.908779
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 17.5,
+   "error": ""
+  },
+  {
+   "qid": "nar-051",
+   "route": "text",
+   "answer": "In 2024, Surgery franchise sales were $9.8 billion [5]. The decline in Advanced Surgery was primarily due to China volume-based procurement across all platforms and competitive pressures in Energy and Endocutters [5].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "a07f240d-9763-58f4-ab82-36d77e539fb7",
+     "accn": "0000200406-21-000008",
+     "char_start": 210187,
+     "char_end": 211741,
+     "score": 2.979562
+    },
+    {
+     "chunk_id": "c81a269e-8511-5cbf-a8c5-9b3149ded5bd",
+     "accn": "0000200406-23-000016",
+     "char_start": 222546,
+     "char_end": 223982,
+     "score": 2.625503
+    },
+    {
+     "chunk_id": "529e2ec1-d9d2-5b00-81f0-ccd09708025f",
+     "accn": "0000200406-24-000096",
+     "char_start": 257788,
+     "char_end": 259031,
+     "score": 2.520892
+    },
+    {
+     "chunk_id": "dfc549c4-bc0a-5066-b004-ce0c4b51b1a4",
+     "accn": "0000200406-22-000022",
+     "char_start": 220887,
+     "char_end": 222529,
+     "score": 2.464122
+    },
+    {
+     "chunk_id": "298f5913-4d98-5cfa-b20e-2fa952f06ace",
+     "accn": "0000200406-25-000038",
+     "char_start": 214191,
+     "char_end": 215185,
+     "score": 2.393376
+    }
+   ],
+   "citations": [
+    "298f5913-4d98-5cfa-b20e-2fa952f06ace"
+   ],
+   "llm_calls": 2,
+   "seconds": 12.219000000011874,
+   "error": ""
+  },
+  {
+   "qid": "nar-052",
+   "route": "text",
+   "answer": "As of January 1, 2023, Johnson & Johnson's net debt position was $16.1 billion compared to $2.1 billion in the prior year [3]. This increase was primarily due to the acquisition of Abiomed, Inc. in December 2022 [3].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "0f79bc82-babc-5e95-97fc-f86cc15fcd7f",
+     "accn": "0000200406-22-000048",
+     "char_start": 240798,
+     "char_end": 242535,
+     "score": 4.185802
+    },
+    {
+     "chunk_id": "a487e007-601f-55a7-92eb-c58f6172f5c9",
+     "accn": "0000200406-25-000038",
+     "char_start": 236009,
+     "char_end": 237808,
+     "score": 3.930423
+    },
+    {
+     "chunk_id": "aab0eacf-ffdf-5fc6-848a-b015873f3568",
+     "accn": "0000200406-23-000016",
+     "char_start": 240674,
+     "char_end": 242520,
+     "score": 3.671356
+    },
+    {
+     "chunk_id": "aaaf988c-6900-5a7c-8431-a9c1f82acf44",
+     "accn": "0000200406-23-000102",
+     "char_start": 280922,
+     "char_end": 281718,
+     "score": 3.212906
+    },
+    {
+     "chunk_id": "c6b65dc9-07d9-5475-8ae0-b1f5d523edc8",
+     "accn": "0000200406-24-000013",
+     "char_start": 234556,
+     "char_end": 236110,
+     "score": 2.926612
+    }
+   ],
+   "citations": [
+    "aab0eacf-ffdf-5fc6-848a-b015873f3568"
+   ],
+   "llm_calls": 2,
+   "seconds": 12.328000000008615,
+   "error": ""
+  },
+  {
+   "qid": "nar-053",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "26dc7525-903e-5fa0-bed5-0c5c7f425772",
+     "accn": "0000200406-20-000056",
+     "char_start": 298213,
+     "char_end": 299996,
+     "score": 4.176275
+    },
+    {
+     "chunk_id": "f25ede49-b81f-58a5-a337-4378f056cbdd",
+     "accn": "0000200406-20-000050",
+     "char_start": 294724,
+     "char_end": 296494,
+     "score": 4.123066
+    },
+    {
+     "chunk_id": "017fde34-ca91-59d5-a22a-e16478a287e6",
+     "accn": "0000200406-22-000022",
+     "char_start": 227135,
+     "char_end": 228730,
+     "score": 3.949079
+    },
+    {
+     "chunk_id": "a487e007-601f-55a7-92eb-c58f6172f5c9",
+     "accn": "0000200406-25-000038",
+     "char_start": 236009,
+     "char_end": 237808,
+     "score": 3.182052
+    },
+    {
+     "chunk_id": "4a87750a-85f7-59b4-a72a-a8f06e76cb78",
+     "accn": "0000200406-21-000070",
+     "char_start": 296772,
+     "char_end": 298571,
+     "score": 3.122642
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 12.187000000005355,
+   "error": ""
+  },
+  {
+   "qid": "nar-054",
+   "route": "text",
+   "answer": "ConocoPhillips's largest asset removal obligations involve the plugging and abandonment of wells, and the removal and disposal of offshore oil and gas platforms around the world [1][2][3][4]. They also include oil and gas production facilities and pipelines in Alaska [1][2][3][4].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "6686d8ad-a0aa-5904-ad66-fd82c2ac3b8a",
+     "accn": "0001562762-21-000027",
+     "char_start": 345017,
+     "char_end": 346801,
+     "score": 3.681103
+    },
+    {
+     "chunk_id": "ec41393a-699e-51cb-9290-563a35a0d15b",
+     "accn": "0001163165-25-000012",
+     "char_start": 305841,
+     "char_end": 307203,
+     "score": 3.345876
+    },
+    {
+     "chunk_id": "bf0b8f2a-a73c-5dc5-803a-ecbff2737ded",
+     "accn": "0001163165-24-000010",
+     "char_start": 300141,
+     "char_end": 301503,
+     "score": 3.345876
+    },
+    {
+     "chunk_id": "5652e008-c3da-5e3f-8917-a8d984a46e13",
+     "accn": "0001163165-23-000006",
+     "char_start": 300934,
+     "char_end": 302296,
+     "score": 3.345876
+    },
+    {
+     "chunk_id": "74dd42be-55f6-565e-ae5e-fe5ebf904cdf",
+     "accn": "0001534701-21-000074",
+     "char_start": 271429,
+     "char_end": 273070,
+     "score": 3.050199
+    }
+   ],
+   "citations": [
+    "6686d8ad-a0aa-5904-ad66-fd82c2ac3b8a",
+    "ec41393a-699e-51cb-9290-563a35a0d15b",
+    "bf0b8f2a-a73c-5dc5-803a-ecbff2737ded",
+    "5652e008-c3da-5e3f-8917-a8d984a46e13"
+   ],
+   "llm_calls": 2,
+   "seconds": 10.0,
+   "error": ""
+  },
+  {
+   "qid": "nar-055",
+   "route": "text",
+   "answer": "ConocoPhillips, ConocoPhillips Company, and Burlington Resources LLC have cross-guarantees with respect to publicly held debt securities [1]. ConocoPhillips Company is 100 percent owned by ConocoPhillips, and Burlington Resources LLC is 100 percent owned by ConocoPhillips Company [1].",
+   "refused": false,
+   "retrieved": [
+    {
+     "chunk_id": "a6e742da-cd5a-52a5-a64d-ca2181e10897",
+     "accn": "0001562762-20-000367",
+     "char_start": 189020,
+     "char_end": 190793,
+     "score": 7.842421
+    },
+    {
+     "chunk_id": "2244fbee-e949-5549-8640-2a7b7057c25e",
+     "accn": "0001562762-21-000304",
+     "char_start": 177052,
+     "char_end": 178797,
+     "score": 7.725137
+    },
+    {
+     "chunk_id": "b2441917-83ec-5a35-bed3-70d122b3524a",
+     "accn": "0001163165-24-000010",
+     "char_start": 261291,
+     "char_end": 263083,
+     "score": 7.395893
+    },
+    {
+     "chunk_id": "2f9c5931-6fc8-5ccc-9837-228fbee6b480",
+     "accn": "0001163165-23-000023",
+     "char_start": 152182,
+     "char_end": 153970,
+     "score": 7.353773
+    },
+    {
+     "chunk_id": "6711ac0a-b510-5096-894a-17c2ea44f20f",
+     "accn": "0001163165-23-000031",
+     "char_start": 161369,
+     "char_end": 163163,
+     "score": 7.34994
+    }
+   ],
+   "citations": [
+    "a6e742da-cd5a-52a5-a64d-ca2181e10897"
+   ],
+   "llm_calls": 2,
+   "seconds": 11.469000000011874,
+   "error": ""
+  },
+  {
+   "qid": "nar-056",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "f314a0fc-95a5-5cf5-a160-6d9857cfc074",
+     "accn": "0001562762-21-000027",
+     "char_start": 228227,
+     "char_end": 230016,
+     "score": 5.572408
+    },
+    {
+     "chunk_id": "6d0d0335-c730-54b1-8536-bcedc55f3b41",
+     "accn": "0001163165-24-000023",
+     "char_start": 99842,
+     "char_end": 101177,
+     "score": 5.417534
+    },
+    {
+     "chunk_id": "8a6bcda6-79d3-52e2-b3d4-bef4281d5a19",
+     "accn": "0001163165-24-000052",
+     "char_start": 116989,
+     "char_end": 118694,
+     "score": 5.12934
+    },
+    {
+     "chunk_id": "25da0eeb-105e-58c1-b9fe-96f2c2cfbe27",
+     "accn": "0001163165-22-000006",
+     "char_start": 116238,
+     "char_end": 117767,
+     "score": 5.088161
+    },
+    {
+     "chunk_id": "22aeb639-9a91-5d2c-a7a3-73fa9f45a9eb",
+     "accn": "0001163165-22-000013",
+     "char_start": 130293,
+     "char_end": 131824,
+     "score": 5.084275
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 11.09299999999348,
+   "error": ""
+  },
+  {
+   "qid": "nar-057",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "3a60f308-8a59-5cb8-8700-f28e1933e749",
+     "accn": "0001730168-20-000109",
+     "char_start": 116076,
+     "char_end": 117070,
+     "score": 5.791105
+    },
+    {
+     "chunk_id": "a0ecd457-3556-514e-8c19-5c3eef41aa31",
+     "accn": "0001534701-21-000074",
+     "char_start": 221918,
+     "char_end": 223541,
+     "score": 5.339047
+    },
+    {
+     "chunk_id": "106649a7-812d-50d6-abc1-7d7653be5cc1",
+     "accn": "0001534701-23-000053",
+     "char_start": 272023,
+     "char_end": 273598,
+     "score": 5.325074
+    },
+    {
+     "chunk_id": "a70b865f-edfc-590d-b353-710362abbc11",
+     "accn": "0000354950-21-000089",
+     "char_start": 166539,
+     "char_end": 168205,
+     "score": 5.118259
+    },
+    {
+     "chunk_id": "d228f184-b6da-56fe-a55f-29a391a84bf4",
+     "accn": "0001534701-23-000053",
+     "char_start": 270359,
+     "char_end": 272157,
+     "score": 5.024938
+    }
+   ],
+   "citations": [],
+   "llm_calls": 1,
+   "seconds": 28.29700000002049,
+   "error": ""
+  },
+  {
+   "qid": "nar-058",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "47bcface-c983-54aa-853c-08578105724e",
+     "accn": "0000104169-25-000021",
+     "char_start": 233172,
+     "char_end": 234215,
+     "score": 7.608466
+    },
+    {
+     "chunk_id": "aa3ce53e-f145-52e9-b3ec-10bc5ba323cf",
+     "accn": "0000034088-23-000030",
+     "char_start": 56305,
+     "char_end": 57555,
+     "score": 6.711385
+    },
+    {
+     "chunk_id": "dcdf2783-862f-5810-9317-d432f3525431",
+     "accn": "0000060667-24-000033",
+     "char_start": 150334,
+     "char_end": 152078,
+     "score": 6.685377
+    },
+    {
+     "chunk_id": "90418f32-adae-50a6-ac5a-91a02cc402b0",
+     "accn": "0000034088-23-000056",
+     "char_start": 81498,
+     "char_end": 82752,
+     "score": 6.683182
+    },
+    {
+     "chunk_id": "5c365a3e-8d91-58d3-af90-55496b991d7f",
+     "accn": "0001045810-23-000227",
+     "char_start": 103632,
+     "char_end": 105103,
+     "score": 6.436095
+    }
+   ],
+   "citations": [],
+   "llm_calls": 1,
+   "seconds": 11.827999999979511,
+   "error": ""
+  },
+  {
+   "qid": "nar-059",
+   "route": "sql",
+   "answer": "Costco's operations provided 7,392,000,000 USD in net cash for the period ending 2022-08-28 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 2.2820000000065193,
+   "error": ""
+  },
+  {
+   "qid": "nar-060",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "5d525e11-56dc-5c56-abc7-4f8f349a0168",
+     "accn": "0000104169-20-000011",
+     "char_start": 194531,
+     "char_end": 196004,
+     "score": 8.045179
+    },
+    {
+     "chunk_id": "7fab42c2-470b-55d5-9b5d-a5da6549ec16",
+     "accn": "0000060667-22-000038",
+     "char_start": 146539,
+     "char_end": 148289,
+     "score": 7.704712
+    },
+    {
+     "chunk_id": "f5e1fa3a-064e-5e88-926c-7a86090864d7",
+     "accn": "0000310158-22-000003",
+     "char_start": 433851,
+     "char_end": 435084,
+     "score": 7.528814
+    },
+    {
+     "chunk_id": "3f53e9f1-9389-5bb3-9314-b1038c0252f2",
+     "accn": "0000104169-21-000033",
+     "char_start": 181427,
+     "char_end": 182881,
+     "score": 7.517874
+    },
+    {
+     "chunk_id": "e598c1cf-644a-5c95-b153-b98c7ddc76f9",
+     "accn": "0000354950-21-000234",
+     "char_start": 67926,
+     "char_end": 69612,
+     "score": 7.453135
+    }
+   ],
+   "citations": [],
+   "llm_calls": 1,
+   "seconds": 9.171000000002095,
+   "error": ""
+  },
+  {
+   "qid": "num-001",
+   "route": "sql",
+   "answer": "ABBV reported revenues of 32,753,000,000 USD for the period ending 2018-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 3.9219999999913853,
+   "error": ""
+  },
+  {
+   "qid": "num-002",
+   "route": "sql",
+   "answer": "ABBV reported Revenues of 33,266,000,000 USD for the period ending 2019-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.7650000000139698,
+   "error": ""
+  },
+  {
+   "qid": "num-003",
+   "route": "sql",
+   "answer": "ABBV reported Revenues of 45,804,000,000 USD for the period ending 2020-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.812999999994645,
+   "error": ""
+  },
+  {
+   "qid": "num-004",
+   "route": "sql",
+   "answer": "ABBV reported Revenues of 56,197,000,000 USD for the period ending 2021-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.922000000020489,
+   "error": ""
+  },
+  {
+   "qid": "num-005",
+   "route": "sql",
+   "answer": "ABBV reported Revenues of 58,054,000,000 USD for the period ending 2022-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.9219999999913853,
+   "error": ""
+  },
+  {
+   "qid": "num-006",
+   "route": "sql",
+   "answer": "AMD reported Revenue from Contract with Customer, Excluding Assessed Tax of 6,475,000,000 USD for the period ending 2018-12-29 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.8439999999827705,
+   "error": ""
+  },
+  {
+   "qid": "num-007",
+   "route": "sql",
+   "answer": "AMD reported Revenue from Contract with Customer, Excluding Assessed Tax of 6,731,000,000 USD for the period ending 2019-12-28 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 2.14000000001397,
+   "error": ""
+  },
+  {
+   "qid": "num-008",
+   "route": "sql",
+   "answer": "AMD reported Revenue from Contract with Customer, Excluding Assessed Tax of 9,763,000,000 USD for the period ending 2020-12-26 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.7039999999979045,
+   "error": ""
+  },
+  {
+   "qid": "num-009",
+   "route": "sql",
+   "answer": "AMD reported 16,434,000,000 USD for Revenue from Contract with Customer, Excluding Assessed Tax for the period ending 2021-12-25 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 28.51500000001397,
+   "error": ""
+  },
+  {
+   "qid": "num-010",
+   "route": "sql",
+   "answer": "AMD reported 23,601,000,000 USD for Revenue from Contract with Customer, Excluding Assessed Tax for the period ending 2022-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 12.937999999994645,
+   "error": ""
+  },
+  {
+   "qid": "num-011",
+   "route": "sql",
+   "answer": "AVGO reported Net Income (Loss) Attributable to Parent of 11,495,000,000 USD for the period ending 2022-10-30 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 3,
+   "seconds": 10.84299999999348,
+   "error": ""
+  },
+  {
+   "qid": "num-012",
+   "route": "sql",
+   "answer": "AVGO reported Net Income (Loss) Attributable to Parent of 5,895,000,000 USD for the period ending 2024-11-03 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.9539999999979045,
+   "error": ""
+  },
+  {
+   "qid": "num-013",
+   "route": "sql",
+   "answer": "COP reported Net Income (Loss) Attributable to Parent of 6,257,000,000 USD for the period ending 2018-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.7969999999913853,
+   "error": ""
+  },
+  {
+   "qid": "num-014",
+   "route": "sql",
+   "answer": "COP reported Net Income (Loss) Attributable to Parent of 7,189,000,000 USD for the period ending 2019-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.75,
+   "error": ""
+  },
+  {
+   "qid": "num-015",
+   "route": "sql",
+   "answer": "COP reported -2,701,000,000 USD for Net Income (Loss) Attributable to Parent for the period ending 2020-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 2.062000000005355,
+   "error": ""
+  },
+  {
+   "qid": "num-016",
+   "route": "sql",
+   "answer": "AVGO reported an Operating Income (Loss) of 5,135,000,000 USD for the period ending 2018-11-04 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 28.84399999998277,
+   "error": ""
+  },
+  {
+   "qid": "num-017",
+   "route": "sql",
+   "answer": "AVGO reported an Operating Income (Loss) of 3,444,000,000 USD for the period ending 2019-11-03 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 12.65600000001723,
+   "error": ""
+  },
+  {
+   "qid": "num-018",
+   "route": "sql",
+   "answer": "AVGO reported Operating Income (Loss) of 4,014,000,000 USD for the period ending 2020-11-01 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 9.937999999994645,
+   "error": ""
+  },
+  {
+   "qid": "num-019",
+   "route": "sql",
+   "answer": "COST reported Operating Income (Loss) of 4,480,000,000 USD for the period ending 2018-09-02 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.875,
+   "error": ""
+  },
+  {
+   "qid": "num-020",
+   "route": "sql",
+   "answer": "COST reported Operating Income (Loss) of 4,737,000,000 USD for the period ending 2019-09-01 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.889999999984866,
+   "error": ""
+  },
+  {
+   "qid": "num-021",
+   "route": "sql",
+   "answer": "HD reported Gross Profit of 34,356,000,000 USD for the fiscal year ended 2018-01-28 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.735000000015134,
+   "error": ""
+  },
+  {
+   "qid": "num-022",
+   "route": "sql",
+   "answer": "HD reported Gross Profit of 37,160,000,000 USD for the period ending 2019-02-03 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 2.047000000020489,
+   "error": ""
+  },
+  {
+   "qid": "num-023",
+   "route": "sql",
+   "answer": "HD reported Gross Profit of 37,572,000,000 USD for the period ending 2020-02-02 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.827999999979511,
+   "error": ""
+  },
+  {
+   "qid": "num-024",
+   "route": "sql",
+   "answer": "HD reported a Gross Profit of 44,853,000,000 USD for the period ending 2021-01-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 39.65700000000652,
+   "error": ""
+  },
+  {
+   "qid": "num-025",
+   "route": "sql",
+   "answer": "HD reported Gross Profit of 50,832,000,000 USD for the period ending 2022-01-30 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.625,
+   "error": ""
+  },
+  {
+   "qid": "num-026",
+   "route": "sql",
+   "answer": "NVDA reported Cost of Revenue of 4,150,000,000 USD for the period ending 2020-01-26 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 10.671000000002095,
+   "error": ""
+  },
+  {
+   "qid": "num-027",
+   "route": "sql",
+   "answer": "NVDA reported Cost of Revenue of 6,279,000,000 USD for the period ending 2021-01-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.7039999999979045,
+   "error": ""
+  },
+  {
+   "qid": "num-028",
+   "route": "sql",
+   "answer": "NVDA reported Cost of Revenue of 9,439,000,000 USD for the period ending 2022-01-30 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.7030000000086147,
+   "error": ""
+  },
+  {
+   "qid": "num-029",
+   "route": "sql",
+   "answer": "NVDA reported Cost of Revenue of 11,618,000,000 USD for the period ending 2023-01-29 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.687000000005355,
+   "error": ""
+  },
+  {
+   "qid": "num-030",
+   "route": "sql",
+   "answer": "QCOM reported Cost of Revenue of 10,244,000,000 USD for the period ending 2018-09-30 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 2.23499999998603,
+   "error": ""
+  },
+  {
+   "qid": "num-031",
+   "route": "sql",
+   "answer": "COP reported Cost of Goods and Services Sold of 14,294,000,000 USD for the period ending 2018-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 28.578000000008615,
+   "error": ""
+  },
+  {
+   "qid": "num-032",
+   "route": "sql",
+   "answer": "COP reported Cost of Goods and Services Sold of 11,842,000,000 USD for the period ending 2019-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 12.625,
+   "error": ""
+  },
+  {
+   "qid": "num-033",
+   "route": "sql",
+   "answer": "COST reported Cost of Goods and Services Sold of 123,152,000,000 USD for the period ending 2018-09-02 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 10.796999999991385,
+   "error": ""
+  },
+  {
+   "qid": "num-034",
+   "route": "sql",
+   "answer": "COST reported Cost of Goods and Services Sold of 132,886,000,000 USD for the period ending 2019-09-01 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.625,
+   "error": ""
+  },
+  {
+   "qid": "num-035",
+   "route": "sql",
+   "answer": "COST reported Cost of Goods and Services Sold of 144,939,000,000 USD for the period ending 2020-08-30 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.5309999999881256,
+   "error": ""
+  },
+  {
+   "qid": "num-036",
+   "route": "sql",
+   "answer": "CVX reported Research and Development Expense of 268,000,000 USD for the fiscal year ended 2022-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.8440000000118744,
+   "error": ""
+  },
+  {
+   "qid": "num-037",
+   "route": "sql",
+   "answer": "INTC reported Research and Development Expense of 13,543,000,000 USD for the period ending 2018-12-29 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.8589999999967404,
+   "error": ""
+  },
+  {
+   "qid": "num-038",
+   "route": "sql",
+   "answer": "INTC reported Research and Development Expense of 13,362,000,000 USD for the period ending 2019-12-28 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.875,
+   "error": ""
+  },
+  {
+   "qid": "num-039",
+   "route": "sql",
+   "answer": "INTC reported Research and Development Expense of 13,556,000,000 USD for the period ending 2020-12-26 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 39.46899999998277,
+   "error": ""
+  },
+  {
+   "qid": "num-040",
+   "route": "sql",
+   "answer": "INTC reported Research and Development Expense of 15,190,000,000 USD for the period ending 2021-12-25 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 2.25,
+   "error": ""
+  },
+  {
+   "qid": "num-041",
+   "route": "sql",
+   "answer": "CVX reported Selling, General and Administrative Expense of 3,838,000,000 USD for the period ending 2018-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 10.39100000000326,
+   "error": ""
+  },
+  {
+   "qid": "num-042",
+   "route": "sql",
+   "answer": "CVX reported Selling, General and Administrative Expense of 4,143,000,000 USD for the period ending 2019-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.7650000000139698,
+   "error": ""
+  },
+  {
+   "qid": "num-043",
+   "route": "sql",
+   "answer": "CVX reported Selling, General and Administrative Expense of 4,213,000,000 USD for the period ending 2020-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.437999999994645,
+   "error": ""
+  },
+  {
+   "qid": "num-044",
+   "route": "sql",
+   "answer": "CVX reported Selling, General and Administrative Expense of 4,014,000,000 USD for the period ending 2021-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.985000000015134,
+   "error": ""
+  },
+  {
+   "qid": "num-045",
+   "route": "sql",
+   "answer": "INTC reported Selling, General and Administrative Expense of 6,950,000,000 USD for the period ending 2018-12-29 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.75,
+   "error": ""
+  },
+  {
+   "qid": "num-046",
+   "route": "sql",
+   "answer": "JNJ reported Income Tax Expense (Benefit) of 2,702,000,000 USD for the period ending 2018-12-30 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 28.687999999994645,
+   "error": ""
+  },
+  {
+   "qid": "num-047",
+   "route": "sql",
+   "answer": "JNJ reported Income Tax Expense (Benefit) of 2,209,000,000 USD for the period ending 2019-12-29 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 12.78100000001723,
+   "error": ""
+  },
+  {
+   "qid": "num-048",
+   "route": "sql",
+   "answer": "JNJ reported Income Tax Expense (Benefit) of 1,783,000,000 USD for the period ending 2021-01-03 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 10.48399999999674,
+   "error": ""
+  },
+  {
+   "qid": "num-049",
+   "route": "sql",
+   "answer": "JNJ reported Income Tax Expense (Benefit) of 1,377,000,000 USD for the period ending 2022-01-02 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.8289999999979045,
+   "error": ""
+  },
+  {
+   "qid": "num-050",
+   "route": "sql",
+   "answer": "JNJ reported Income Tax Expense (Benefit) of 2,989,000,000 USD for the period ending 2023-01-01 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.687000000005355,
+   "error": ""
+  },
+  {
+   "qid": "num-051",
+   "route": "sql",
+   "answer": "LLY reported Assets of 39,286,100,000 USD as of 2019-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.6410000000032596,
+   "error": ""
+  },
+  {
+   "qid": "num-052",
+   "route": "sql",
+   "answer": "LLY reported Assets of 46,633,100,000 USD as of 2020-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 2.1089999999967404,
+   "error": ""
+  },
+  {
+   "qid": "num-053",
+   "route": "sql",
+   "answer": "LLY reported Assets of 48,806,000,000 USD as of 2021-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.7189999999827705,
+   "error": ""
+  },
+  {
+   "qid": "num-054",
+   "route": "sql",
+   "answer": "LLY reported Assets of 49,489,800,000 USD as of 2022-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 39.625,
+   "error": ""
+  },
+  {
+   "qid": "num-055",
+   "route": "sql",
+   "answer": "LLY reported Assets of 64,006,300,000 USD as of 2023-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.9219999999913853,
+   "error": ""
+  },
+  {
+   "qid": "num-056",
+   "route": "sql",
+   "answer": "LOW's Assets, Current was 14,228,000,000 USD as of 2019-02-01 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 10.328000000008615,
+   "error": ""
+  },
+  {
+   "qid": "num-057",
+   "route": "sql",
+   "answer": "LOW's Assets, Current was 15,318,000,000 USD as of 2020-01-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.9219999999913853,
+   "error": ""
+  },
+  {
+   "qid": "num-058",
+   "route": "sql",
+   "answer": "LOW reported Assets, Current of 22,326,000,000 USD for the period ending 2021-01-29 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.7030000000086147,
+   "error": ""
+  },
+  {
+   "qid": "num-059",
+   "route": "sql",
+   "answer": "LOW reported Assets, Current of 20,060,000,000 USD for the period ending 2022-01-28 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.7660000000032596,
+   "error": ""
+  },
+  {
+   "qid": "num-060",
+   "route": "sql",
+   "answer": "LOW reported Assets, Current of 21,442,000,000 USD for the period ending 2023-02-03 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.7969999999913853,
+   "error": ""
+  },
+  {
+   "qid": "num-061",
+   "route": "sql",
+   "answer": "NVDA's Liabilities as of 2019-01-27 were 3,950,000,000 USD [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 28.655999999988126,
+   "error": ""
+  },
+  {
+   "qid": "num-062",
+   "route": "sql",
+   "answer": "PFE's Liabilities as of 2019-12-31 were 104,148,000,000 USD [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 13.0,
+   "error": ""
+  },
+  {
+   "qid": "num-063",
+   "route": "sql",
+   "answer": "PFE's Liabilities as of 2020-12-31 were 90,756,000,000 USD [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 10.375,
+   "error": ""
+  },
+  {
+   "qid": "num-064",
+   "route": "sql",
+   "answer": "PFE reported Liabilities of 104,013,000,000 USD as of 2021-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.7650000000139698,
+   "error": ""
+  },
+  {
+   "qid": "num-065",
+   "route": "sql",
+   "answer": "PFE reported liabilities of 101,288,000,000 USD for the period ending 2022-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 2.48499999998603,
+   "error": ""
+  },
+  {
+   "qid": "num-066",
+   "route": "sql",
+   "answer": "MRK's Liabilities, Current was 22,220,000,000 USD as of 2019-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.4690000000118744,
+   "error": ""
+  },
+  {
+   "qid": "num-067",
+   "route": "sql",
+   "answer": "MRK's Liabilities, Current was 27,327,000,000 USD as of 2020-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.7179999999934807,
+   "error": ""
+  },
+  {
+   "qid": "num-068",
+   "route": "sql",
+   "answer": "MRK reported Liabilities, Current of 23,872,000,000 USD as of 2021-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.625,
+   "error": ""
+  },
+  {
+   "qid": "num-069",
+   "route": "sql",
+   "answer": "MRK's Liabilities, Current was 24,239,000,000 USD as of 2022-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 38.953000000008615,
+   "error": ""
+  },
+  {
+   "qid": "num-070",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "0f72228a-476c-5aa4-b55b-3e7cb1fb8acc",
+     "accn": "0001628280-24-006850",
+     "char_start": 465963,
+     "char_end": 467373,
+     "score": 0.849397
+    },
+    {
+     "chunk_id": "dac252c4-e251-50ce-ad9f-bff3d6e22a80",
+     "accn": "0001628280-25-007732",
+     "char_start": 477267,
+     "char_end": 478677,
+     "score": 0.626497
+    },
+    {
+     "chunk_id": "280b8e54-8214-5483-aabe-e0b58df76e6f",
+     "accn": "0000093410-23-000079",
+     "char_start": 141195,
+     "char_end": 142994,
+     "score": 0.526194
+    },
+    {
+     "chunk_id": "7461bc78-65b0-5061-9e40-0b166a78114a",
+     "accn": "0001628280-24-006850",
+     "char_start": 358660,
+     "char_end": 360455,
+     "score": -0.041666
+    },
+    {
+     "chunk_id": "f800252d-6915-5734-88e4-eb22e98e9ce8",
+     "accn": "0001534701-23-000080",
+     "char_start": 168143,
+     "char_end": 169781,
+     "score": -0.916128
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 12.64100000000326,
+   "error": ""
+  },
+  {
+   "qid": "num-071",
+   "route": "sql",
+   "answer": "PFE's Stockholders' Equity Attributable to Parent was 63,143,000,000 USD as of 2019-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.5309999999881256,
+   "error": ""
+  },
+  {
+   "qid": "num-072",
+   "route": "sql",
+   "answer": "PSX reported Stockholders' Equity Attributable to Parent of 24,910,000,000 USD as of 2019-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.5780000000086147,
+   "error": ""
+  },
+  {
+   "qid": "num-073",
+   "route": "sql",
+   "answer": "PSX's Stockholders' Equity Attributable to Parent was 18,984,000,000 USD as of 2020-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.4530000000086147,
+   "error": ""
+  },
+  {
+   "qid": "num-074",
+   "route": "sql",
+   "answer": "PSX reported Stockholders' Equity Attributable to Parent of 19,166,000,000 USD as of 2021-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.6559999999881256,
+   "error": ""
+  },
+  {
+   "qid": "num-075",
+   "route": "sql",
+   "answer": "PSX's Stockholders' Equity Attributable to Parent was 29,494,000,000 USD as of 2022-12-31 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.5789999999979045,
+   "error": ""
+  },
+  {
+   "qid": "num-076",
+   "route": "sql",
+   "answer": "PSX's Cash and Cash Equivalents, at Carrying Value as of 2019-12-31 was 1,614,000,000 USD [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 28.203000000008615,
+   "error": ""
+  },
+  {
+   "qid": "num-077",
+   "route": "sql",
+   "answer": "QCOM reported Cash and Cash Equivalents, at Carrying Value of 11,839,000,000 USD as of 2019-09-29 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 12.921999999991385,
+   "error": ""
+  },
+  {
+   "qid": "num-078",
+   "route": "sql",
+   "answer": "QCOM's Cash and Cash Equivalents, at Carrying Value was 6,707,000,000 USD as of 2020-09-27 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 12.46799999999348,
+   "error": ""
+  },
+  {
+   "qid": "num-079",
+   "route": "sql",
+   "answer": "QCOM reported Cash and Cash Equivalents, at Carrying Value of 7,116,000,000 USD as of 2021-09-26 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.5160000000032596,
+   "error": ""
+  },
+  {
+   "qid": "num-080",
+   "route": "sql",
+   "answer": "QCOM reported Cash and Cash Equivalents, at Carrying Value of 2,773,000,000 USD as of 2022-09-25 [1].",
+   "refused": false,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 1.5150000000139698,
+   "error": ""
+  },
+  {
+   "qid": "una-001",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "0e292913-7dd9-5945-9a9a-77b53fd31ce4",
+     "accn": "0001730168-23-000008",
+     "char_start": 76036,
+     "char_end": 77788,
+     "score": 6.672594
+    },
+    {
+     "chunk_id": "2f6e2224-6ca5-5ffa-8ce3-77450e3c2af3",
+     "accn": "0001730168-24-000023",
+     "char_start": 88671,
+     "char_end": 90424,
+     "score": 6.416317
+    },
+    {
+     "chunk_id": "d287898f-61d9-5f04-824b-3172d609dacc",
+     "accn": "0001730168-23-000077",
+     "char_start": 85870,
+     "char_end": 87662,
+     "score": 6.247601
+    },
+    {
+     "chunk_id": "e9ab54c0-fde2-5780-a9a0-7ab32eb11527",
+     "accn": "0001730168-23-000008",
+     "char_start": 107339,
+     "char_end": 108246,
+     "score": 6.082599
+    },
+    {
+     "chunk_id": "f221ee76-126d-55b3-b041-5a475a1417fe",
+     "accn": "0001730168-23-000077",
+     "char_start": 120948,
+     "char_end": 121862,
+     "score": 5.870686
+    }
+   ],
+   "citations": [],
+   "llm_calls": 1,
+   "seconds": 12.452999999979511,
+   "error": ""
+  },
+  {
+   "qid": "una-002",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "4404767c-1e25-5501-98ef-31fed961a792",
+     "accn": "0001628280-23-027770",
+     "char_start": 242540,
+     "char_end": 243533,
+     "score": 5.951065
+    },
+    {
+     "chunk_id": "14a93687-b021-5bf8-9760-3ea2111c8a39",
+     "accn": "0000310158-22-000034",
+     "char_start": 272713,
+     "char_end": 273719,
+     "score": 5.792091
+    },
+    {
+     "chunk_id": "9c03d3af-9c18-5a8c-ad76-04d509897d1e",
+     "accn": "0001628280-24-034715",
+     "char_start": 257739,
+     "char_end": 258776,
+     "score": 5.614598
+    },
+    {
+     "chunk_id": "69a89d54-f1d2-563e-9512-593aa9d67a2d",
+     "accn": "0001628280-23-036717",
+     "char_start": 266990,
+     "char_end": 268211,
+     "score": 4.897962
+    },
+    {
+     "chunk_id": "bd8e0ca3-d87a-5121-8edf-47d67aa09c2d",
+     "accn": "0000310158-21-000028",
+     "char_start": 252233,
+     "char_end": 252844,
+     "score": 4.585381
+    }
+   ],
+   "citations": [],
+   "llm_calls": 1,
+   "seconds": 9.812999999994645,
+   "error": ""
+  },
+  {
+   "qid": "una-003",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "4de3f908-0f40-51b2-a772-c9154640b426",
+     "accn": "0000104169-24-000056",
+     "char_start": 47639,
+     "char_end": 48410,
+     "score": 4.9533
+    },
+    {
+     "chunk_id": "79902ec4-041e-54df-8179-ddbf8d53bd9b",
+     "accn": "0000104169-23-000020",
+     "char_start": 48363,
+     "char_end": 49162,
+     "score": 4.823434
+    },
+    {
+     "chunk_id": "5f36a689-b807-51da-855e-17b18c32f46a",
+     "accn": "0000104169-21-000033",
+     "char_start": 191292,
+     "char_end": 192649,
+     "score": 4.410356
+    },
+    {
+     "chunk_id": "510f863f-6396-5be6-8fc4-8c60dbed9e54",
+     "accn": "0000104169-20-000011",
+     "char_start": 182695,
+     "char_end": 184094,
+     "score": 4.409394
+    },
+    {
+     "chunk_id": "582465bd-8bb1-5c0f-bb51-16f642756ecf",
+     "accn": "0000104169-24-000056",
+     "char_start": 233582,
+     "char_end": 235376,
+     "score": 4.393958
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 12.297000000020489,
+   "error": ""
+  },
+  {
+   "qid": "una-004",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "54eb5cee-1555-5a4f-a31b-cc0e6b798794",
+     "accn": "0001730168-24-000139",
+     "char_start": 193722,
+     "char_end": 195239,
+     "score": 2.569393
+    },
+    {
+     "chunk_id": "a178f986-e5b7-50ea-a628-e18ff5d1e8a8",
+     "accn": "0001730168-23-000077",
+     "char_start": 89069,
+     "char_end": 90550,
+     "score": 2.309109
+    },
+    {
+     "chunk_id": "cfcb2de7-c04a-5154-89a3-99eadee37d9e",
+     "accn": "0001730168-21-000153",
+     "char_start": 198120,
+     "char_end": 199779,
+     "score": 2.10264
+    },
+    {
+     "chunk_id": "2f731a6f-e007-5049-a77d-0245c6b18ed0",
+     "accn": "0001730168-20-000226",
+     "char_start": 207294,
+     "char_end": 208800,
+     "score": 1.470723
+    },
+    {
+     "chunk_id": "6ffe66c7-f8c2-5e73-901c-1f85a63b482e",
+     "accn": "0001730168-21-000153",
+     "char_start": 199756,
+     "char_end": 201248,
+     "score": 0.422634
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 12.687000000005355,
+   "error": ""
+  },
+  {
+   "qid": "una-005",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "247afcc1-67a5-561b-b365-ca2266f1eb17",
+     "accn": "0001045810-23-000227",
+     "char_start": 89163,
+     "char_end": 90876,
+     "score": 2.414446
+    },
+    {
+     "chunk_id": "bcee4e79-f1f5-5236-93b7-8fcedc3c41ec",
+     "accn": "0001045810-23-000175",
+     "char_start": 81642,
+     "char_end": 83441,
+     "score": 1.231451
+    },
+    {
+     "chunk_id": "43d43eda-ab06-5ca6-82bb-66d07bf71761",
+     "accn": "0001045810-24-000029",
+     "char_start": 207765,
+     "char_end": 209152,
+     "score": 1.134973
+    },
+    {
+     "chunk_id": "95f6f085-d44d-51ae-9929-6f0e37232f95",
+     "accn": "0001045810-23-000175",
+     "char_start": 79947,
+     "char_end": 81641,
+     "score": 0.924777
+    },
+    {
+     "chunk_id": "511d2b11-42f6-5355-a6e6-b4908941ca20",
+     "accn": "0001045810-23-000093",
+     "char_start": 69883,
+     "char_end": 71679,
+     "score": 0.810931
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 12.796999999991385,
+   "error": ""
+  },
+  {
+   "qid": "una-006",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "2e6111c8-676c-58f3-8521-5a1933d1ade4",
+     "accn": "0000104169-24-000056",
+     "char_start": 200306,
+     "char_end": 201730,
+     "score": 1.171111
+    },
+    {
+     "chunk_id": "27d9d302-5610-5e7b-8bc2-1b76149dc38c",
+     "accn": "0000909832-22-000021",
+     "char_start": 78873,
+     "char_end": 80578,
+     "score": 0.709803
+    },
+    {
+     "chunk_id": "6013d8d4-4faf-5c64-b6af-f2b974e1cea1",
+     "accn": "0000200406-25-000038",
+     "char_start": 195075,
+     "char_end": 196627,
+     "score": 0.707512
+    },
+    {
+     "chunk_id": "371f5ebf-5f2a-541d-9721-75d3a1656dc3",
+     "accn": "0000104169-25-000021",
+     "char_start": 191663,
+     "char_end": 193087,
+     "score": 0.696005
+    },
+    {
+     "chunk_id": "16211d9e-593b-588f-abfb-984a71afe32c",
+     "accn": "0000909832-23-000042",
+     "char_start": 79347,
+     "char_end": 80636,
+     "score": 0.531691
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 42.328000000008615,
+   "error": ""
+  },
+  {
+   "qid": "una-007",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 1,
+   "seconds": 1.062999999994645,
+   "error": ""
+  },
+  {
+   "qid": "una-008",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [],
+   "citations": [],
+   "llm_calls": 1,
+   "seconds": 0.7179999999934807,
+   "error": ""
+  },
+  {
+   "qid": "una-009",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "5d315d8c-c864-5448-997f-d1d8e8e9d807",
+     "accn": "0000093410-20-000050",
+     "char_start": 121015,
+     "char_end": 122603,
+     "score": 3.057693
+    },
+    {
+     "chunk_id": "bd895417-f4ed-5542-a8f0-023e6519ad10",
+     "accn": "0000093410-20-000039",
+     "char_start": 128218,
+     "char_end": 129806,
+     "score": 3.05022
+    },
+    {
+     "chunk_id": "26acd222-734b-56a7-a28a-143fbaf28554",
+     "accn": "0000093410-22-000019",
+     "char_start": 111543,
+     "char_end": 113325,
+     "score": 1.23973
+    },
+    {
+     "chunk_id": "27214915-79fc-5f0d-b7f2-2bb028e376cb",
+     "accn": "0000093410-23-000088",
+     "char_start": 114706,
+     "char_end": 116208,
+     "score": 1.090676
+    },
+    {
+     "chunk_id": "7c7f2fce-bc7a-5cb5-86d3-f27d582e89a7",
+     "accn": "0000093410-24-000021",
+     "char_start": 106795,
+     "char_end": 108483,
+     "score": 1.055247
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 15.296999999991385,
+   "error": ""
+  },
+  {
+   "qid": "una-010",
+   "route": "refuse",
+   "answer": "INSUFFICIENT EVIDENCE",
+   "refused": true,
+   "retrieved": [
+    {
+     "chunk_id": "c7f6054b-0680-5eaa-8380-14c5e182a3ac",
+     "accn": "0000909832-23-000042",
+     "char_start": 25830,
+     "char_end": 27423,
+     "score": 4.813337
+    },
+    {
+     "chunk_id": "7ede4fd0-9b7a-56a7-bb72-74b8f2145c54",
+     "accn": "0000909832-23-000042",
+     "char_start": 17254,
+     "char_end": 18559,
+     "score": 4.575146
+    },
+    {
+     "chunk_id": "c8cc6ede-7e8c-512e-ad43-86b06eb34874",
+     "accn": "0000909832-24-000049",
+     "char_start": 17560,
+     "char_end": 18866,
+     "score": 4.323002
+    },
+    {
+     "chunk_id": "48ea7a53-f3e0-5549-9c75-043bbb817f15",
+     "accn": "0000909832-24-000049",
+     "char_start": 25651,
+     "char_end": 27088,
+     "score": 4.19163
+    },
+    {
+     "chunk_id": "d4e6899f-dc5f-57f4-aef8-caf4afd291f7",
+     "accn": "0000909832-20-000017",
+     "char_start": 30367,
+     "char_end": 32148,
+     "score": 3.632152
+    }
+   ],
+   "citations": [],
+   "llm_calls": 2,
+   "seconds": 13.578000000008615,
+   "error": ""
+  }
+ ]
+}

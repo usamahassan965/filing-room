@@ -113,20 +113,49 @@ def _cmd_trace(args: argparse.Namespace) -> int:
     from filing.llm.factory import build_backend
 
     cfg = settings()
+    if args.live:
+        # The response cache off, on purpose. Every prompt in the frozen set has
+        # already been answered by the full run, so a cached capture reports
+        # llm_calls=0 and sub-millisecond model spans -- true, because
+        # `llm_calls` counts hosted HTTP calls and a free re-run must not claim
+        # a day's quota, but read out of the file it says the agent makes no
+        # model calls. The committed trace is a live one so its costs and its
+        # latencies are the real ones.
+        cfg = cfg.model_copy(update={"cache_enabled": False})
     ec = get_config(args.config).resolved(cfg)
-    path = dataset.dataset_path(Path(cfg.data_dir), args.version)
-    questions = {q.id: q for q in dataset.read(path)}
-    try:
-        q = questions[args.qid]
-    except KeyError:
-        print(f"no question {args.qid!r} in {path}", file=sys.stderr)
-        return 1
+    if args.question:
+        # A probe rather than a frozen-set question. Useful for the branches the
+        # eval set does not reliably reach -- the repair loop above all, since a
+        # question that repairs is by definition one the first attempt failed,
+        # and the graph is meant to make those rare. The note written into the
+        # file says which kind of question produced it, because a trace whose
+        # provenance is unclear is worth less than no trace.
+        qid, question = args.qid or "probe", args.question
+    else:
+        path = dataset.dataset_path(Path(cfg.data_dir), args.version)
+        questions = {q.id: q for q in dataset.read(path)}
+        try:
+            found = questions[args.qid]
+        except KeyError:
+            print(f"no question {args.qid!r} in {path}", file=sys.stderr)
+            return 1
+        qid, question = found.id, found.question
 
     backend = build_backend(cfg, ec.chat_backend or None) if ec.generate else None
     tools = build_agent_tools(cfg, backend=backend, config=ec)
-    state, spans = capture_question(q.question, tools=tools, qid=q.id)
+    state, spans = capture_question(question, tools=tools, qid=qid)
 
-    out = write_trace(Path(args.out), question=q.question, qid=q.id, state=state, spans=spans)
+    source = "a question written to reach one branch" if args.question else "the frozen set v1.0"
+    note = (
+        f"One question from {source}, through the M5 agent graph, captured "
+        "in-process by filing.agent.trace and regenerable with "
+        f"`python -m filing.eval trace --qid {qid}"
+        f"{' --question ...' if args.question else ''}"
+        f"{' --live' if args.live else ''}`."
+    )
+    out = write_trace(
+        Path(args.out), question=question, qid=qid, state=state, spans=spans, note=note
+    )
     names = [s["name"] for s in spans]
     print(f"{len(spans)} spans: {' -> '.join(n.removeprefix('agent.') for n in names)}")
     print(
@@ -183,9 +212,15 @@ def main(argv: list[str] | None = None) -> int:
 
     p = sub.add_parser("trace", help="export one question's span tree to docs/")
     p.add_argument("--qid", default="num-001", help="question id from the frozen set")
+    p.add_argument("--question", default="", help="trace this text instead of a frozen question")
     p.add_argument("--config", default="agent", choices=sorted(CONFIGS))
     p.add_argument("--version", default=dataset.DATASET_VERSION)
     p.add_argument("--out", default="docs/trace_example.json")
+    p.add_argument(
+        "--live",
+        action="store_true",
+        help="bypass the response cache so the trace records real calls and real latencies",
+    )
     p.set_defaults(func=_cmd_trace)
 
     p = sub.add_parser("dataset", help="describe the frozen question set")

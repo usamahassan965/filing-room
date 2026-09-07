@@ -1,0 +1,154 @@
+{
+  "note": "One question from a question written to reach one branch, through the M5 agent graph, captured in-process by filing.agent.trace and regenerable with `python -m filing.eval trace --qid repair-probe --question ... --live`.",
+  "qid": "repair-probe",
+  "question": "What did ABBV report for Revenues for the fiscal year ended 1998-12-31?",
+  "route": "sql",
+  "plan": [
+    {
+      "text": "What did ABBV report for Revenues for the fiscal year ended 1998-12-31?",
+      "route": "sql",
+      "ticker": "ABBV",
+      "concept": "Revenues",
+      "period_end": "",
+      "why": "The user is asking for a specific reported financial figure (Revenues) for a specific company (ABBV) and period end date."
+    }
+  ],
+  "repairs": 1,
+  "repair_log": [
+    "ABBV reports no Revenues in USD near 1998-12-31",
+    "repair 1: drop the period and take the most recent filing"
+  ],
+  "llm_calls": 2,
+  "seconds": 8.703,
+  "answer": "INSUFFICIENT EVIDENCE",
+  "refused": true,
+  "evidence": [
+    {
+      "kind": "fact",
+      "citation": "ABBV 10-K 2022-12-31 Revenues [0001551152-25-000020]",
+      "score": 1.0,
+      "value": 58054000000.0,
+      "unit": "USD",
+      "tag": "Revenues",
+      "body": "ABBV reported Revenues of 58,054,000,000 USD for the period ending 2022-12-31 (tag Revenues)."
+    }
+  ],
+  "spans": [
+    {
+      "name": "agent.question",
+      "ms": 5941.927,
+      "status": "UNSET",
+      "attributes": {
+        "qid": "repair-probe",
+        "question": "What did ABBV report for Revenues for the fiscal year ended 1998-12-31?",
+        "route": "sql",
+        "repairs": 1,
+        "llm_calls": 2,
+        "refused": true
+      },
+      "children": [
+        {
+          "name": "agent.plan",
+          "ms": 5049.696,
+          "status": "UNSET",
+          "attributes": {
+            "filing.question": "What did ABBV report for Revenues for the fiscal year ended 1998-12-31?",
+            "filing.plan.route": "sql",
+            "filing.plan.heuristic": false
+          }
+        },
+        {
+          "name": "agent.route",
+          "ms": 0.0,
+          "status": "UNSET",
+          "attributes": {
+            "filing.route": "sql",
+            "filing.route.downgraded": false
+          }
+        },
+        {
+          "name": "agent.retrieve.sql",
+          "ms": 69.102,
+          "status": "UNSET",
+          "attributes": {
+            "filing.sql.tag": "Revenues",
+            "filing.sql.rows": 0
+          }
+        },
+        {
+          "name": "agent.rerank",
+          "ms": 0.0,
+          "status": "UNSET",
+          "attributes": {
+            "filing.rerank.in": 0,
+            "filing.rerank.applied": false
+          }
+        },
+        {
+          "name": "agent.grade",
+          "ms": 0.0,
+          "status": "UNSET",
+          "attributes": {
+            "filing.grade.ok": false,
+            "filing.grade.reason": "no evidence"
+          }
+        },
+        {
+          "name": "agent.repair",
+          "ms": 0.0,
+          "status": "UNSET",
+          "attributes": {
+            "filing.repair.attempt": 1,
+            "filing.repair.missing": "anything",
+            "filing.repair.action": "drop the period and take the most recent filing"
+          }
+        },
+        {
+          "name": "agent.route",
+          "ms": 0.0,
+          "status": "UNSET",
+          "attributes": {
+            "filing.route": "sql",
+            "filing.route.downgraded": false
+          }
+        },
+        {
+          "name": "agent.retrieve.sql",
+          "ms": 50.117,
+          "status": "UNSET",
+          "attributes": {
+            "filing.sql.tag": "Revenues",
+            "filing.sql.rows": 1
+          }
+        },
+        {
+          "name": "agent.rerank",
+          "ms": 0.999,
+          "status": "UNSET",
+          "attributes": {
+            "filing.rerank.in": 1,
+            "filing.rerank.applied": false
+          }
+        },
+        {
+          "name": "agent.grade",
+          "ms": 0.0,
+          "status": "UNSET",
+          "attributes": {
+            "filing.grade.ok": true,
+            "filing.grade.reason": "fact found: Revenues 2022-12-31"
+          }
+        },
+        {
+          "name": "agent.synthesise",
+          "ms": 708.609,
+          "status": "UNSET",
+          "attributes": {
+            "filing.evidence.count": 1,
+            "filing.synthesise.called": true
+          }
+        }
+      ]
+    }
+  ]
+}

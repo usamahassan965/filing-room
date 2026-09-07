@@ -227,6 +227,10 @@ def ndcg(question: EvalQuestion, retrieved: tuple[RetrievedChunk, ...], k: int) 
 class SliceScore:
     name: str
     n: int = 0
+    # How many of `n` the retrieval columns were computed over. Its own column
+    # in the table rather than a footnote, because a hit@5 over a subset the
+    # system chose for itself needs its denominator visible next to it.
+    retrieval_n: int = 0
     exact_match: float | None = None
     hit_rate: dict[int, float] = field(default_factory=dict)
     recall: dict[int, float] = field(default_factory=dict)
@@ -258,6 +262,15 @@ class Scorecard:
             "overall": self.overall.to_json(),
             "slices": {k: v.to_json() for k, v in self.slices.items()},
         }
+
+
+# Routes whose evidence carries no character span. An XBRL fact reached through
+# DuckDB and the same number printed in the filing are one fact by two paths,
+# and only one path has offsets -- so a question answered from `sql` or `graph`
+# is not a retrieval failure, it is outside what span overlap can score. The
+# alternative was to invent a span for the fact, which would turn a stated
+# limitation into a green column.
+SPANLESS_ROUTES = frozenset({"sql", "graph"})
 
 
 def _mean(xs: list[float]) -> float:
@@ -297,11 +310,15 @@ def _score_group(
             if q.slice == "unanswerable":
                 abstained.append(float(o.refused))
 
-        # Retrieval is scored on every answerable question, including numeric
-        # ones -- that is the whole point of indexing the financial statements
-        # in the baseline, and without it the numeric slice would be a router
-        # test only.
-        if q.spans:
+        # Retrieval is scored on every answerable question the system answered
+        # from text, numeric ones included -- that is the whole point of
+        # indexing the financial statements in the baseline, and without it the
+        # numeric slice would be a router test only. A question answered from a
+        # spanless store is excluded rather than scored zero: see
+        # SPANLESS_ROUTES. The baseline has no such route, so nothing about its
+        # published numbers moves.
+        if q.spans and o.route not in SPANLESS_ROUTES:
+            s.retrieval_n += 1
             for k in KS:
                 per_k["hit"].setdefault(k, []).append(hit_rate(q, o.retrieved, k))
                 per_k["rec"].setdefault(k, []).append(recall(q, o.retrieved, k))
@@ -385,13 +402,14 @@ def to_markdown(card: Scorecard, *, title: str = "") -> str:
     lines: list[str] = []
     if title:
         lines += [f"### {title}", ""]
-    head = ["slice", "n", "exact", "router"]
+    head = ["slice", "n", "exact", "router", "ret n"]
     head += [f"hit@{k}" for k in KS] + [f"ndcg@{k}" for k in KS]
     head += ["abstain", "cite ok", "cite gold", "LLM calls"]
     lines.append("| " + " | ".join(head) + " |")
     lines.append("|" + "|".join(["---"] * len(head)) + "|")
     for r in rows:
         cells = [r.name, str(r.n), _pct(r.exact_match), _pct(r.router_accuracy)]
+        cells += [str(r.retrieval_n) if r.retrieval_n else "--"]
         cells += [_pct(r.hit_rate.get(k)) if r.hit_rate else "--" for k in KS]
         cells += [f"{r.ndcg[k]:.3f}" if k in r.ndcg else "--" for k in KS]
         cells += [
