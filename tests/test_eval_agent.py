@@ -335,6 +335,40 @@ def test_a_retrieval_only_run_still_gets_a_reranker(env, monkeypatch):
     assert asked == ["local"]  # not the environment's hosted default
 
 
+def test_the_reranker_can_be_ablated_out_without_removing_the_backend(env, monkeypatch):
+    """The switch the ablation is made of, and why it is not `backend=None`.
+
+    Turning the cross-encoder off by withholding the backend would also turn
+    off the plan call, the synthesis call and the grader's score floor -- four
+    changes reported as one, which is not an ablation. `rerank=False` moves the
+    one node, so the difference between the two result files is that node.
+    """
+    seen: list[str] = []
+
+    class Watched(FakeBackend):
+        def rerank(self, query, passages, *, top_n=None, **kw):  # noqa: ANN001, ARG002
+            seen.append(query)
+            return super().rerank(query, passages, top_n=top_n)
+
+    backend = Watched([plan_reply("text", ticker="NVDA"), "Because volumes rose [1]"])
+    out = answer_agent(
+        question("nar-001", "narrative"),
+        tools=tools(backend, rerank=False),
+        config=replace(AGENT, rerank=False),
+    )
+    assert seen == []  # the node ran; the model was not asked
+    assert out.retrieved  # and the fused order came through it
+
+
+def test_the_ablation_differs_from_the_retrieval_config_in_one_field():
+    """Anything else moving would make the comparison about two things."""
+    from dataclasses import fields
+
+    a, b = CONFIGS["agent-retrieval"], CONFIGS["agent-retrieval-norerank"]
+    moved = {f.name for f in fields(a) if getattr(a, f.name) != getattr(b, f.name)}
+    assert moved == {"name", "rerank", "note"}
+
+
 def test_a_fact_citation_is_dropped_rather_than_counted_as_unresolvable():
     """`parse_citations` skips evidence with no chunk id, which is the seam."""
     fact = Evidence(kind="fact", body="b", citation="c", accn="a", value=1.0)

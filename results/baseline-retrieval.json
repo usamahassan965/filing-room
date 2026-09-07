@@ -28,16 +28,18 @@
   }
  },
  "run": {
-  "answered": 150,
-  "from_cache": 0,
+  "full_set": true,
+  "answered": 0,
+  "from_cache": 150,
   "llm_calls": 0,
   "errors": 0,
-  "seconds": 104.17
+  "seconds": 3.97
  },
  "scores": {
   "overall": {
    "name": "overall",
    "n": 150,
+   "retrieval_n": 140,
    "exact_match": null,
    "hit_rate": {
     "1": 0.05714285714285714,
@@ -68,6 +70,7 @@
    "numeric": {
     "name": "numeric",
     "n": 80,
+    "retrieval_n": 80,
     "exact_match": null,
     "hit_rate": {
      "1": 0.025,
@@ -97,6 +100,7 @@
    "narrative": {
     "name": "narrative",
     "n": 60,
+    "retrieval_n": 60,
     "exact_match": null,
     "hit_rate": {
      "1": 0.1,
@@ -126,6 +130,7 @@
    "unanswerable": {
     "name": "unanswerable",
     "n": 10,
+    "retrieval_n": 0,
     "exact_match": null,
     "hit_rate": {},
     "recall": {},

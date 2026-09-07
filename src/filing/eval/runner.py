@@ -86,6 +86,7 @@ class EvalConfig:
     chunker: str = NAIVE_CHUNKER
     collection: str = ""
     generate: bool = True
+    rerank: bool = True
     dataset_version: str = dataset.DATASET_VERSION
     prompt_version: str = PROMPT_VERSION
     temperature: float = 0.0
@@ -267,6 +268,20 @@ CONFIGS: dict[str, EvalConfig] = {
             "the agent's hybrid retriever and local cross-encoder reranker, "
             "with the plan and synthesise calls switched off -- no hosted call at all"
         ),
+    ),
+    # The same retrieval with the cross-encoder taken out, which is the only
+    # way to learn whether it earns its place. It is a local forward pass, so
+    # it costs no quota and no key -- and a stage that costs nothing is the
+    # kind nobody audits. Identical to `agent-retrieval` in every other field,
+    # so the difference between the two tables is one node.
+    "agent-retrieval-norerank": EvalConfig(
+        name="agent-retrieval-norerank",
+        system="agent",
+        generate=False,
+        rerank=False,
+        k=max(metrics.KS),
+        chunker="semantic",
+        note="the same hybrid retrieval, fused order only -- the reranker ablated out",
     ),
 }
 
@@ -473,6 +488,7 @@ def build_agent_tools(cfg: Settings, *, backend: Any, config: EvalConfig) -> Any
         max_tokens=config.max_tokens,
         chat_role=config.chat_role,
         generate=config.generate,
+        rerank=config.rerank,
     )
 
 

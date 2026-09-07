@@ -114,6 +114,12 @@ class Tools:
     graph: Any = None  # filing.agent.entities.GraphTool
     k: int = CANDIDATE_K
     top_n: int = TOP_N
+    # Whether the cross-encoder runs at all. A switch rather than a constant
+    # because the stage has to be ablatable: it is free (a local forward pass)
+    # and therefore never questioned, which is exactly the kind of stage that
+    # earns its place by assumption. Off, the node passes the fused order
+    # through and the agent's text branch is RRF alone.
+    rerank: bool = True
     temperature: float = 0.0
     max_tokens: int = 512
     chat_role: str = "chat"
@@ -326,7 +332,8 @@ class Nodes:
         candidates = list(state.get("candidates") or [])
         with self.t.tracer.start_as_current_span("agent.rerank") as span:
             span.set_attribute("filing.rerank.in", len(candidates))
-            if not candidates or candidates[0].kind != "text" or self.t.backend is None:
+            skip = not self.t.rerank or self.t.backend is None
+            if not candidates or candidates[0].kind != "text" or skip:
                 span.set_attribute("filing.rerank.applied", False)
                 return {"evidence": candidates[: self.t.top_n]}
             rankings = self.t.backend.rerank(
