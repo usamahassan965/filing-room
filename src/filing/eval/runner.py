@@ -169,6 +169,42 @@ CONFIGS: dict[str, EvalConfig] = {
         k=max(metrics.KS),
         note="the baseline retriever alone: dense top-10, no LLM call at all",
     ),
+    # The generator ablation, three ways. Identical retrieval to `baseline` --
+    # same naive index, same top-5, same prompt -- so the only thing that moves
+    # between these tables and the baseline's is which model reads the excerpts.
+    # That is the whole point: it separates the retriever's ceiling from the
+    # generator's, which a single run cannot do.
+    #
+    # All three free tiers were probed live before being written down here.
+    # Cohere meters CALLS (1,000 a month), so a 150-question run costs 15% of
+    # the month and finishes in about ten minutes. Groq and OVHcloud meter
+    # throughput instead, at roughly two questions a minute each, so their runs
+    # take about an hour -- slow, but an hour is not eight days, which is what
+    # ruled `gemini-3.5-flash` out of the baseline in the first place.
+    "baseline-cohere": EvalConfig(
+        name="baseline-cohere",
+        system="naive",
+        chat_backend="cohere",
+        chat_role="chat",
+        note="the baseline retriever with command-a -- the generator ablation",
+    ),
+    "baseline-groq": EvalConfig(
+        name="baseline-groq",
+        system="naive",
+        chat_backend="groq",
+        chat_role="chat",
+        note="the baseline retriever with gpt-oss-120b -- the generator ablation",
+    ),
+    # No key and no account. If every other provider on this list refuses the
+    # country, this row still runs, which is the only reason a 2-rpm endpoint
+    # is worth an hour.
+    "baseline-ovh": EvalConfig(
+        name="baseline-ovh",
+        system="naive",
+        chat_backend="ovh",
+        chat_role="chat",
+        note="the baseline retriever with Qwen3.5-397B, anonymously",
+    ),
     # The generating half, run on this machine instead of on a quota. Two of
     # them, because the registry holds two local chat models that both fit in
     # memory and there is no way to know from the outside which one answers
@@ -273,6 +309,14 @@ def parse_citations(answer: str, chunks: list[Any]) -> tuple[str, ...]:
     """
     import re
 
+    # gpt-oss-120b cites with FULLWIDTH brackets -- U+3010/U+3011, the CJK lenticular
+    # pair -- so the ASCII-only pattern scored it at zero citations while it was in
+    # fact citing correctly on every answer. That is a broken metric, not a finding
+    # about the model, and the contract in SYSTEM_PROMPT says "bracketed numbers"
+    # without promising a codepoint. Normalise before matching.
+    answer = answer.translate(
+        str.maketrans({"\u3010": "[", "\u3011": "]", "\uff3b": "[", "\uff3d": "]"})
+    )
     out: list[str] = []
     for m in re.finditer(r"\[(\d{1,2})\]", answer):
         i = int(m.group(1))

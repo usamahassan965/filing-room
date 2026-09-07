@@ -23,7 +23,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-Backend = Literal["gemini", "ollama", "local"]
+Backend = Literal["gemini", "cohere", "groq", "ovh", "ollama", "local"]
 Role = Literal["chat", "chat_fast", "embed", "rerank"]
 
 
@@ -100,6 +100,65 @@ MODEL_REGISTRY: dict[Backend, dict[str, ModelSpec]] = {
             local=True,
             note="local cross-encoder; no key, no quota, no rate limit",
         ),
+    },
+    # ---------------------------------------------------------------- bake-off
+    # Three providers whose free tiers were probed live rather than read off a
+    # listicle, all reachable through filing.llm.openai_compat. Every rpm below
+    # was taken from the provider's own x-ratelimit headers on a real call.
+    #
+    # The rerank entry in each is the same local cross-encoder the Gemini
+    # registry uses. That is not laziness: these configs exist to change the
+    # generator and hold retrieval fixed, so a provider's own reranker would
+    # confound exactly the comparison they are for.
+    "cohere": {
+        "chat": ModelSpec(
+            id="command-a-03-2025",
+            alternates=("command-a-plus-05-2026", "command-r-plus-08-2024"),
+            rpm=18,
+            note="trial key: 20 rpm and 1,000 calls a MONTH -- calls, not tokens",
+        ),
+        "chat_fast": ModelSpec(id="command-r7b-12-2024", alternates=("command-r-08-2024",), rpm=18),
+        "embed": ModelSpec(id="embed-v4.0", alternates=("embed-english-v3.0",), dim=1536, rpm=18),
+        "rerank": ModelSpec(
+            id="cross-encoder/ms-marco-MiniLM-L-6-v2",
+            local=True,
+            note="local cross-encoder, so the generator is the only variable",
+        ),
+    },
+    # Groq bills tokens per MINUTE, not per day: the live header says 8,000 TPM
+    # against 1,000 requests a day. At ~3.2k tokens a question that is the
+    # binding constraint -- roughly two questions a minute, so an rpm of 2 is
+    # not caution, it is the actual ceiling. The 150-question run takes an hour
+    # and costs a fifteenth of the daily request budget.
+    "groq": {
+        "chat": ModelSpec(
+            id="openai/gpt-oss-120b",
+            alternates=("qwen/qwen3.8-27b", "openai/gpt-oss-20b"),
+            rpm=2,
+            note="8,000 tokens/min is the real limit; requests are never the problem",
+        ),
+        "chat_fast": ModelSpec(id="qwen/qwen3.6-27b", alternates=("openai/gpt-oss-20b",), rpm=2),
+        # No embed entry, deliberately. Groq's catalogue is chat, speech and
+        # safety classifiers -- there is no embedding model to name, and a
+        # placeholder with dim=0 would be a registry that lies. model_for()
+        # raising is the correct answer to "embed with Groq".
+        "rerank": ModelSpec(id="cross-encoder/ms-marco-MiniLM-L-6-v2", local=True),
+    },
+    # No key, no account, no country list to be absent from -- which is the
+    # entire reason it is here, after build.nvidia.com turned out to be a wall.
+    # The price is 2 requests per minute per IP, shared with everyone else on
+    # this address, so a full run is over an hour and the limiter is not
+    # optional.
+    "ovh": {
+        "chat": ModelSpec(
+            id="Qwen3.5-397B-A17B",
+            alternates=("gpt-oss-120b", "Meta-Llama-3_3-70B-Instruct", "Qwen3-32B"),
+            rpm=2,
+            note="anonymous; 2 rpm per IP is the whole quota",
+        ),
+        "chat_fast": ModelSpec(id="Qwen3.5-9B", alternates=("Mistral-7B-Instruct-v0.3",), rpm=2),
+        "embed": ModelSpec(id="bge-m3", alternates=("Qwen3-Embedding-8B",), dim=1024, rpm=2),
+        "rerank": ModelSpec(id="cross-encoder/ms-marco-MiniLM-L-6-v2", local=True),
     },
     # Sized to the machine, not to the leaderboard. llama3.1:8b at q4 wants
     # ~6 GB resident and this box has 15.8 GB total with ~4.8 GB actually free,
@@ -179,6 +238,17 @@ class Settings(BaseSettings):
     gemini_openai_base_url: str = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
     ollama_base_url: str = "http://localhost:11434"
+
+    # --- bake-off providers (see filing.llm.openai_compat) ---
+    # Cohere speaks OpenAI at a /compatibility/v1 path rather than at the root,
+    # which is the only structural difference between the three.
+    cohere_api_key: SecretStr = SecretStr("")
+    cohere_base_url: str = "https://api.cohere.ai/compatibility/v1"
+    groq_api_key: SecretStr = SecretStr("")
+    groq_base_url: str = "https://api.groq.com/openai/v1"
+    # No key field: OVHcloud answers unauthenticated requests, which is the
+    # property that put it on this list.
+    ovh_base_url: str = "https://oai.endpoints.kepler.ai.cloud.ovh.net/v1"
 
     # --- local models ---
     rerank_device: str = "cpu"
@@ -298,6 +368,31 @@ class Settings(BaseSettings):
     @property
     def registry(self) -> dict[str, ModelSpec]:
         return MODEL_REGISTRY[self.llm_backend]
+
+    def provider_credentials(self, provider: str) -> tuple[str, str, str]:
+        """Base URL, secret, and where to get one, for an OpenAI-compatible provider.
+
+        The third element doubles as a flag: an empty string means the provider
+        needs no credential, so a blank secret is not an error. That is not a
+        hypothetical case -- it is how OVHcloud works, and the reason it is the
+        one provider here that no country list can take away.
+        """
+        table = {
+            "cohere": (
+                self.cohere_base_url,
+                self.cohere_api_key.get_secret_value(),
+                "https://dashboard.cohere.com/api-keys",
+            ),
+            "groq": (
+                self.groq_base_url,
+                self.groq_api_key.get_secret_value(),
+                "https://console.groq.com/keys",
+            ),
+            "ovh": (self.ovh_base_url, "", ""),
+        }
+        if provider not in table:
+            raise KeyError(f"{provider!r} is not an OpenAI-compatible provider: {sorted(table)}")
+        return table[provider]
 
 
 @lru_cache(maxsize=1)

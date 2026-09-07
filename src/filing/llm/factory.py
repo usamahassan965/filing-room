@@ -17,6 +17,10 @@ def build_backend(cfg: Settings | None = None, backend: Backend | None = None) -
         from filing.llm.gemini import GeminiBackend
 
         return GeminiBackend(cfg)
+    if choice in ("cohere", "groq", "ovh"):
+        from filing.llm.openai_compat import OpenAICompatBackend
+
+        return OpenAICompatBackend(choice, cfg)
     if choice == "ollama":
         from filing.llm.fallback_ollama import OllamaBackend
 

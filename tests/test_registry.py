@@ -19,11 +19,27 @@ ROLES = ("chat", "chat_fast", "embed", "rerank")
 # rather than returning something.
 RETRIEVAL_ONLY = frozenset({"local"})
 
+# The mirror image, and for the opposite reason: Groq's catalogue is chat,
+# speech and safety classifiers, with no embedding model in it at all. It can
+# still rerank, because reranking here is a local cross-encoder rather than
+# anything the provider serves. Naming a placeholder embed model to satisfy the
+# parametrisation below would be a registry that lies about what can be called.
+GENERATION_ONLY = frozenset({"groq"})
 
-@pytest.mark.parametrize("backend", sorted(MODEL_REGISTRY))
+
+@pytest.mark.parametrize("backend", sorted(set(MODEL_REGISTRY) - GENERATION_ONLY))
 @pytest.mark.parametrize("role", ("embed", "rerank"))
 def test_every_backend_can_retrieve(backend, role):
     assert model_for(role, backend).id
+
+
+@pytest.mark.parametrize("backend", sorted(GENERATION_ONLY))
+def test_a_generation_only_backend_still_reranks(backend):
+    """It has no embedder; the local cross-encoder is not the provider's to lack."""
+    assert model_for("rerank", backend).local is True
+    with pytest.raises(KeyError) as exc:
+        model_for("embed", backend)
+    assert "chat" in str(exc.value)
 
 
 @pytest.mark.parametrize("backend", sorted(set(MODEL_REGISTRY) - RETRIEVAL_ONLY))
@@ -63,9 +79,17 @@ def test_declared_rate_limits_are_sane(backend):
 
 
 def test_embed_specs_declare_their_width():
-    """`filing smoke` asserts the vector width, so an undeclared dim is untestable."""
-    for backend in MODEL_REGISTRY:
-        assert MODEL_REGISTRY[backend]["embed"].dim, backend
+    """`filing smoke` asserts the vector width, so an undeclared dim is untestable.
+
+    A backend may serve no embedding model at all -- Groq does not -- and the
+    honest registry entry for that is no entry. What is not allowed is naming a
+    model without saying how wide its vectors are, because the collection name
+    is built from that number and a wrong one is a silent retrieval failure.
+    """
+    for backend, roles in MODEL_REGISTRY.items():
+        spec = roles.get("embed")
+        if spec is not None:
+            assert spec.dim, backend
 
 
 # --------------------------------------------------------------------------
