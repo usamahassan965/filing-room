@@ -62,7 +62,6 @@ def test_no_duplicate_candidates(backend):
         assert spec.candidates[0] == spec.id
 
 
-
 def test_unknown_role_names_the_known_ones():
     with pytest.raises(KeyError) as exc:
         model_for("summariser", "gemini")
@@ -75,7 +74,6 @@ def test_declared_rate_limits_are_sane(backend):
     for role, spec in MODEL_REGISTRY[backend].items():
         if spec.rpm is not None:
             assert spec.rpm > 0, f"{backend}/{role} rpm={spec.rpm}"
-
 
 
 def test_embed_specs_declare_their_width():

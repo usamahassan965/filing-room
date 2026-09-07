@@ -53,7 +53,6 @@ class ModelSpec:
         return (self.id, *self.alternates)
 
 
-
 MODEL_REGISTRY: dict[Backend, dict[str, ModelSpec]] = {
     # Gemini free tier. The rpm figures are the documented free-tier limits at
     # the time of writing; they move, so they are overridable per-model here and
