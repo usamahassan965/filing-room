@@ -12,6 +12,7 @@
     filing graph    extract the entity graph from those same chunks
     filing text     the M3 gate -- six checks, exit code 0 or 1
     filing failures the M6 failure gallery, counted by a Phoenix filter
+    filing serve    the M7 API -- /ask, with the evidence in the response
 
 No gate in this project advances on a claim, so the gate commands assert rather
 than print: ``smoke`` fails loudly if the cache is not deduplicating requests or
@@ -853,6 +854,37 @@ def failures(
             if r["reason"]:
                 console.print(f"    [dim]{r['reason'][:160]}[/dim]")
             console.print(f"    [dim]{trace_url(r['trace_id'], cfg=cfg)}[/dim]")
+
+
+@app.command()
+def serve(
+    config: Annotated[
+        str, typer.Option("--config", help="Which eval config the server answers under.")
+    ] = "",
+    host: Annotated[str, typer.Option("--host")] = "127.0.0.1",
+    port: Annotated[int, typer.Option("--port")] = 8000,
+    warm: Annotated[
+        bool, typer.Option("--warm/--lazy", help="Open the stores before accepting requests.")
+    ] = True,
+) -> None:
+    """Serve /ask, the answer with its evidence attached.
+
+    Warm by default: the first request would otherwise pay for opening Qdrant,
+    the BM25 index and the cross-encoder, and a demo whose first question takes
+    forty seconds is a demo nobody watches to the end. ``--lazy`` is there for
+    the case where the point is to see the 503 a missing corpus produces.
+
+    Bound to localhost, because the endpoint has no authentication and spends a
+    model budget on every request.
+    """
+    from filing.api import DEFAULT_CONFIG
+    from filing.api import serve as run_server
+
+    name = config or DEFAULT_CONFIG
+    console.print(f"[bold]filing[/bold] serving [cyan]{name}[/cyan] on http://{host}:{port}")
+    console.print(f"  docs   http://{host}:{port}/docs")
+    console.print("  ui     streamlit run src/filing/ui.py")
+    run_server(config=name, host=host, port=port, warm=warm)
 
 
 @app.command()

@@ -6,14 +6,17 @@ against the source, and every answer traceable to the filing it came from.
 
 Runs on free API tiers. Full build plan: [`docs/build-plan.html`](docs/build-plan.html).
 
-**Status: M6 shipped — the agent answers the same 150 questions at 98.8% exact
-on numbers against the baseline's 7.5%, and every figure it prints is now
-recomputed against the source before it ships: 0 hallucinated figures in 133,
-every citation resolving, and 426 of 427 deliberately corrupted answers caught.
-One M5 gate criterion is still missed and still said so below.**
+**Status: M7 shipped — the agent answers the same 150 questions at 98.8% exact
+on numbers against the baseline's 7.5%, every figure it prints is recomputed
+against the source before it ships (0 hallucinated figures in 133, every
+citation resolving, 426 of 427 deliberately corrupted answers caught), and all
+of that is now visible from a page: `filing serve` returns the evidence in the
+response and the UI is a client of it, not a second source of truth. One M5 gate
+criterion is still missed and still said so below.**
 M0 the rig, M1 the corpus, M2 the fact store, M3 the text index and the entity
 graph, M4 the frozen question set and the naive baseline, M5 the routed agent,
-M6 the verifier and the failure taxonomy.
+M6 the verifier and the failure taxonomy, M7 the API and the page that renders
+its payload.
 
 | Gate | What it produced | Check |
 |---|---|---|
@@ -24,8 +27,9 @@ M6 the verifier and the failure taxonomy.
 | **M4** the yardstick | 150 frozen questions, 260 gold spans, naive index of 48,934 chunks | `filing.eval run --config baseline` — 150/150, 4 live calls |
 | **M5** the agent | router + 3 stores + grader + repair(≤2), 98.8% numeric exact, router 0.833 | `filing.eval run --config agent` — 150/150, 0 errors, 290 calls |
 | **M6** the guard | numeric verifier, citation resolver, abstention guard, 4-tag taxonomy | `filing.eval run --config agent-guarded` — 0 hallucinated / 133, 0 blocked |
+| **M7** the surface | `/ask` returning the evidence, SSE stages, a page that renders the payload | `filing serve` — plan, routing, evidence, verification and trace, all four outcomes |
 
-784 tests, `ruff` clean, and no test may open a socket off this machine.
+829 tests, `ruff` clean, and no test may open a socket off this machine.
 
 ---
 
@@ -66,6 +70,7 @@ filing index      # embed the narrative chunks into Qdrant, build BM25 beside
 filing graph      # entity/relation extraction into a NetworkX graph
 filing text       # M3 gate: 6 checks over the chunks, indexes and graph
 filing failures   # M6: the failure taxonomy, counted by a Phoenix filter
+filing serve      # M7: /ask, with the plan, the evidence and the trace in the response
 
 python -m filing.eval verify                        # the frozen 150 still land on their spans
 python -m filing.eval run --config baseline-retrieval   # score the retriever, no LLM at all
@@ -834,6 +839,101 @@ quietly moving the baseline.
 
 ---
 
+## M7 — the transparency surface
+
+Phoenix is the developer's view of a run. This gate builds the other half: what
+a **reader** gets to see about how an answer was reached, without a login and
+without having to take the sentence on trust.
+
+One rule holds the whole thing up: **the API carries the evidence, the page
+renders it.** `src/filing/api.py` returns a payload containing the plan, the
+route actually taken, every evidence record with its citation and whether the
+writer cited it, every figure the verifier checked and what it was matched
+against, the grade, the repair log, the timings and the trace id.
+`src/filing/ui.py` imports `httpx` and `streamlit`, and from this project
+nothing but that payload's shape — no store, no graph, no model, no settings
+object. The last panel on the page is the raw JSON the page was built from,
+which is what makes the rule checkable rather than merely stated: everything
+above that panel is a rendering of the object inside it.
+
+```bash
+filing serve --port 8077                 # /health, /ask, /ask/stream, /docs
+FILING_API=http://127.0.0.1:8077 streamlit run src/filing/ui.py
+```
+
+`/ask` blocks and returns the payload. `/ask/stream` is the same run as
+server-sent events — a `start`, one `stage` per graph node as it fires, then the
+identical `answer` payload — so the page can name what the agent is doing
+instead of showing a spinner for fifty seconds. The Streamlit client falls back
+to `/ask` on its own if the stream cannot be opened, because a proxy that eats
+SSE should degrade to a slower demo, not a broken one.
+
+### Four outcomes, because collapsing them would hide M6
+
+| outcome | what happened | what the page says |
+|---|---|---|
+| `answered` | the agent answered and the verifier let it through | every figure below was checked against the evidence |
+| `abstained` | the agent itself declined | it declined — the behaviour the eval rewards |
+| `blocked` | the agent answered and **the verifier overruled it** | why the verifier stopped it, reason by reason |
+| `error` | the run did not finish | the exception, rendered as a state |
+
+`abstained` and `blocked` print the same `INSUFFICIENT EVIDENCE` to the reader.
+Folding them into one state on the surface would make M6's guard invisible at
+exactly the moment it did its job, so the payload keeps them apart and the
+banner says which one it was.
+
+### The span that could not be closed
+
+The first working version of `/ask/stream` opened an OpenTelemetry span, ran the
+graph inside it, and yielded from inside the `with` block. Every request logged
+`Failed to detach context`, and the trace ids were parented by luck.
+
+An OTel context token is a `contextvars` reset token, and a token taken on one
+thread cannot be reset on another. Starlette pumps a synchronous SSE generator
+through its thread pool one `__next__` at a time, so the span was entered on
+whichever worker took the first step and exited on whichever worker took the
+last. The fix is not a suppression: the graph now runs on a thread of its own
+and pushes stage events onto a queue, and the generator does nothing but drain
+that queue. Both ends of the span happen in one context because they happen on
+one thread. `tests/test_api.py` asserts exactly that — it stubs the span with a
+context manager that records `threading.get_ident()` on entry and on exit, and
+requires the two to be equal and to differ from the consumer's.
+
+### The demo's own examples were the first thing the surface caught
+
+The page ships four example questions in the sidebar. The first four written
+named MSFT and AAPL, neither of which is in this twenty-company corpus, and a
+fiscal-2024 NVDA figure the agent structurally cannot reach. An example that
+abstains because the ticker was never ingested teaches a visitor nothing about
+the system and everything about the demo, so all four were replaced with
+questions verified through the API against this corpus: one numeric, one
+narrative, one narrative over a different filer, and — deliberately — one
+unanswerable, because a surface that only ever showed answers would be hiding
+half the design.
+
+### What this gate surfaced and did not fix
+
+Two retrieval defects became visible the moment the plan and the evidence were
+on the same screen. Both are out of M7's scope and neither is fixed here.
+
+**The concept resolver prefers overlap to identity.** `'total revenue'` resolves
+to `CostOfRevenue` at `score=0.49, how='overlap'` — a word-overlap match beating
+the concept the phrase actually names. `'revenues'` resolves correctly, at
+`score=1.0, how='exact-label'`. The bug is in the ranking, not the lookup.
+
+**`facts_current` is joined to `filings`, and that join hides two thirds of the
+store.** The fact lookup in `src/filing/agent/sql.py` joins to `filings` to get a
+form type, but `filings` holds only the 407 documents actually ingested while the
+XBRL companyfacts feed carries facts from every filing a company ever made. The
+join silently drops 186,171 of 265,535 rows. NVDA's fiscal-2024 revenue lives
+under an accession that was never ingested, so the agent cannot reach it — while
+the M4 gold was generated from `facts_current` *without* that join, which means
+the frozen set contains gold answers for facts the agent is structurally unable
+to retrieve. That is a scoring problem as much as a retrieval one, and it wants
+its own gate.
+
+---
+
 ## Layout
 
 ```
@@ -842,6 +942,8 @@ src/filing/
 ├── tracing.py       phoenix / openinference wiring — the write side
 ├── gallery.py       the read side: the failure taxonomy as a server-side filter
 ├── cli.py           every command above
+├── api.py           /ask — the payload contract, and the four outcomes
+├── ui.py            the page: a client of that payload, and of nothing else
 ├── llm/
 │   ├── base.py            the three-verb interface
 │   ├── limiter.py         sliding-window rate limiter
@@ -884,7 +986,7 @@ src/filing/
 
 scripts/eval_v1_0/   the authoring record — rebuilds the frozen set byte for byte
 scripts/m6_negative_control.py   breaks 116 real answers four ways, measures the catch rate
-tests/               784 tests, no network and no API key
+tests/               829 tests, no network and no API key
 results/             one committed JSON + markdown table per config
 docs/                build plan, corpus notes, the baseline write-up, two agent traces
 ```

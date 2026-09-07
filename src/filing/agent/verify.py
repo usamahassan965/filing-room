@@ -69,10 +69,13 @@ __all__ = [
     "NumberClaim",
     "Verdict",
     "classify",
+    "figures_in",
     "guard_answer",
     "has_locator",
+    "markers_in",
     "recheck_facts",
     "resolve_citations",
+    "sentences",
     "uncited_claims",
     "verify_answer",
     "verify_numbers",
@@ -263,6 +266,37 @@ def _read(text: str) -> list[_Stated]:
             )
         )
     return out
+
+
+def sentences(answer: str) -> tuple[str, ...]:
+    """The answer split the way the uncited-claim check splits it.
+
+    Public because M7's evidence panel shows the answer claim by claim, and a
+    panel that split sentences its own way would be showing the reader a
+    decomposition the guard never looked at. One definition, two consumers.
+    """
+    return tuple(s for s in (part.strip() for part in _SENTENCE.split(answer)) if s)
+
+
+def markers_in(text: str) -> tuple[int, ...]:
+    """The citation markers in a stretch of prose, in order, without repeats."""
+    out: list[int] = []
+    for bracket in _CITATION.finditer(text):
+        for marker in _MARKER.finditer(bracket.group(0)):
+            i = int(marker.group(0))
+            if i not in out:
+                out.append(i)
+    return tuple(out)
+
+
+def figures_in(text: str) -> tuple[str, ...]:
+    """The figures a stretch of prose states, as they are written in it.
+
+    The same reading :func:`verify_numbers` does, exposed without the
+    classification, so a caller can ask *which sentence* a checked figure was
+    stated in without re-implementing how a number is found.
+    """
+    return tuple(s.text for s in _read(strip_citations(text)))
 
 
 def _digit_strings(text: str) -> set[str]:
@@ -531,17 +565,13 @@ def resolve_citations(answer: str, evidence: list[Any]) -> tuple[tuple[int, ...]
     made: list[int] = []
     dangling: list[int] = []
     unlocatable: list[int] = []
-    for bracket in _CITATION.finditer(answer):
-        for marker in _MARKER.finditer(bracket.group(0)):
-            i = int(marker.group(0))
-            if i in made or i in dangling or i in unlocatable:
-                continue
-            if not 1 <= i <= len(evidence):
-                dangling.append(i)
-            elif not has_locator(evidence[i - 1]):
-                unlocatable.append(i)
-            else:
-                made.append(i)
+    for i in markers_in(answer):
+        if not 1 <= i <= len(evidence):
+            dangling.append(i)
+        elif not has_locator(evidence[i - 1]):
+            unlocatable.append(i)
+        else:
+            made.append(i)
     return tuple(made), tuple(dangling), tuple(unlocatable)
 
 
@@ -565,11 +595,10 @@ def uncited_claims(answer: str) -> tuple[str, ...]:
     every one of the 116 real answers already satisfies it.
     """
     out: list[str] = []
-    for sentence in _SENTENCE.split(answer):
-        sentence = sentence.strip()
-        if not sentence or _CITATION.search(sentence):
+    for sentence in sentences(answer):
+        if _CITATION.search(sentence):
             continue
-        if _read(strip_citations(sentence)):
+        if figures_in(sentence):
             out.append(sentence)
     # Only when the per-sentence pass found nothing: an uncited answer that
     # states a figure is already reported sentence by sentence, and adding the

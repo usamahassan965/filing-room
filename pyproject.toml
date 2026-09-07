@@ -47,6 +47,14 @@ dependencies = [
     # reconstruct. The repair loop's bound lives in the graph, not in a
     # while-loop somebody has to trust.
     "langgraph>=0.2",
+    # M7. The API is FastAPI because the payload *is* the deliverable: pydantic
+    # models give the evidence contract a published schema at /docs rather than
+    # a shape a reader has to infer from a sample response. sse-starlette
+    # streams the run stage by stage, which is what lets the interface show the
+    # plan and the route while the generator is still writing.
+    "fastapi>=0.115",
+    "uvicorn>=0.32",
+    "sse-starlette>=2.1",
 ]
 
 [project.optional-dependencies]
@@ -60,6 +68,14 @@ dev = [
 # this pulls pandas, fastapi, boto3 and friends, so it stays opt-in.
 phoenix = [
     "arize-phoenix>=8.0",
+]
+# M7's page. An extra rather than a dependency, and the split is the
+# architecture rather than packaging taste: the API carries the evidence and the
+# page renders it, so the page is replaceable and the server must not need it
+# installed to serve. Streamlit also drags in pandas, pyarrow and altair, none
+# of which anything else here touches.
+ui = [
+    "streamlit>=1.40",
 ]
 
 [project.scripts]
