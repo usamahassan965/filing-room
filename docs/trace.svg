@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="792" height="430" viewBox="0 0 792 430" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" role="img" aria-label="agent span waterfall">
+<rect width="792" height="430" rx="8" fill="#ffffff"/>
+<text x="18" y="26" font-size="13" font-weight="600" fill="#1c1f23">repair-probe &#183; route sql &#183; 1 repair(s) &#183; 2 LLM calls</text>
+<text x="18" y="44" font-size="11" fill="#6b7280">What did ABBV report for Revenues for the fiscal year ended 1998-12-31?</text>
+<line x1="228.0" y1="72" x2="228.0" y2="396" stroke="#dfe3e8" stroke-width="1"/>
+<text x="228.0" y="66" font-size="9" fill="#6b7280" text-anchor="middle">0.0s</text>
+<line x1="345.5" y1="72" x2="345.5" y2="396" stroke="#dfe3e8" stroke-width="1"/>
+<text x="345.5" y="66" font-size="9" fill="#6b7280" text-anchor="middle">1.5s</text>
+<line x1="463.0" y1="72" x2="463.0" y2="396" stroke="#dfe3e8" stroke-width="1"/>
+<text x="463.0" y="66" font-size="9" fill="#6b7280" text-anchor="middle">3.0s</text>
+<line x1="580.5" y1="72" x2="580.5" y2="396" stroke="#dfe3e8" stroke-width="1"/>
+<text x="580.5" y="66" font-size="9" fill="#6b7280" text-anchor="middle">4.5s</text>
+<line x1="698.0" y1="72" x2="698.0" y2="396" stroke="#dfe3e8" stroke-width="1"/>
+<text x="698.0" y="66" font-size="9" fill="#6b7280" text-anchor="middle">5.9s</text>
+<text x="18" y="99" font-size="11" fill="#1c1f23">agent.question</text>
+<rect x="228.0" y="89" width="470.0" height="13" rx="3" fill="#4a4f57"/>
+<text x="704.0" y="99" font-size="10" fill="#6b7280">5942ms</text>
+<text x="30" y="125" font-size="11" fill="#1c1f23">agent.plan</text>
+<rect x="228.0" y="115" width="399.4" height="13" rx="3" fill="#6b5bd2"/>
+<text x="633.4" y="125" font-size="10" fill="#6b7280">5050ms</text>
+<text x="30" y="151" font-size="11" fill="#1c1f23">agent.route</text>
+<rect x="627.4" y="141" width="2.0" height="13" rx="3" fill="#8a8f98"/>
+<text x="635.4" y="151" font-size="10" fill="#6b7280">0ms</text>
+<text x="30" y="177" font-size="11" fill="#1c1f23">agent.retrieve.sql</text>
+<rect x="627.4" y="167" width="5.5" height="13" rx="3" fill="#2f8f6b"/>
+<text x="638.9" y="177" font-size="10" fill="#6b7280">69ms</text>
+<text x="30" y="203" font-size="11" fill="#1c1f23">agent.rerank</text>
+<rect x="632.9" y="193" width="2.0" height="13" rx="3" fill="#3d7fb8"/>
+<text x="640.9" y="203" font-size="10" fill="#6b7280">0ms</text>
+<text x="30" y="229" font-size="11" fill="#1c1f23">agent.grade</text>
+<rect x="632.9" y="219" width="2.0" height="13" rx="3" fill="#c98a2b"/>
+<text x="640.9" y="229" font-size="10" fill="#6b7280">0ms</text>
+<text x="30" y="255" font-size="11" fill="#1c1f23">agent.repair</text>
+<rect x="632.9" y="245" width="2.0" height="13" rx="3" fill="#c05a4a"/>
+<text x="640.9" y="255" font-size="10" fill="#6b7280">0ms</text>
+<text x="30" y="281" font-size="11" fill="#1c1f23">agent.route</text>
+<rect x="632.9" y="271" width="2.0" height="13" rx="3" fill="#8a8f98"/>
+<text x="640.9" y="281" font-size="10" fill="#6b7280">0ms</text>
+<text x="30" y="307" font-size="11" fill="#1c1f23">agent.retrieve.sql</text>
+<rect x="632.9" y="297" width="4.0" height="13" rx="3" fill="#2f8f6b"/>
+<text x="642.9" y="307" font-size="10" fill="#6b7280">50ms</text>
+<text x="30" y="333" font-size="11" fill="#1c1f23">agent.rerank</text>
+<rect x="636.9" y="323" width="2.0" height="13" rx="3" fill="#3d7fb8"/>
+<text x="644.9" y="333" font-size="10" fill="#6b7280">1ms</text>
+<text x="30" y="359" font-size="11" fill="#1c1f23">agent.grade</text>
+<rect x="636.9" y="349" width="2.0" height="13" rx="3" fill="#c98a2b"/>
+<text x="644.9" y="359" font-size="10" fill="#6b7280">0ms</text>
+<text x="30" y="385" font-size="11" fill="#1c1f23">agent.synthesise</text>
+<rect x="636.9" y="375" width="56.1" height="13" rx="3" fill="#6b5bd2"/>
+<text x="699.0" y="385" font-size="10" fill="#6b7280">709ms</text>
+<text x="18" y="418" font-size="10" fill="#6b7280">8.70s wall clock &#183; regenerate with python scripts/render_trace.py</text>
+</svg>

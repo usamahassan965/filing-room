@@ -1,0 +1,116 @@
+{
+  "sample": 8,
+  "dataset_version": "v1.0",
+  "cached": false,
+  "note": "Measured with the outcome cache disabled. Quality never comes from this file and cost never comes from the results files.",
+  "timings": [
+    {
+      "config": "baseline-retrieval",
+      "n": 8,
+      "llm_calls": 0,
+      "calls_per_question": 0.0,
+      "p50_seconds": 0.19,
+      "p95_seconds": 53.05,
+      "seconds": [
+        53.047,
+        0.187,
+        0.25,
+        0.219,
+        0.156,
+        0.188,
+        0.125,
+        0.14
+      ]
+    },
+    {
+      "config": "agent-retrieval-norerank",
+      "n": 8,
+      "llm_calls": 0,
+      "calls_per_question": 0.0,
+      "p50_seconds": 0.16,
+      "p95_seconds": 3.83,
+      "seconds": [
+        3.829,
+        0.156,
+        0.156,
+        0.094,
+        0.109,
+        0.188,
+        0.187,
+        0.125
+      ]
+    },
+    {
+      "config": "agent-retrieval",
+      "n": 8,
+      "llm_calls": 0,
+      "calls_per_question": 0.0,
+      "p50_seconds": 12.01,
+      "p95_seconds": 23.61,
+      "seconds": [
+        23.61,
+        13.562,
+        9.688,
+        11.484,
+        12.406,
+        9.672,
+        11.985,
+        12.031
+      ]
+    },
+    {
+      "config": "baseline",
+      "n": 8,
+      "llm_calls": 8,
+      "calls_per_question": 1.0,
+      "p50_seconds": 1.05,
+      "p95_seconds": 5.78,
+      "seconds": [
+        5.781,
+        0.985,
+        1.0,
+        0.89,
+        1.125,
+        1.407,
+        1.0,
+        1.093
+      ]
+    },
+    {
+      "config": "agent",
+      "n": 8,
+      "llm_calls": 16,
+      "calls_per_question": 2.0,
+      "p50_seconds": 14.75,
+      "p95_seconds": 17.92,
+      "seconds": [
+        17.922,
+        15.422,
+        14.078,
+        15.844,
+        15.688,
+        11.343,
+        12.422,
+        11.094
+      ]
+    },
+    {
+      "config": "agent-guarded",
+      "n": 8,
+      "llm_calls": 16,
+      "calls_per_question": 2.0,
+      "p50_seconds": 12.04,
+      "p95_seconds": 17.58,
+      "seconds": [
+        17.578,
+        11.844,
+        12.234,
+        14.86,
+        11.344,
+        11.203,
+        11.765,
+        12.766
+      ]
+    }
+  ]
+}

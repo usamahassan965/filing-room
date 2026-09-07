@@ -1,0 +1,105 @@
+# Three jobs, ordered by how fast they tell you something.
+#
+# The interesting one is `gate`. The obvious way to check an eval on a pull
+# request is to re-answer a subset of the questions, and it is the wrong way:
+# it needs a key, so it cannot run on a fork; it costs quota per push; and it
+# measures the provider's mood as much as the diff -- a rate limit or a model
+# silently rotated behind a stable ID moves the numbers with nothing in the
+# repository having changed. So this gate re-*scores* the committed runs
+# instead. The answers are frozen; the metrics code is whatever the branch
+# says. Any diff between the recomputed scorecard and the stored one is
+# therefore caused by the diff, which is the only thing CI is entitled to
+# claim. It opens no sockets, needs no secrets, installs four packages, and
+# checks all 150 questions across six configurations in about three seconds.
+#
+# See src/filing/eval/gate.py for what the three checks are and results/ for
+# what they run against.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: eval gate (no secrets, no network)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      # Deliberately not `pip install -e .`. The gate imports config, the
+      # dataset reader and the metrics -- nothing that retrieves, embeds or
+      # generates -- so it does not need torch, docling or a vector client, and
+      # a job that installs 2 GB to compare floats is a job nobody keeps.
+      - name: install what the gate actually imports
+        run: pip install "pydantic>=2.9" "pydantic-settings>=2.6" "python-dotenv>=1.0" "duckdb>=1.1"
+
+      - name: re-score the committed runs
+        run: PYTHONPATH=src python -m filing.eval gate --json gate.json
+
+      # The claim in the README is that the ablation table is regenerable by one
+      # command. This is that claim as an assertion: rebuild it from the same
+      # results files and require the committed markdown to be byte-identical.
+      # A table edited by hand fails here.
+      - name: the ablation table is the one the results produce
+        run: |
+          PYTHONPATH=src python -m filing.eval ablation >/dev/null
+          git diff --exit-code -- results/ablation.md results/ablation.json
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gate-report
+          path: gate.json
+
+  lint:
+    name: ruff
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install "ruff>=0.8"
+      - run: ruff format --check src tests
+      - run: ruff check src tests
+
+  tests:
+    name: pytest
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      # CPU torch first, and by index rather than by extra: the default wheel
+      # for sentence-transformers drags ~2.5 GB of CUDA onto a runner that has
+      # no GPU, which is most of this job's wall clock and all of its cache.
+      - name: install
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu torch
+          pip install -e ".[dev,ui]"
+
+      # No key, no corpus, no Qdrant, no Phoenix. conftest turns any outbound
+      # connection into a failed test, so this passing is itself the claim that
+      # the suite is hermetic -- and the reason it can run on a fork's PR.
+      - name: pytest
+        run: pytest

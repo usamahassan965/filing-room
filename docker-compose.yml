@@ -26,3 +26,55 @@ services:
     volumes:
       - ./qdrant_storage:/qdrant/storage
     restart: unless-stopped
+
+  # ------------------------------------------------------------------ the app
+  # Behind a profile, so `docker compose up -d` still means "start the two
+  # stores" for anyone developing against a local checkout. The demo is
+  #
+  #     docker compose --profile app up -d --build
+  #
+  # and it needs two things this repository cannot carry: a GEMINI_API_KEY in
+  # .env, and a built corpus under ./data (see README -- `filing ingest`, then
+  # `filing index`). Both are mounted rather than baked; see Dockerfile.
+  api:
+    profiles: ["app"]
+    build: .
+    image: filing-api
+    container_name: filing-api
+    env_file: .env
+    environment:
+      # Service names, not localhost: inside the compose network `localhost` is
+      # the container itself, and the defaults in config.py are written for a
+      # laptop where every service shares one loopback.
+      QDRANT_URL: http://qdrant:6333
+      PHOENIX_ENDPOINT: http://phoenix:6006
+    volumes:
+      - ./data:/app/data:ro
+    ports:
+      # Loopback only. /ask has no authentication and spends a model budget on
+      # every request; publishing it on 0.0.0.0 would put that on the LAN.
+      - "127.0.0.1:8077:8000"
+    depends_on:
+      - qdrant
+      - phoenix
+    restart: unless-stopped
+
+  ui:
+    profiles: ["app"]
+    build: .
+    image: filing-api
+    container_name: filing-ui
+    environment:
+      FILING_API: http://api:8000
+    command:
+      - streamlit
+      - run
+      - src/filing/ui.py
+      - --server.address=0.0.0.0
+      - --server.port=8501
+      - --server.headless=true
+    ports:
+      - "127.0.0.1:8501:8501"
+    depends_on:
+      - api
+    restart: unless-stopped

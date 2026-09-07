@@ -10,6 +10,7 @@ if the CLI's command tree is rearranged.
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -215,6 +216,67 @@ def _cmd_run(args: argparse.Namespace) -> int:
     return 1 if report.errors else 0
 
 
+def _cmd_ablation(args: argparse.Namespace) -> int:
+    """Rebuild the ladder table -- and, if asked, measure what it costs first."""
+    from filing.eval import ablation
+
+    cfg = settings()
+    if args.time:
+
+        def rung_done(rung, timing, wall: float) -> None:  # noqa: ANN001
+            print(
+                f"  {rung.adds:<26} {rung.config:<26} "
+                f"{timing.n} questions, {timing.llm_calls} calls, "
+                f"p50 {timing.p50:.1f}s, p95 {timing.p95:.1f}s  [{wall:.0f}s wall]",
+                file=sys.stderr,
+            )
+
+        print(
+            f"timing {len(ablation.LADDER)} rungs over {args.sample} questions each, "
+            "cache disabled",
+            file=sys.stderr,
+        )
+        path = ablation.measure(cfg, sample=args.sample, on_rung=rung_done)
+        print(f"wrote {path}", file=sys.stderr)
+
+    try:
+        json_path, md_path, rows = ablation.write(cfg)
+    except ablation.MissingResults as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    print(ablation.to_markdown(rows, timings_present=any(r.timing for r in rows)))
+    shas = {r.dataset_sha256 for r in rows}
+    if len(shas) > 1:
+        print(f"\nNOT COMPARABLE: {len(shas)} different question sets across the rungs.")
+        return 1
+    print(f"\nwrote {json_path}\nwrote {md_path}")
+    return 0
+
+
+def _cmd_gate(args: argparse.Namespace) -> int:
+    """The per-PR regression gate. Reads committed results; answers nothing."""
+    from filing.eval import gate
+
+    cfg = settings()
+    report = gate.run_gate(Path(args.results or results_dir(cfg)), Path(cfg.data_dir))
+    print(gate.to_markdown(report))
+    print()
+    if args.json:
+        Path(args.json).write_text(json.dumps(report.to_json(), indent=2) + "\n", encoding="utf-8")
+        print(f"wrote {args.json}")
+    if report.ok:
+        print(f"GATE PASS -- {len(report.checks)} checks over {len(gate.FLOORS)} configs")
+        return 0
+    for check in report.failures:
+        print(f"FAIL  {check.config}  {check.kind}: {check.label}")
+        if check.detail:
+            print(f"      {check.detail}")
+    for missing in report.missing:
+        print(f"FAIL  {missing}")
+    print(f"\nGATE FAIL -- {len(report.failures) + len(report.missing)} of {len(report.checks)}")
+    return 1
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m filing.eval", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -258,6 +320,20 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("verify", help="re-read every gold span from the filing on disk")
     p.add_argument("--version", default=dataset.DATASET_VERSION)
     p.set_defaults(func=_cmd_verify)
+
+    p = sub.add_parser("ablation", help="rebuild the quality/cost/latency ladder table")
+    p.add_argument(
+        "--time",
+        action="store_true",
+        help="measure cost and latency first, on an uncached sample (spends quota)",
+    )
+    p.add_argument("--sample", type=int, default=8, help="questions per rung in the timing pass")
+    p.set_defaults(func=_cmd_ablation)
+
+    p = sub.add_parser("gate", help="re-score the committed results; the per-PR CI check")
+    p.add_argument("--results", default="", help="results directory (default: the configured one)")
+    p.add_argument("--json", default="", help="also write the report as JSON to this path")
+    p.set_defaults(func=_cmd_gate)
 
     p = sub.add_parser("build-naive", help="chunk and index the corpus for the baseline")
     p.add_argument("--rebuild", action="store_true")

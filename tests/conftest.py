@@ -8,6 +8,7 @@ it, which means a field added to ``Chunk`` breaks one line rather than forty.
 from __future__ import annotations
 
 import hashlib
+import pathlib
 
 import pytest
 
@@ -94,3 +95,23 @@ def _no_outbound_network(monkeypatch):
         return real(self, address, *a, **kw)
 
     monkeypatch.setattr(socket.socket, "connect", guarded)
+
+
+# ---------------------------------------------------------------------------
+# the committed evidence
+# ---------------------------------------------------------------------------
+
+_REPO = pathlib.Path(__file__).resolve().parents[1]
+
+
+@pytest.fixture
+def results_root() -> pathlib.Path:
+    """The repository's own ``results/`` directory.
+
+    Tests that read it are asserting things about the committed record rather
+    than about the code -- that the ablation ladder has no holes, that the gate
+    passes on what is checked in. They are the tests that fail when somebody
+    commits a worse run, which is a different and more useful failure than any
+    fixture can produce.
+    """
+    return _REPO / "results"

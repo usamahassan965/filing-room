@@ -1,0 +1,306 @@
+{
+  "ladder": [
+    {
+      "config": "baseline-retrieval",
+      "lane": "retrieval",
+      "adds": "naive",
+      "detail": "fixed 2,048-char chunks, dense top-10, no fusion and no reranker"
+    },
+    {
+      "config": "agent-retrieval-norerank",
+      "lane": "retrieval",
+      "adds": "+ hybrid",
+      "detail": "semantic chunks, dense and BM25 fused by RRF, fused order kept"
+    },
+    {
+      "config": "agent-retrieval",
+      "lane": "retrieval",
+      "adds": "+ rerank",
+      "detail": "the same fusion, reordered by the local MiniLM cross-encoder"
+    },
+    {
+      "config": "baseline",
+      "lane": "answer",
+      "adds": "naive + generate",
+      "detail": "dense top-5 into one prompt, one LLM call, no router and no grader"
+    },
+    {
+      "config": "agent",
+      "lane": "answer",
+      "adds": "+ router, grader, repair",
+      "detail": "plan, route to sql|text|graph, rerank, grade, repair at most twice"
+    },
+    {
+      "config": "agent-guarded",
+      "lane": "answer",
+      "adds": "+ verifier",
+      "detail": "every figure checked against evidence and every citation resolved"
+    }
+  ],
+  "dataset_sha256": "38ee1f9188cda1597dffbcfdaeea7daaccb6e762b248b1aec3cdb185de35692f",
+  "comparable": true,
+  "rows": [
+    {
+      "config": "baseline-retrieval",
+      "lane": "retrieval",
+      "adds": "naive",
+      "detail": "fixed 2,048-char chunks, dense top-10, no fusion and no reranker",
+      "fingerprint": "e10713856fc0fe5c7af1ea69c0beb2bd1f40d64d905c3cbaa181f5cc57b6edb1",
+      "dataset_sha256": "38ee1f9188cda1597dffbcfdaeea7daaccb6e762b248b1aec3cdb185de35692f",
+      "n": 150,
+      "retrieval_n": 140,
+      "full_set": true,
+      "quality": {
+        "hit@5": 0.07857142857142857,
+        "hit@10": 0.15714285714285714,
+        "ndcg@10": 0.07386892132402723,
+        "exact_match": null,
+        "citations_supported": null,
+        "hallucinated": null
+      },
+      "deltas": {},
+      "timing": {
+        "config": "baseline-retrieval",
+        "n": 8,
+        "llm_calls": 0,
+        "calls_per_question": 0.0,
+        "warmup_seconds": 0.0,
+        "p50_seconds": 0.19,
+        "p95_seconds": 53.05,
+        "seconds": [
+          53.047,
+          0.187,
+          0.25,
+          0.219,
+          0.156,
+          0.188,
+          0.125,
+          0.14
+        ]
+      }
+    },
+    {
+      "config": "agent-retrieval-norerank",
+      "lane": "retrieval",
+      "adds": "+ hybrid",
+      "detail": "semantic chunks, dense and BM25 fused by RRF, fused order kept",
+      "fingerprint": "42ee5c50210135c76982a1c43ccb2f0f47ba4cd18a5353f7b25d3bec8e6a788f",
+      "dataset_sha256": "38ee1f9188cda1597dffbcfdaeea7daaccb6e762b248b1aec3cdb185de35692f",
+      "n": 150,
+      "retrieval_n": 140,
+      "full_set": true,
+      "quality": {
+        "hit@5": 0.25,
+        "hit@10": 0.3142857142857143,
+        "ndcg@10": 0.17539311865727836,
+        "exact_match": null,
+        "citations_supported": null,
+        "hallucinated": null
+      },
+      "deltas": {
+        "hit@5": 0.17142857142857143,
+        "hit@10": 0.15714285714285714,
+        "ndcg@10": 0.10152419733325113,
+        "exact_match": null,
+        "citations_supported": null,
+        "hallucinated": null
+      },
+      "timing": {
+        "config": "agent-retrieval-norerank",
+        "n": 8,
+        "llm_calls": 0,
+        "calls_per_question": 0.0,
+        "warmup_seconds": 0.0,
+        "p50_seconds": 0.16,
+        "p95_seconds": 3.83,
+        "seconds": [
+          3.829,
+          0.156,
+          0.156,
+          0.094,
+          0.109,
+          0.188,
+          0.187,
+          0.125
+        ]
+      }
+    },
+    {
+      "config": "agent-retrieval",
+      "lane": "retrieval",
+      "adds": "+ rerank",
+      "detail": "the same fusion, reordered by the local MiniLM cross-encoder",
+      "fingerprint": "fdff36c1930b434dd35a466c558a3e3264614c418a1f2135ea51208a4b791a5f",
+      "dataset_sha256": "38ee1f9188cda1597dffbcfdaeea7daaccb6e762b248b1aec3cdb185de35692f",
+      "n": 150,
+      "retrieval_n": 140,
+      "full_set": true,
+      "quality": {
+        "hit@5": 0.19285714285714287,
+        "hit@10": 0.2571428571428571,
+        "ndcg@10": 0.1545105166583368,
+        "exact_match": null,
+        "citations_supported": null,
+        "hallucinated": null
+      },
+      "deltas": {
+        "hit@5": -0.057142857142857134,
+        "hit@10": -0.05714285714285716,
+        "ndcg@10": -0.02088260199894157,
+        "exact_match": null,
+        "citations_supported": null,
+        "hallucinated": null
+      },
+      "timing": {
+        "config": "agent-retrieval",
+        "n": 8,
+        "llm_calls": 0,
+        "calls_per_question": 0.0,
+        "warmup_seconds": 0.0,
+        "p50_seconds": 12.01,
+        "p95_seconds": 23.61,
+        "seconds": [
+          23.61,
+          13.562,
+          9.688,
+          11.484,
+          12.406,
+          9.672,
+          11.985,
+          12.031
+        ]
+      }
+    },
+    {
+      "config": "baseline",
+      "lane": "answer",
+      "adds": "naive + generate",
+      "detail": "dense top-5 into one prompt, one LLM call, no router and no grader",
+      "fingerprint": "35a114d6f9898094087a6770aba2ef873fd02a42110dddc4e9098ddb975e4664",
+      "dataset_sha256": "38ee1f9188cda1597dffbcfdaeea7daaccb6e762b248b1aec3cdb185de35692f",
+      "n": 150,
+      "retrieval_n": 140,
+      "full_set": true,
+      "quality": {
+        "hit@5": 0.07857142857142857,
+        "hit@10": 0.07857142857142857,
+        "ndcg@10": 0.0497509178705566,
+        "exact_match": 0.075,
+        "citations_supported": 0.13924050632911392,
+        "hallucinated": null
+      },
+      "deltas": {},
+      "timing": {
+        "config": "baseline",
+        "n": 8,
+        "llm_calls": 8,
+        "calls_per_question": 1.0,
+        "warmup_seconds": 0.0,
+        "p50_seconds": 1.05,
+        "p95_seconds": 5.78,
+        "seconds": [
+          5.781,
+          0.985,
+          1.0,
+          0.89,
+          1.125,
+          1.407,
+          1.0,
+          1.093
+        ]
+      }
+    },
+    {
+      "config": "agent",
+      "lane": "answer",
+      "adds": "+ router, grader, repair",
+      "detail": "plan, route to sql|text|graph, rerank, grade, repair at most twice",
+      "fingerprint": "2da392ecc9203223063958f59f31fed5e0324a427577feecb92fd70ac5ea9994",
+      "dataset_sha256": "38ee1f9188cda1597dffbcfdaeea7daaccb6e762b248b1aec3cdb185de35692f",
+      "n": 150,
+      "retrieval_n": 60,
+      "full_set": true,
+      "quality": {
+        "hit@5": 0.4,
+        "hit@10": 0.4,
+        "ndcg@10": 0.2666847805704054,
+        "exact_match": 0.9875,
+        "citations_supported": 0.28,
+        "hallucinated": null
+      },
+      "deltas": {
+        "hit@5": 0.32142857142857145,
+        "hit@10": 0.32142857142857145,
+        "ndcg@10": 0.2169338626998488,
+        "exact_match": 0.9125000000000001,
+        "citations_supported": 0.1407594936708861,
+        "hallucinated": null
+      },
+      "timing": {
+        "config": "agent",
+        "n": 8,
+        "llm_calls": 16,
+        "calls_per_question": 2.0,
+        "warmup_seconds": 0.0,
+        "p50_seconds": 14.75,
+        "p95_seconds": 17.92,
+        "seconds": [
+          17.922,
+          15.422,
+          14.078,
+          15.844,
+          15.688,
+          11.343,
+          12.422,
+          11.094
+        ]
+      }
+    },
+    {
+      "config": "agent-guarded",
+      "lane": "answer",
+      "adds": "+ verifier",
+      "detail": "every figure checked against evidence and every citation resolved",
+      "fingerprint": "0ccc7a4f38b3645882de0254e5467919933e6f2ada0adfe21bb3af9212a14d91",
+      "dataset_sha256": "38ee1f9188cda1597dffbcfdaeea7daaccb6e762b248b1aec3cdb185de35692f",
+      "n": 150,
+      "retrieval_n": 60,
+      "full_set": true,
+      "quality": {
+        "hit@5": 0.4,
+        "hit@10": 0.4,
+        "ndcg@10": 0.2666847805704054,
+        "exact_match": 0.9875,
+        "citations_supported": 0.28,
+        "hallucinated": 0.0
+      },
+      "deltas": {
+        "hit@5": 0.0,
+        "hit@10": 0.0,
+        "ndcg@10": 0.0,
+        "exact_match": 0.0,
+        "citations_supported": 0.0,
+        "hallucinated": null
+      },
+      "timing": {
+        "config": "agent-guarded",
+        "n": 8,
+        "llm_calls": 16,
+        "calls_per_question": 2.0,
+        "warmup_seconds": 0.0,
+        "p50_seconds": 12.04,
+        "p95_seconds": 17.58,
+        "seconds": [
+          17.578,
+          11.844,
+          12.234,
+          14.86,
+          11.344,
+          11.203,
+          11.765,
+          12.766
+        ]
+      }
+    }
+  ]
+}

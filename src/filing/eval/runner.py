@@ -756,7 +756,14 @@ def run(
             # Built lazily so a fully cached re-run needs neither Qdrant nor a
             # network: "reproducible from cache" has to mean reproducible with
             # nothing running.
-            if be is None and ec.generate:
+            #
+            # Injected tools are the other half of that. A caller that hands in
+            # its own tools has already supplied a backend, and building a
+            # second one here would make such a run demand a key it never
+            # spends -- which is exactly why three tests passed on a machine
+            # with a .env and failed on a clean clone, where CI runs.
+            byo_tools = ec.system == "agent" and tools is not None
+            if be is None and ec.generate and not byo_tools:
                 from filing.llm.factory import build_backend
 
                 # ec.chat_backend, not cfg.llm_backend. The config already
@@ -767,7 +774,7 @@ def run(
                 # its numbers is worse than no file. Empty falls back to the
                 # environment, which is what the plain `baseline` config wants.
                 be = build_backend(cfg, ec.chat_backend or None)
-            if be is None and ec.system == "agent":
+            if be is None and ec.system == "agent" and not byo_tools:
                 # A retrieval-only agent run still needs a backend, because the
                 # reranker lives on one -- and every backend's `rerank` is the
                 # same local cross-entropy forward pass, hosted or not, so this

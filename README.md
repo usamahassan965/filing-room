@@ -1,22 +1,69 @@
 # Filing Room
 
-Agentic RAG over SEC filings. Numeric facts from XBRL, narrative from the filing
-text, and relationships from an entity graph — routed by an agent, verified
-against the source, and every answer traceable to the filing it came from.
+Ask a document-QA system *"what did AbbVie report for revenues in FY2018?"* and
+it will answer. The answer will be fluent, it will carry a citation, and on this
+corpus it will be wrong about ninety-two times in a hundred.
 
-Runs on free API tiers. Full build plan: [`docs/build-plan.html`](docs/build-plan.html).
+That is not a strawman — it is the first row of the table below. A competent
+naive RAG pipeline over the same 20 companies, the same 407 SEC filings and the
+same 150 frozen questions as everything else here: chunk the text, embed it,
+retrieve the top five, put them in a prompt. It scores **7.5% exact on numeric
+questions.** The figure it needs is in an XBRL fact table it never looks at, so
+it reads a number off a page of prose and picks the wrong fiscal year, or quotes
+a segment total as a company total, or rounds. Every one of those answers
+arrives with a citation attached, which is the part that makes it dangerous
+rather than merely bad.
 
-**Status: M7 shipped — the agent answers the same 150 questions at 98.8% exact
-on numbers against the baseline's 7.5%, every figure it prints is recomputed
-against the source before it ships (0 hallucinated figures in 133, every
-citation resolving, 426 of 427 deliberately corrupted answers caught), and all
-of that is now visible from a page: `filing serve` returns the evidence in the
-response and the UI is a client of it, not a second source of truth. One M5 gate
-criterion is still missed and still said so below.**
-M0 the rig, M1 the corpus, M2 the fact store, M3 the text index and the entity
-graph, M4 the frozen question set and the naive baseline, M5 the routed agent,
-M6 the verifier and the failure taxonomy, M7 the API and the page that renders
-its payload.
+Filing Room is what it took to get that to **98.8%**, and — the harder half — to
+be able to show the work.
+
+## What each stage actually buys
+
+Six configurations, one question set, one command to rebuild
+([`results/ablation.md`](results/ablation.md) has both lanes in full and
+[`docs/eval-set.md`](docs/eval-set.md) is the datasheet for the questions):
+
+| rung | config | hit@10 | nDCG@10 | numeric exact | cite→gold | halluc | calls/q | p50 |
+|---|---|---|---|---|---|---|---:|---:|
+| naive + generate | `baseline` | 7.9% | 5.0% | 7.5% | 13.9% | — | 1.00 | 1.0s |
+| + router, grader, repair | `agent` | 40.0% (+32.1) | 26.7% (+21.7) | **98.8%** (+91.3) | 28.0% (+14.1) | — | 2.00 | 14.8s |
+| + verifier | `agent-guarded` | 40.0% (=) | 26.7% (=) | 98.8% (=) | 28.0% (=) | **0.0%** | 2.00 | 12.0s |
+
+And the retrieval lane underneath it, with the generator switched off entirely —
+a ceiling on everything above, because a writer cannot cite evidence the search
+never returned:
+
+| rung | config | hit@5 | hit@10 | nDCG@10 | p50 |
+|---|---|---|---|---|---:|
+| naive | `baseline-retrieval` | 7.9% | 15.7% | 7.4% | 0.2s |
+| + hybrid | `agent-retrieval-norerank` | 25.0% (+17.1) | 31.4% (+15.7) | 17.5% (+10.2) | 0.2s |
+| + rerank | `agent-retrieval` | 19.3% (−5.7) | 25.7% (−5.7) | 15.5% (−2.1) | 12.0s |
+
+The last row is the one worth stopping on. **The cross-encoder reranker makes
+retrieval worse** — six points of hit@10 and two of nDCG, for seventy-five times
+the latency — and it is still in the shipped agent, because M5's gate criteria
+were written before the measurement and this repository does not quietly retune
+a config to make its own table look better. It is a negative delta, printed in
+the table, with [the analysis](#the-retrieval-ablation) below.
+
+![One question through the agent graph, with its repair loop](docs/trace.svg)
+
+Every stage above is a span, every span is timed, and the picture is drawn from
+the same JSON the tracer emits — `python scripts/render_trace.py
+docs/trace_repair.json docs/trace.svg` — rather than screenshotted from a UI, so
+it cannot drift away from the run it describes.
+
+Runs on free API tiers. Full build plan:
+[`docs/build-plan.html`](docs/build-plan.html).
+
+**Status: M8 shipped — all nine gates.** The agent answers the same 150
+questions at 98.8% exact on numbers against the baseline's 7.5%, every figure it
+prints is recomputed against the source before it ships (0 hallucinated figures
+in 133, every citation resolving, 426 of 427 deliberately corrupted answers
+caught), that is all visible from a page whose evidence comes out of the API,
+and a per-PR gate re-scores the committed runs so none of those numbers can move
+without a red build. One M5 gate criterion is still missed and still said so
+below.
 
 | Gate | What it produced | Check |
 |---|---|---|
@@ -28,8 +75,9 @@ its payload.
 | **M5** the agent | router + 3 stores + grader + repair(≤2), 98.8% numeric exact, router 0.833 | `filing.eval run --config agent` — 150/150, 0 errors, 290 calls |
 | **M6** the guard | numeric verifier, citation resolver, abstention guard, 4-tag taxonomy | `filing.eval run --config agent-guarded` — 0 hallucinated / 133, 0 blocked |
 | **M7** the surface | `/ask` returning the evidence, SSE stages, a page that renders the payload | `filing serve` — plan, routing, evidence, verification and trace, all four outcomes |
+| **M8** the evidence pack | the ladder above, a rescore gate, an image, a compose file | `filing.eval gate` — 29 checks over 6 configs, offline, ~3s |
 
-829 tests, `ruff` clean, and no test may open a socket off this machine.
+854 tests, `ruff` clean, and no test may open a socket off this machine.
 
 ---
 
@@ -79,6 +127,8 @@ python -m filing.eval run --config agent-guarded    # M6 gate: the same agent, v
 python -m filing.eval run --config agent-flagged    # the same check, reported instead of enforced
 python -m filing.eval trace --qid num-001 --live    # one question's span tree, into docs/
 python -m filing.eval depth --depth 500             # how far down the ranking the evidence sits
+python -m filing.eval ablation                      # M8: rebuild the quality/cost/latency ladder
+python -m filing.eval gate                          # M8 gate: re-score the committed runs, offline
 ```
 
 `ingest` takes hours, and `index` takes two and a half on CPU. Everything else
@@ -934,6 +984,151 @@ its own gate.
 
 ---
 
+## M8 — the evidence pack
+
+Everything before this gate produced a number. This one is about whether a
+stranger can believe them in ten minutes, and whether they can still be believed
+in six months.
+
+| Piece | Where | What it is for |
+|---|---|---|
+| the ladder | `src/filing/eval/ablation.py` → [`results/ablation.md`](results/ablation.md) | what each stage buys, in quality *and* in cost |
+| the gate | `src/filing/eval/gate.py` → `python -m filing.eval gate` | the committed numbers cannot move without a red build |
+| the workflow | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | three jobs: gate, ruff, pytest — none with a secret |
+| the demo | [`docs/gate-demo.md`](docs/gate-demo.md) | the gate going red on an injected regression |
+| the image | [`Dockerfile`](Dockerfile), `docker compose --profile app up -d` | the API and the page, from a clone |
+| the picture | `scripts/render_trace.py` → [`docs/trace.svg`](docs/trace.svg) | a trace drawn from the trace, not screenshotted |
+
+### The cache destroys its own cost measurement
+
+Every results file in this repository is served from `OutcomeCache`. That is the
+property that makes them reproducible with nothing running, and it is also why
+`results/agent.json` says the run made 290 LLM calls with a median of 9.16
+seconds while `results/agent-guarded.json` — the *same graph*, one node further
+on — says 0 calls and a median of 0.09. The second file is timing a replay.
+
+So a ladder cannot read cost and latency out of the committed runs at all. The
+`calls/q`, `p50` and `p95` columns come from a separate pass with **both** caches
+off — `run(use_cache=False)` only disables the outcome cache; the LLM response
+cache underneath it would happily serve every prompt the earlier runs already
+sent, which is the same replay artefact one layer down. That is one line in
+`ablation.measure`, and without it the table would have reported the agent
+answering in under a second.
+
+The first honest pass then produced a p95 of 53.05 seconds against a p50 of 0.19
+for the naive retriever. That is true of the measurement and false of the
+retriever: it is sentence-transformers loading off disk on question one. Rather
+than drop the outlier — which is how a benchmark starts lying — the sample runs
+`n + 1` questions and reports the first one in its own **`ready s`** column,
+outside the percentiles and visible.
+
+### Two lanes, because the plan's ladder does not exist
+
+The build plan drew one monotone chain: naive → +hybrid → +rerank → +router →
++grader/repair → +verifier. Six configurations, each one stage more than the
+last. The system will not produce it. The agent graph turns the router, the
+grader and the repair loop on together — they are not separable nodes but one
+control flow — so there is no configuration anywhere in this repository that has
+hybrid retrieval with a fixed route *and* a generator, and never was.
+
+The ladder is therefore two lanes of three: a **retrieval lane** that measures
+the search with `generate=False` (no key, no quota, no generator to confound it)
+and an **answer lane** that measures the graph end to end with the model held
+fixed at `gemini-3.5-flash-lite`. Deltas are computed within a lane and never
+across one, which `test_deltas_are_within_a_lane_and_never_across_one` asserts —
+a delta that crossed the boundary would report the first answer rung as +80
+points of hit rate for having a generator attached.
+
+The table also carries a `comparable` flag. Six results files scored against six
+different question sets would render exactly as prettily as six scored against
+one; the flag is the dataset sha256 of every rung, collapsed, and the CLI exits
+non-zero when it does not collapse to one value.
+
+### The gate re-scores; it does not re-answer
+
+The obvious per-PR check is to re-run some questions. It is the wrong check.
+Re-answering needs a key, so it cannot run on a fork; it costs quota on every
+push; and it measures the provider as much as the diff — a rate limit, a model
+rotated behind a stable ID, a temperature that was never quite zero. A green
+build would mean "the weather was fine today".
+
+So `python -m filing.eval gate` freezes the answers and re-runs the *code*
+against them. Three checks per configuration:
+
+1. **fingerprint** — rebuild the config from the results file's own record and
+   re-hash it. Catches a config edited after the run that produced it.
+2. **rescore** — rebuild every `Outcome` from the file, recompute the whole
+   scorecard with today's metrics module, and diff every leaf. Catches a metric
+   whose definition drifted, and a number edited by hand.
+3. **floors** — 17 named thresholds with a stated reason each: `agent` numeric
+   exact ≥ 0.95, `agent-guarded` hallucinated ≤ 0.0, abstention = 1.0, citations
+   resolvable = 1.0, router accuracy ≥ 0.80. Catches a genuinely worse run
+   committed on purpose.
+
+It checks all 150 questions rather than the 40-question subset the plan asked
+for — that subset existed to bound the cost of re-answering, and a rescore has no
+cost to bound. **29 checks over 6 configurations in about three seconds, with no
+key, no corpus, no Qdrant and no socket.** The CI job installs four packages.
+
+The last part is the one the plan asks to be demonstrated rather than claimed:
+[`docs/gate-demo.md`](docs/gate-demo.md) is a transcript of the gate going red on
+a throwaway branch with one number edited, and `tests/test_gate.py` injects seven
+different regressions and asserts each one is caught.
+
+### Running it from a clone
+
+```bash
+cp .env.example .env          # paste a Gemini key
+filing ingest && filing facts && filing chunks && filing index && filing graph
+docker compose --profile app up -d --build
+```
+
+Then http://127.0.0.1:8501 for the page and http://127.0.0.1:8077/docs for the
+API schema. Both ports are bound to loopback on purpose: `/ask` has no
+authentication and spends a model budget per request.
+
+The corpus is a mount rather than a layer — 1.2 GB of filings and vectors would
+make every code change a 1.2 GB rebuild — so the ingest line above is not
+optional, and it is the slow part (hours for `ingest`, about two and a half for
+`index` on CPU). The two local models *are* baked into the image, so a container
+start needs no round-trip to Hugging Face.
+
+### Regenerating every number above
+
+```bash
+python -m filing.eval gate                       # ~3s, offline: the CI check
+python -m filing.eval ablation                   # rebuild the table from results/
+python -m filing.eval ablation --time --sample 8 # re-measure cost and latency (spends quota)
+python scripts/render_trace.py docs/trace_repair.json docs/trace.svg
+python -m filing.eval run --config agent         # the run itself, ~30 min, 290 calls
+```
+
+`ablation` with no flags reads only committed files and is what CI runs; the
+`--time` pass is the one that needs a key, Qdrant and about ten minutes, and it
+is the only source of the three cost columns.
+
+### What this gate did not deliver
+
+Two of the plan's own criteria are not met, and neither is met by something that
+looks like it.
+
+**There is no public URL.** Deploying means creating an account on a host and
+attaching a payment method to it, which is the user's to do, not mine. The plan
+anticipated this — *"if hosted deployment stalls on cost or cold starts, ship a
+Docker Compose one-liner plus a recorded walkthrough"* — and the compose profile
+above is that bail-out. It is worth saying that the bail-out is not obviously the
+worse deal here: a free-tier container that cold-starts for forty seconds and
+then answers with an empty index, because the 1.2 GB corpus is not in the image,
+would be a URL that demonstrates nothing.
+
+**There is no recorded walkthrough.** I cannot record video. What stands in its
+place is the trace image above, `docs/trace_example.json` and
+`docs/trace_repair.json` (two complete span trees, one of them a repair loop),
+and the four-outcome tour in the M7 section — which is the same material a
+three-minute recording would have narrated, minus the narration.
+
+---
+
 ## Layout
 
 ```
@@ -982,12 +1177,17 @@ src/filing/
     ├── naive.py           the baseline: 2,048-char stride, dense top-k
     ├── runner.py          config fingerprint, outcome cache, the run
     ├── metrics.py         scoring — arithmetic only, nothing is asked a model
-    └── depth.py           how far down the ranking the evidence actually sits
+    ├── depth.py           how far down the ranking the evidence actually sits
+    ├── ablation.py        the six-rung ladder, in two lanes, with honest timings
+    └── gate.py            the per-PR check: re-score the committed runs, offline
 
 scripts/eval_v1_0/   the authoring record — rebuilds the frozen set byte for byte
 scripts/m6_negative_control.py   breaks 116 real answers four ways, measures the catch rate
-tests/               829 tests, no network and no API key
-results/             one committed JSON + markdown table per config
+scripts/render_trace.py          a captured span tree -> docs/trace.svg
+.github/workflows/ci.yml         gate, ruff, pytest — none of them holding a secret
+Dockerfile           one image, two entrypoints; the corpus stays a mount
+tests/               854 tests, no network and no API key
+results/             one committed JSON + markdown table per config, plus the ladder
 docs/                build plan, corpus notes, the baseline write-up, two agent traces
 ```
 
