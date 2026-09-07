@@ -157,6 +157,21 @@ WHERE f.ticker = ?
   AND f.span IN ('FY', 'instant')
 """
 
+# The same read without the taxonomy clause, because a piece of evidence
+# carries a tag but not the taxonomy it came from, and inventing "us-gaap" here
+# would make the verifier's recheck silently miss anything filed under another.
+_RECHECK = """
+SELECT f.ticker, f.tag, coalesce(c.label, f.tag), f.unit, f.span,
+       f.period_start, f.period_end, f.val, f.accn, g.form
+FROM facts_current f
+JOIN filings g ON g.accn = f.accn
+LEFT JOIN concepts c ON c.taxonomy = f.taxonomy AND c.tag = f.tag
+WHERE f.ticker = ?
+  AND f.tag = ?
+  AND f.unit = ?
+  AND f.span IN ('FY', 'instant')
+"""
+
 _ORDER_BY_PROXIMITY = " ORDER BY abs(date_diff('day', f.period_end, ?)) ASC, f.period_end DESC"
 _ORDER_BY_RECENCY = " ORDER BY f.period_end DESC"
 
@@ -352,6 +367,50 @@ class SqlTool:
             concept=resolved,
             reason=reason,
         )
+
+    def recheck(
+        self,
+        ticker: str,
+        tag: str,
+        *,
+        period_end: str | date | None = None,
+        unit: str = "USD",
+        accn: str = "",
+    ) -> FactRow | None:
+        """Go back to the store for one fact, keyed by its identity.
+
+        M6's verifier calls this on every figure an answer states that came from
+        the fact branch. It deliberately does *not* go through the concept
+        resolver: the resolver is one of the components being checked, and a
+        recheck that asks the same phrase-matching layer the same question is a
+        recheck that agrees with itself. Given a ticker, a tag and a period, this
+        is a primary-key read.
+
+        Two honest limits. It cannot tell you the tag was the right one to have
+        picked -- only that the store holds this value under it. And for a fact
+        the SQL branch itself retrieved, the value comes back from the same table
+        it went into, so what the recheck actually rules out is the answer's
+        number having drifted from the store's between retrieval and prose. That
+        is the failure it is aimed at, and the only one it should be credited
+        with catching.
+        """
+        params: list[object] = [ticker.upper(), tag, unit]
+        query = _RECHECK
+        if accn:
+            query += " AND f.accn = ?"
+            params.append(accn)
+        target = _as_date(period_end)
+        if target is not None:
+            query += _ORDER_BY_PROXIMITY
+            params.append(target)
+        else:
+            query += _ORDER_BY_RECENCY
+        rows = tuple(FactRow(*row) for row in self.store.sql(query + " LIMIT 1", params))
+        if not rows:
+            return None
+        if target is not None and not _within(rows[0].period_end, target):
+            return None
+        return rows[0]
 
     def periods(self, ticker: str) -> Sequence[date]:
         """Fiscal year ends this company actually reports. For the repair node."""

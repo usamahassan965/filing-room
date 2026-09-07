@@ -11,8 +11,10 @@ from __future__ import annotations
 
 import argparse
 import sys
+from dataclasses import replace
 from pathlib import Path
 
+from filing.agent.verify import GUARD_MODES
 from filing.config import settings
 from filing.eval import dataset, metrics
 from filing.eval.runner import CONFIGS, get_config, results_dir, run, title_for
@@ -169,6 +171,20 @@ def _cmd_trace(args: argparse.Namespace) -> int:
 def _cmd_run(args: argparse.Namespace) -> int:
     cfg = settings()
     ec = get_config(args.config)
+    if args.guard:
+        # The override renames the config as well as changing it. A results
+        # file is named after its config and the fingerprint is computed from
+        # it, so a flag that changed behaviour while leaving the name alone
+        # would write one experiment over another's file -- the same failure
+        # the `.partial` suffix exists to prevent. `off` also switches the
+        # verifier off, because a guard mode is only meaningful when there is
+        # a verdict for it to act on.
+        ec = replace(
+            ec,
+            name=f"{ec.name}-guard-{args.guard}",
+            guard=args.guard,
+            verify=args.guard != "off",
+        )
     slices = tuple(args.slice) if args.slice else dataset.SLICES
 
     def tick(i: int, total: int, outcome) -> None:  # noqa: ANN001
@@ -208,6 +224,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--limit", type=int, default=None, help="first N questions only")
     p.add_argument("--slice", action="append", choices=list(dataset.SLICES))
     p.add_argument("--no-cache", action="store_true", help="re-answer even if cached")
+    p.add_argument(
+        "--guard",
+        choices=list(GUARD_MODES),
+        default=None,
+        help="override the config's verification guard; runs under a renamed config",
+    )
     p.set_defaults(func=_cmd_run)
 
     p = sub.add_parser("trace", help="export one question's span tree to docs/")

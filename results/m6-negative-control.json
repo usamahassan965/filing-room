@@ -1,0 +1,29 @@
+{
+  "config": "agent-flagged",
+  "dataset_version": "v1.0",
+  "clean_answers": 116,
+  "clean_passing": 116,
+  "mutations": {
+    "bent figure": {
+      "applied": 97,
+      "caught": 96
+    },
+    "dangling citation": {
+      "applied": 116,
+      "caught": 116
+    },
+    "stripped citations": {
+      "applied": 116,
+      "caught": 116
+    },
+    "swapped figure": {
+      "applied": 98,
+      "caught": 98
+    }
+  },
+  "total_applied": 427,
+  "total_caught": 426,
+  "not_caught": [
+    "nar-048 [bent figure] The Phase 4 JAVELIN Lung 100 trial did not meet the primary endpoints of overall survival and progression-free"
+  ]
+}

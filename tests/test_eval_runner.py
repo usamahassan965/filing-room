@@ -10,6 +10,7 @@ the runner's docstring would rest on nothing.
 from __future__ import annotations
 
 import json
+import pathlib
 from dataclasses import dataclass, replace
 
 import pytest
@@ -159,6 +160,51 @@ def test_a_different_question_file_is_a_different_experiment():
 def test_the_same_config_hashes_the_same_twice():
     base = runner.get_config("baseline")
     assert base.fingerprint("sha") == replace(base, name="baseline").fingerprint("sha")
+
+
+RESULTS = pathlib.Path(__file__).resolve().parents[1] / "results"
+
+
+def _committed_results():
+    if not RESULTS.is_dir():
+        return []
+    out = []
+    for path in sorted(RESULTS.glob("*.json")):
+        d = json.loads(path.read_text(encoding="utf-8"))
+        if "config" in d and "fingerprint" in d:
+            out.append(pytest.param(path.name, d, id=path.stem))
+    return out
+
+
+@pytest.mark.parametrize("name,report", _committed_results())
+def test_every_committed_results_file_still_recomputes_its_own_fingerprint(name, report):  # noqa: ARG001
+    """The guard against the drift that already happened once.
+
+    Adding ``rerank`` to :class:`EvalConfig` in M5 changed the fingerprint of
+    every config that had never heard of it, including ones whose numbers were
+    already committed -- and nothing noticed, because a fingerprint is only ever
+    read by a person comparing two files by eye. Dropping default-valued fields
+    from the hash stops a *new* field doing that again; this test is what stops
+    anything else doing it. It reconstructs the config from the results file's
+    own record and asserts the hash comes back.
+
+    When it fails, the question to answer is not "how do I make it pass" but
+    "did the experiment change?" -- if it did, re-run; if it did not, the hash
+    function did, and that is the bug.
+    """
+    ec = runner.EvalConfig(**report["config"])
+    assert ec.fingerprint(report["dataset"]["sha256"]) == report["fingerprint"]
+
+
+def test_a_field_added_at_its_default_leaves_every_fingerprint_alone():
+    """The additive property, stated as a test rather than as a hope.
+
+    A gate that adds a knob nobody turned has not run a different experiment,
+    and the record should not claim it did.
+    """
+    base = runner.get_config("baseline")
+    assert base.fingerprint("s") == replace(base, verify=False, guard="block").fingerprint("s")
+    assert base.fingerprint("s") != replace(base, verify=True).fingerprint("s")
 
 
 def test_the_note_is_prose_and_still_part_of_the_hash():

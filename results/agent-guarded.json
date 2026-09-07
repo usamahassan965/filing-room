@@ -1,6 +1,6 @@
 {
  "config": {
-  "name": "agent",
+  "name": "agent-guarded",
   "system": "agent",
   "k": 5,
   "chat_role": "chat_fast",
@@ -12,15 +12,15 @@
   "collection": "filing__local__BAAI_bge-small-en-v1-5__384__semantic",
   "generate": true,
   "rerank": true,
-  "verify": false,
+  "verify": true,
   "guard": "block",
   "dataset_version": "v1.0",
   "prompt_version": "p1",
   "temperature": 0.0,
   "max_tokens": 512,
-  "note": "plan/route -> sql|text|graph -> rerank -> grade -> repair(<=2) -> synthesise"
+  "note": "the agent, with every figure verified against its evidence and every citation resolved to a locator before the answer ships"
  },
- "fingerprint": "2da392ecc9203223063958f59f31fed5e0324a427577feecb92fd70ac5ea9994",
+ "fingerprint": "0ccc7a4f38b3645882de0254e5467919933e6f2ada0adfe21bb3af9212a14d91",
  "dataset": {
   "path": "C:\\Users\\Usama\\vscode_projects\\Filing_Agentic_RAG\\data\\eval\\questions_v1.0.jsonl",
   "sha256": "38ee1f9188cda1597dffbcfdaeea7daaccb6e762b248b1aec3cdb185de35692f",
@@ -32,11 +32,11 @@
  },
  "run": {
   "full_set": true,
-  "answered": 0,
-  "from_cache": 150,
+  "answered": 150,
+  "from_cache": 0,
   "llm_calls": 0,
   "errors": 0,
-  "seconds": 0.17
+  "seconds": 58.38
  },
  "scores": {
   "overall": {
@@ -65,15 +65,15 @@
    "citations_made": 75,
    "citations_resolvable": 1.0,
    "citations_supported": 0.28,
-   "verified_n": 0,
-   "figures_checked": 0,
-   "hallucinated": null,
-   "flag_rate": null,
-   "block_rate": null,
-   "locator_rate": null,
+   "verified_n": 150,
+   "figures_checked": 133,
+   "hallucinated": 0.0,
+   "flag_rate": 0.0,
+   "block_rate": 0.0,
+   "locator_rate": 1.0,
    "errors": 0,
-   "llm_calls": 290,
-   "seconds": 1480.8770000000368
+   "llm_calls": 0,
+   "seconds": 16.538000000002285
   },
   "slices": {
    "numeric": {
@@ -102,15 +102,15 @@
     "citations_made": 0,
     "citations_resolvable": null,
     "citations_supported": null,
-    "verified_n": 0,
-    "figures_checked": 0,
-    "hallucinated": null,
-    "flag_rate": null,
-    "block_rate": null,
-    "locator_rate": null,
+    "verified_n": 80,
+    "figures_checked": 79,
+    "hallucinated": 0.0,
+    "flag_rate": 0.0,
+    "block_rate": 0.0,
+    "locator_rate": 1.0,
     "errors": 0,
-    "llm_calls": 161,
-    "seconds": 613.8770000000077
+    "llm_calls": 0,
+    "seconds": 8.533000000003085
    },
    "narrative": {
     "name": "narrative",
@@ -138,15 +138,15 @@
     "citations_made": 75,
     "citations_resolvable": 1.0,
     "citations_supported": 0.28,
-    "verified_n": 0,
-    "figures_checked": 0,
-    "hallucinated": null,
-    "flag_rate": null,
-    "block_rate": null,
-    "locator_rate": null,
+    "verified_n": 60,
+    "figures_checked": 54,
+    "hallucinated": 0.0,
+    "flag_rate": 0.0,
+    "block_rate": 0.0,
+    "locator_rate": 1.0,
     "errors": 0,
-    "llm_calls": 113,
-    "seconds": 733.969000000041
+    "llm_calls": 0,
+    "seconds": 7.30199999999968
    },
    "unanswerable": {
     "name": "unanswerable",
@@ -162,15 +162,15 @@
     "citations_made": 0,
     "citations_resolvable": null,
     "citations_supported": null,
-    "verified_n": 0,
+    "verified_n": 10,
     "figures_checked": 0,
-    "hallucinated": null,
-    "flag_rate": null,
-    "block_rate": null,
+    "hallucinated": 0.0,
+    "flag_rate": 0.0,
+    "block_rate": 0.0,
     "locator_rate": null,
     "errors": 0,
-    "llm_calls": 16,
-    "seconds": 133.03099999998813
+    "llm_calls": 0,
+    "seconds": 0.7029999999995198
    }
   }
  },
@@ -218,9 +218,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 53.15700000000652,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 2.6719999999995707,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-002",
@@ -265,9 +277,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 11.35899999999674,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.06300000000010186,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-003",
@@ -314,9 +338,23 @@
    "citations": [
     "06af0bae-1eec-5151-b611-f944781b2385"
    ],
-   "llm_calls": 2,
-   "seconds": 11.405999999988126,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.046000000000276486,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-004",
@@ -364,9 +402,24 @@
     "d44b223a-e0b8-5259-a826-1ad621ec7207",
     "64133815-0bfd-583d-b5df-2549a312a246"
    ],
-   "llm_calls": 2,
-   "seconds": 13.047000000020489,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04700000000048021,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     3,
+     5
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-005",
@@ -415,9 +468,25 @@
     "785561fe-dd2c-5ec7-a7f1-da313a4e15dc",
     "5be344fc-1343-5d37-95fe-02d518dec297"
    ],
-   "llm_calls": 2,
-   "seconds": 11.827999999979511,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04699999999957072,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     1,
+     4,
+     5
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-006",
@@ -464,9 +533,94 @@
    "citations": [
     "1fa389da-380c-55c0-8432-1f9ae3f44be1"
    ],
-   "llm_calls": 2,
-   "seconds": 8.969000000011874,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04699999999957072,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "$40",
+      "value": 40.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "NVDA 10-K 2021-01-31 Item 1 [0001045810-21-000010 33831:35652]"
+     },
+     {
+      "text": "$2",
+      "value": 2.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "NVDA 10-K 2021-01-31 Item 1 [0001045810-21-000010 33831:35652]"
+     },
+     {
+      "text": "$10",
+      "value": 10.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "NVDA 10-K 2021-01-31 Item 1 [0001045810-21-000010 33831:35652]"
+     },
+     {
+      "text": "44.3",
+      "value": 44.3,
+      "status": "supported",
+      "how": "digits",
+      "source": "NVDA 10-K 2021-01-31 Item 1 [0001045810-21-000010 33831:35652]"
+     },
+     {
+      "text": "$21.5",
+      "value": 21.5,
+      "status": "supported",
+      "how": "digits",
+      "source": "NVDA 10-K 2021-01-31 Item 1 [0001045810-21-000010 33831:35652]"
+     },
+     {
+      "text": "$2",
+      "value": 2.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "NVDA 10-K 2021-01-31 Item 1 [0001045810-21-000010 33831:35652]"
+     },
+     {
+      "text": "$1.36",
+      "value": 1.36,
+      "status": "supported",
+      "how": "digits",
+      "source": "NVDA 10-K 2021-01-31 Item 1 [0001045810-21-000010 33831:35652]"
+     },
+     {
+      "text": "$0.17",
+      "value": 0.17,
+      "status": "supported",
+      "how": "digits",
+      "source": "NVDA 10-K 2021-01-31 Item 1 [0001045810-21-000010 33831:35652]"
+     },
+     {
+      "text": "$0.47",
+      "value": 0.47,
+      "status": "supported",
+      "how": "digits",
+      "source": "NVDA 10-K 2021-01-31 Item 1 [0001045810-21-000010 33831:35652]"
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-007",
@@ -515,9 +669,47 @@
     "dcf2039f-1a70-5fbd-ae80-38f1fe07dca7",
     "82d6cb92-76f0-5e44-9790-78fa822bd027"
    ],
-   "llm_calls": 2,
-   "seconds": 11.937000000005355,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.06300000000010186,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "$390",
+      "value": 390.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "NVDA 10-K 2020-01-26 Item 5 [0001045810-20-000010 118496:120185]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1,
+     3,
+     4
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-008",
@@ -562,9 +754,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 10.780999999988126,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04700000000048021,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-009",
@@ -611,9 +815,80 @@
    "citations": [
     "ebe02538-fdd2-59d3-aaa1-1416883649be"
    ],
-   "llm_calls": 2,
-   "seconds": 10.5,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04700000000048021,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "31",
+      "value": 31.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PSX 10-K 2024-12-31 Item 7 [0001534701-25-000074 299357:300125]"
+     },
+     {
+      "text": "2023",
+      "value": 2023.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "$290",
+      "value": 290.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PSX 10-K 2024-12-31 Item 7 [0001534701-25-000074 299357:300125]"
+     },
+     {
+      "text": "31",
+      "value": 31.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PSX 10-K 2024-12-31 Item 7 [0001534701-25-000074 299357:300125]"
+     },
+     {
+      "text": "2024",
+      "value": 2024.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "$290",
+      "value": 290.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PSX 10-K 2024-12-31 Item 7 [0001534701-25-000074 299357:300125]"
+     },
+     {
+      "text": "66",
+      "value": 66.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PSX 10-K 2024-12-31 Item 7 [0001534701-25-000074 299357:300125]"
+     },
+     {
+      "text": "$290",
+      "value": 290.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PSX 10-K 2024-12-31 Item 7 [0001534701-25-000074 299357:300125]"
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-010",
@@ -658,9 +933,23 @@
     }
    ],
    "citations": [],
-   "llm_calls": 1,
-   "seconds": 37.187999999994645,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.14099999999962165,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [
+     "retrieval_miss"
+    ],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-011",
@@ -705,9 +994,23 @@
     }
    ],
    "citations": [],
-   "llm_calls": 1,
-   "seconds": 25.578999999997905,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10900000000037835,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [
+     "retrieval_miss"
+    ],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-012",
@@ -716,9 +1019,40 @@
    "refused": true,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 2.14000000001397,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.17199999999957072,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "66",
+      "value": 66.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PSX 10-K 2024-12-31 Item 7 [0001534701-25-000074 277622:277946]"
+     },
+     {
+      "text": "42.25",
+      "value": 42.25,
+      "status": "supported",
+      "how": "digits",
+      "source": "PSX 10-K 2020-12-31 Item 7 [0001534701-21-000074 215914:216088]"
+     }
+    ],
+    "markers": [
+     3,
+     4,
+     5
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-013",
@@ -763,9 +1097,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 8.796999999991385,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04700000000048021,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-014",
@@ -814,9 +1160,25 @@
     "ae0d551d-fc2e-5b26-90be-97937604f05a",
     "2e0171c9-f104-5e92-ba82-be97964af993"
    ],
-   "llm_calls": 2,
-   "seconds": 10.546999999991385,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.14099999999962165,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     1,
+     2,
+     3
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-015",
@@ -866,9 +1228,26 @@
     "525204f3-8c13-5d26-a932-8cd9e848bb1d",
     "ba3f9945-617b-5e30-9d11-2002e9cd936e"
    ],
-   "llm_calls": 2,
-   "seconds": 9.75,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.07899999999972351,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     2,
+     3,
+     4,
+     5
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-016",
@@ -916,9 +1295,32 @@
     "82437fbc-5305-5a6a-85d9-31d398b3a908",
     "596b3e27-8c0c-5a76-9317-13c1f96da221"
    ],
-   "llm_calls": 2,
-   "seconds": 11.328000000008615,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.07800000000042928,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "13",
+      "value": 13.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "QCOM 10-K 2024-09-29 Item 1A [0000804328-24-000075 232969:234113]"
+     }
+    ],
+    "markers": [
+     2,
+     3
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-017",
@@ -965,9 +1367,52 @@
    "citations": [
     "a34c416e-163b-5b6d-b247-90ab5ab6f11b"
    ],
-   "llm_calls": 2,
-   "seconds": 11.905999999988126,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.06199999999989814,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "14",
+      "value": 14.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AMD 10-Q 2022-03-26 Item I.2 [0000002488-22-000078 92034:93736]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "$2.4",
+      "value": 2.4,
+      "status": "supported",
+      "how": "digits",
+      "source": "AMD 10-Q 2022-03-26 Item I.2 [0000002488-22-000078 92034:93736]"
+     },
+     {
+      "text": "$1.6",
+      "value": 1.6,
+      "status": "supported",
+      "how": "digits",
+      "source": "AMD 10-Q 2022-03-26 Item I.2 [0000002488-22-000078 92034:93736]"
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-018",
@@ -1012,9 +1457,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 12.171999999991385,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.06300000000010186,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-019",
@@ -1062,9 +1519,24 @@
     "2eeac56f-6fdf-5d06-aaf4-ef65dc943ce7",
     "694ad93c-7dd1-5710-b051-6f8a4fc4094e"
    ],
-   "llm_calls": 2,
-   "seconds": 9.594000000011874,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.06199999999989814,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     1,
+     2
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-020",
@@ -1109,9 +1581,23 @@
     }
    ],
    "citations": [],
-   "llm_calls": 1,
-   "seconds": 22.48399999999674,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10999999999967258,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [
+     "retrieval_miss"
+    ],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-021",
@@ -1158,9 +1644,45 @@
    "citations": [
     "9a817b2c-6a56-557c-adcf-23797e7b8252"
    ],
-   "llm_calls": 2,
-   "seconds": 10.23399999999674,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04699999999957072,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "10",
+      "value": 10.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "LOW 10-K 2021-01-29 Item 7 [0000060667-21-000026 169477:170105]"
+     },
+     {
+      "text": "$82",
+      "value": 82.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "LOW 10-K 2021-01-29 Item 7 [0000060667-21-000026 169477:170105]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-022",
@@ -1205,9 +1727,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 8.485000000015134,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04699999999957072,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-023",
@@ -1254,9 +1788,23 @@
    "citations": [
     "454ed197-e216-5289-8fb5-bf7741b67449"
    ],
-   "llm_calls": 2,
-   "seconds": 8.452999999979511,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.06300000000010186,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     2
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-024",
@@ -1306,9 +1854,97 @@
     "f17a3650-8899-5216-984d-3c3a4c6748f5",
     "b4ff3375-6f04-50aa-a137-bd482e767ac7"
    ],
-   "llm_calls": 2,
-   "seconds": 9.65600000001723,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.06300000000010186,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "$3.0",
+      "value": 3.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "HD 10-K 2021-01-31 Item 7 [0000354950-21-000089 164940:166538]"
+     },
+     {
+      "text": "$6.0",
+      "value": 6.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "HD 10-K 2021-01-31 Item 7 [0000354950-21-000089 164940:166538]"
+     },
+     {
+      "text": "$6.5",
+      "value": 6.5,
+      "status": "supported",
+      "how": "digits",
+      "source": "HD 10-K 2021-01-31 Item 7 [0000354950-21-000089 164940:166538]"
+     },
+     {
+      "text": "364",
+      "value": 364.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "HD 10-K 2021-01-31 Item 7 [0000354950-21-000089 164940:166538]"
+     },
+     {
+      "text": "$3.5",
+      "value": 3.5,
+      "status": "supported",
+      "how": "digits",
+      "source": "HD 10-K 2021-01-31 Item 7 [0000354950-21-000089 164940:166538]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "$2.0",
+      "value": 2.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "HD 10-K 2021-01-31 Item 7 [0000354950-21-000089 164940:166538]"
+     },
+     {
+      "text": "364",
+      "value": 364.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "HD 10-K 2021-01-31 Item 7 [0000354950-21-000089 164940:166538]"
+     },
+     {
+      "text": "$1.0",
+      "value": 1.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "HD 10-K 2021-01-31 Item 7 [0000354950-21-000089 164940:166538]"
+     }
+    ],
+    "markers": [
+     1,
+     2,
+     3,
+     5
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-025",
@@ -1355,9 +1991,23 @@
    "citations": [
     "45525d39-07d2-51f6-8013-436971a193ec"
    ],
-   "llm_calls": 2,
-   "seconds": 6.75,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04700000000048021,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-026",
@@ -1407,9 +2057,26 @@
     "e99a1048-f080-51b5-be11-6c15e1020251",
     "6d3f553f-bf7e-57e6-83b6-c07557af8b1f"
    ],
-   "llm_calls": 2,
-   "seconds": 8.89100000000326,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.03099999999994907,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     1,
+     2,
+     3,
+     5
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-027",
@@ -1418,9 +2085,21 @@
    "refused": true,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 2.077999999979511,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.07800000000042928,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-028",
@@ -1467,9 +2146,45 @@
    "citations": [
     "5254436a-049e-5145-bdfe-ef3b0b060362"
    ],
-   "llm_calls": 2,
-   "seconds": 10.422000000020489,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.06300000000010186,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "$928",
+      "value": 928.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AVGO 10-K 2020-11-01 Item 7 [0001730168-20-000226 266116:267743]"
+     },
+     {
+      "text": "25",
+      "value": 25.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AVGO 10-Q 2023-07-30 Item I.2 [0001730168-23-000077 89069:90550]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "question",
+      "source": ""
+     }
+    ],
+    "markers": [
+     2
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-029",
@@ -1478,9 +2193,21 @@
    "refused": true,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 5.907000000006519,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.07800000000042928,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-030",
@@ -1528,9 +2255,67 @@
     "b793a4ed-cffc-5c29-9089-b28a7935e80e",
     "3f7a6af5-25b2-5ae1-9f14-f3f8643361d6"
    ],
-   "llm_calls": 2,
-   "seconds": 15.671000000002095,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04699999999957072,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "31",
+      "value": 31.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AVGO 10-Q 2021-01-31 Item I.2 [0001730168-21-000045 88792:90572]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "MRK 10-K 2021-12-31 Item 7 [0000310158-22-000003 405778:406848]"
+     },
+     {
+      "text": "2",
+      "value": 2.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AVGO 10-Q 2021-05-02 Item I.2 [0001730168-21-000116 99933:101584]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "MRK 10-K 2021-12-31 Item 7 [0000310158-22-000003 405778:406848]"
+     }
+    ],
+    "markers": [
+     4,
+     5
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-031",
@@ -1581,9 +2366,49 @@
     "a51e9fd8-9af0-51d0-b642-3c73286ac7aa",
     "db3e3b3a-9c7d-598f-99ce-3df04bb696a6"
    ],
-   "llm_calls": 2,
-   "seconds": 9.828999999997905,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04700000000048021,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "2017",
+      "value": 2017.0,
+      "status": "context",
+      "how": "question",
+      "source": ""
+     },
+     {
+      "text": "$13,550",
+      "value": 13550.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AVGO 10-Q 2020-08-02 Item I.2 [0001730168-20-000164 149611:150894]"
+     },
+     {
+      "text": "$4,000",
+      "value": 4000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AVGO 10-Q 2020-08-02 Item I.2 [0001730168-20-000164 149611:150894]"
+     }
+    ],
+    "markers": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-032",
@@ -1628,9 +2453,25 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 13.030999999988126,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.07800000000042928,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     2,
+     3,
+     5
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-033",
@@ -1675,9 +2516,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 9.859000000025844,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04699999999957072,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-034",
@@ -1728,9 +2581,27 @@
     "6e252c96-7542-58d5-a491-fa46b2fc69bc",
     "81ad6b7d-b585-532c-ba1b-ce44fa6e4d8f"
    ],
-   "llm_calls": 2,
-   "seconds": 9.140999999974156,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04700000000048021,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-035",
@@ -1777,9 +2648,23 @@
    "citations": [
     "a61c7256-74cb-5d05-abbb-f42a56d4ee16"
    ],
-   "llm_calls": 2,
-   "seconds": 7.594000000011874,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.03099999999994907,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-036",
@@ -1828,9 +2713,25 @@
     "4215e831-6403-5243-965d-d5eef1e0792a",
     "e34ed68f-f0da-50e2-bd1a-ca92d601b757"
    ],
-   "llm_calls": 2,
-   "seconds": 7.578000000008615,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04700000000048021,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     1,
+     2,
+     3
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-037",
@@ -1877,9 +2778,31 @@
    "citations": [
     "2186c345-3c44-58e8-9734-279dda461919"
    ],
-   "llm_calls": 2,
-   "seconds": 7.937000000005355,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.28099999999994907,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "19",
+      "value": 19.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "ABBV 10-Q 2020-09-30 Item II.1A [0001551152-20-000032 206459:208181]"
+     }
+    ],
+    "markers": [
+     4
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-038",
@@ -1924,9 +2847,25 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 6.312999999994645,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     1,
+     2,
+     3
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-039",
@@ -1971,9 +2910,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 6.0,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-040",
@@ -2023,9 +2974,26 @@
     "36676417-9288-53a5-b14d-378670719665",
     "0f26cca3-8343-54db-88fe-6d8b4d675fff"
    ],
-   "llm_calls": 2,
-   "seconds": 12.578000000008615,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.07799999999951979,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-041",
@@ -2074,9 +3042,25 @@
     "2d1f380c-a01c-53e7-9471-1ac7d1f4f364",
     "1bfaab0e-cc3d-5925-83ab-04a80a99659f"
    ],
-   "llm_calls": 2,
-   "seconds": 10.21899999998277,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.03099999999994907,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     1,
+     2,
+     3
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-042",
@@ -2121,9 +3105,23 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 24.17200000002049,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [
+     "retrieval_miss"
+    ],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-043",
@@ -2168,9 +3166,23 @@
     }
    ],
    "citations": [],
-   "llm_calls": 1,
-   "seconds": 25.905999999988126,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.14099999999962165,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [
+     "retrieval_miss"
+    ],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-044",
@@ -2217,9 +3229,66 @@
    "citations": [
     "46205c01-1314-5255-986f-0318043fab52"
    ],
-   "llm_calls": 2,
-   "seconds": 9.219000000011874,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.06199999999989814,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "$554",
+      "value": 554.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "MRK 10-K 2022-12-31 Item 7 [0001628280-23-005061 482838:484408]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "$748",
+      "value": 748.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "MRK 10-K 2022-12-31 Item 7 [0001628280-23-005061 482838:484408]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "$450",
+      "value": 450.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "MRK 10-K 2022-12-31 Item 7 [0001628280-23-005061 482838:484408]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-045",
@@ -2268,9 +3337,25 @@
     "db6fad08-87c1-5ef6-97b7-ac05d764d7c6",
     "e7729990-b466-50e4-a6a0-03effbea690c"
    ],
-   "llm_calls": 2,
-   "seconds": 6.702999999979511,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.07799999999951979,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     3,
+     4,
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-046",
@@ -2319,9 +3404,33 @@
     "3688d407-8bd9-50fc-b93e-977665513beb",
     "78656e61-3306-5b2c-a4e6-fccb267bbdc9"
    ],
-   "llm_calls": 2,
-   "seconds": 7.64000000001397,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.06300000000010186,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "2023",
+      "value": 2023.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1,
+     3,
+     2
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-047",
@@ -2366,9 +3475,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 8.89100000000326,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04700000000048021,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-048",
@@ -2415,9 +3536,38 @@
    "citations": [
     "991ea439-c0a9-5b2c-9410-7b60323f7a38"
    ],
-   "llm_calls": 2,
-   "seconds": 10.796999999991385,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04699999999957072,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "3",
+      "value": 3.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PFE 10-K 2021-12-31 Item 7 [0000078003-22-000027 379172:380299]"
+     },
+     {
+      "text": "100",
+      "value": 100.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PFE 10-K 2021-12-31 Item 7 [0000078003-22-000027 379172:380299]"
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-049",
@@ -2464,9 +3614,45 @@
    "citations": [
     "55a1305a-450e-5224-a7df-352e48e51115"
    ],
-   "llm_calls": 2,
-   "seconds": 11.171999999991385,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "$1.0",
+      "value": 1.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PFE 10-K 2021-12-31 Item 7 [0000078003-22-000027 364773:366512]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     2
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-050",
@@ -2511,9 +3697,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 17.5,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04699999999957072,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-051",
@@ -2560,9 +3758,38 @@
    "citations": [
     "298f5913-4d98-5cfa-b20e-2fa952f06ace"
    ],
-   "llm_calls": 2,
-   "seconds": 12.219000000011874,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.06300000000010186,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "2024",
+      "value": 2024.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "$9.8",
+      "value": 9.8,
+      "status": "supported",
+      "how": "digits",
+      "source": "JNJ 10-K 2022-01-02 Item 7 [0000200406-22-000022 220887:222529]"
+     }
+    ],
+    "markers": [
+     5
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-052",
@@ -2609,9 +3836,59 @@
    "citations": [
     "aab0eacf-ffdf-5fc6-848a-b015873f3568"
    ],
-   "llm_calls": 2,
-   "seconds": 12.328000000008615,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.06199999999989814,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "1",
+      "value": 1.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "JNJ 10-Q 2022-04-03 Item I.2 [0000200406-22-000048 240798:242535]"
+     },
+     {
+      "text": "2023",
+      "value": 2023.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "$16.1",
+      "value": 16.1,
+      "status": "supported",
+      "how": "digits",
+      "source": "JNJ 10-K 2023-01-01 Item 7 [0000200406-23-000016 240674:242520]"
+     },
+     {
+      "text": "$2.1",
+      "value": 2.1,
+      "status": "supported",
+      "how": "digits",
+      "source": "JNJ 10-K 2023-01-01 Item 7 [0000200406-23-000016 240674:242520]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     3
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-053",
@@ -2656,9 +3933,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 12.187000000005355,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04700000000048021,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-054",
@@ -2708,9 +3997,26 @@
     "bf0b8f2a-a73c-5dc5-803a-ecbff2737ded",
     "5652e008-c3da-5e3f-8917-a8d984a46e13"
    ],
-   "llm_calls": 2,
-   "seconds": 10.0,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04699999999957072,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-055",
@@ -2757,9 +4063,38 @@
    "citations": [
     "a6e742da-cd5a-52a5-a64d-ca2181e10897"
    ],
-   "llm_calls": 2,
-   "seconds": 11.469000000011874,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04699999999957072,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "100",
+      "value": 100.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "COP 10-Q 2020-09-30 Item I.2 [0001562762-20-000367 189020:190793]"
+     },
+     {
+      "text": "100",
+      "value": 100.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "COP 10-Q 2020-09-30 Item I.2 [0001562762-20-000367 189020:190793]"
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-056",
@@ -2804,9 +4139,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 11.09299999999348,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04700000000048021,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-057",
@@ -2851,9 +4198,23 @@
     }
    ],
    "citations": [],
-   "llm_calls": 1,
-   "seconds": 28.29700000002049,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10999999999967258,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [
+     "retrieval_miss"
+    ],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-058",
@@ -2898,9 +4259,24 @@
     }
    ],
    "citations": [],
-   "llm_calls": 1,
-   "seconds": 11.827999999979511,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.18800000000010186,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [
+     "retrieval_miss",
+     "router_wrong"
+    ],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-059",
@@ -2909,9 +4285,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 2.2820000000065193,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.15599999999994907,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "7,392,000,000",
+      "value": 7392000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "COST 10-K 2022-08-28 NetCashProvidedByUsedInOperatingActivities [0000909832-24-000049]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "nar-060",
@@ -2956,9 +4361,24 @@
     }
    ],
    "citations": [],
-   "llm_calls": 1,
-   "seconds": 9.171000000002095,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.18699999999989814,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [
+     "retrieval_miss",
+     "router_wrong"
+    ],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-001",
@@ -2967,9 +4387,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 3.9219999999913853,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.1570000000001528,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "32,753,000,000",
+      "value": 32753000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "ABBV 10-K 2018-12-31 Revenues [0001551152-21-000008]"
+     },
+     {
+      "text": "2018",
+      "value": 2018.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-002",
@@ -2978,9 +4427,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.7650000000139698,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.17199999999957072,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "33,266,000,000",
+      "value": 33266000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "ABBV 10-K 2019-12-31 Revenues [0001551152-22-000007]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-003",
@@ -2989,9 +4467,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.812999999994645,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.14000000000032742,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "45,804,000,000",
+      "value": 45804000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "ABBV 10-K 2020-12-31 Revenues [0001551152-23-000011]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-004",
@@ -3000,9 +4507,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.922000000020489,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "56,197,000,000",
+      "value": 56197000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "ABBV 10-K 2021-12-31 Revenues [0001551152-24-000011]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-005",
@@ -3011,9 +4547,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.9219999999913853,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "58,054,000,000",
+      "value": 58054000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "ABBV 10-K 2022-12-31 Revenues [0001551152-25-000020]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-006",
@@ -3022,9 +4587,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.8439999999827705,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10900000000037835,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "6,475,000,000",
+      "value": 6475000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AMD 10-K 2018-12-29 RevenueFromContractWithCustomerExcludingAssessedTax [0001628280-21-001185]"
+     },
+     {
+      "text": "2018",
+      "value": 2018.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-007",
@@ -3033,9 +4627,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 2.14000000001397,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10999999999967258,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "6,731,000,000",
+      "value": 6731000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AMD 10-K 2019-12-28 RevenueFromContractWithCustomerExcludingAssessedTax [0000002488-22-000016]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-008",
@@ -3044,9 +4667,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.7039999999979045,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "9,763,000,000",
+      "value": 9763000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AMD 10-K 2020-12-26 RevenueFromContractWithCustomerExcludingAssessedTax [0000002488-23-000047]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-009",
@@ -3055,9 +4707,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 28.51500000001397,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "16,434,000,000",
+      "value": 16434000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AMD 10-K 2021-12-25 RevenueFromContractWithCustomerExcludingAssessedTax [0000002488-24-000012]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-010",
@@ -3066,9 +4747,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 12.937999999994645,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "23,601,000,000",
+      "value": 23601000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AMD 10-K 2022-12-31 RevenueFromContractWithCustomerExcludingAssessedTax [0000002488-25-000012]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-011",
@@ -3077,9 +4787,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 3,
-   "seconds": 10.84299999999348,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10900000000037835,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "11,495,000,000",
+      "value": 11495000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AVGO 10-K 2022-10-30 NetIncomeLoss [0001730168-24-000139]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-012",
@@ -3088,9 +4827,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.9539999999979045,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "5,895,000,000",
+      "value": 5895000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AVGO 10-K 2024-11-03 NetIncomeLoss [0001730168-24-000139]"
+     },
+     {
+      "text": "2024",
+      "value": 2024.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-013",
@@ -3099,9 +4867,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.7969999999913853,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "6,257,000,000",
+      "value": 6257000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "COP 10-K 2018-12-31 NetIncomeLoss [0001562762-21-000027]"
+     },
+     {
+      "text": "2018",
+      "value": 2018.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-014",
@@ -3110,9 +4907,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.75,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "7,189,000,000",
+      "value": 7189000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "COP 10-K 2019-12-31 NetIncomeLoss [0001562762-22-000031]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-015",
@@ -3121,9 +4947,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 2.062000000005355,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "-2,701,000,000",
+      "value": -2701000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "COP 10-K 2020-12-31 NetIncomeLoss [0001163165-23-000006]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-016",
@@ -3132,9 +4987,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 28.84399999998277,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.07799999999951979,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "5,135,000,000",
+      "value": 5135000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AVGO 10-K 2018-11-04 OperatingIncomeLoss [0001730168-20-000226]"
+     },
+     {
+      "text": "2018",
+      "value": 2018.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-017",
@@ -3143,9 +5027,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 12.65600000001723,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10999999999967258,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "3,444,000,000",
+      "value": 3444000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AVGO 10-K 2019-11-03 OperatingIncomeLoss [0001730168-21-000153]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-018",
@@ -3154,9 +5067,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 9.937999999994645,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "4,014,000,000",
+      "value": 4014000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "AVGO 10-K 2020-11-01 OperatingIncomeLoss [0001730168-22-000118]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-019",
@@ -3165,9 +5107,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.875,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10900000000037835,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "4,480,000,000",
+      "value": 4480000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "COST 10-K 2018-09-02 OperatingIncomeLoss [0000909832-20-000017]"
+     },
+     {
+      "text": "2018",
+      "value": 2018.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-020",
@@ -3176,9 +5147,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.889999999984866,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "4,737,000,000",
+      "value": 4737000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "COST 10-K 2019-09-01 OperatingIncomeLoss [0000909832-21-000014]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-021",
@@ -3187,9 +5187,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.735000000015134,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.07800000000042928,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "34,356,000,000",
+      "value": 34356000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "HD 10-K 2018-01-28 GrossProfit [0000354950-20-000015]"
+     },
+     {
+      "text": "2018",
+      "value": 2018.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-022",
@@ -3198,9 +5227,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 2.047000000020489,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "37,160,000,000",
+      "value": 37160000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "HD 10-K 2019-02-03 GrossProfit [0000354950-21-000089]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-023",
@@ -3209,9 +5267,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.827999999979511,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "37,572,000,000",
+      "value": 37572000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "HD 10-K 2020-02-02 GrossProfit [0000354950-22-000070]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-024",
@@ -3220,9 +5307,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 39.65700000000652,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10899999999946886,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "44,853,000,000",
+      "value": 44853000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "HD 10-K 2021-01-31 GrossProfit [0000354950-23-000059]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-025",
@@ -3231,9 +5347,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.625,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.11000000000058208,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "50,832,000,000",
+      "value": 50832000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "HD 10-K 2022-01-30 GrossProfit [0000354950-24-000062]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-026",
@@ -3242,9 +5387,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 10.671000000002095,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.0929999999998472,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "4,150,000,000",
+      "value": 4150000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "NVDA 10-K 2020-01-26 CostOfRevenue [0001045810-22-000036]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-027",
@@ -3253,9 +5427,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.7039999999979045,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10999999999967258,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "6,279,000,000",
+      "value": 6279000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "NVDA 10-K 2021-01-31 CostOfRevenue [0001045810-23-000017]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-028",
@@ -3264,9 +5467,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.7030000000086147,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10900000000037835,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "9,439,000,000",
+      "value": 9439000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "NVDA 10-K 2022-01-30 CostOfRevenue [0001045810-24-000029]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-029",
@@ -3275,9 +5507,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.687000000005355,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10999999999967258,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "11,618,000,000",
+      "value": 11618000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "NVDA 10-K 2023-01-29 CostOfRevenue [0001045810-25-000023]"
+     },
+     {
+      "text": "2023",
+      "value": 2023.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-030",
@@ -3286,9 +5547,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 2.23499999998603,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10900000000037835,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "10,244,000,000",
+      "value": 10244000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "QCOM 10-K 2018-09-30 CostOfRevenue [0001728949-20-000067]"
+     },
+     {
+      "text": "2018",
+      "value": 2018.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-031",
@@ -3297,9 +5587,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 28.578000000008615,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "14,294,000,000",
+      "value": 14294000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "COP 10-K 2018-12-31 CostOfGoodsAndServicesSold [0001562762-21-000027]"
+     },
+     {
+      "text": "2018",
+      "value": 2018.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-032",
@@ -3308,9 +5627,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 12.625,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.0929999999998472,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "11,842,000,000",
+      "value": 11842000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "COP 10-K 2019-12-31 CostOfGoodsAndServicesSold [0001562762-22-000031]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-033",
@@ -3319,9 +5667,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 10.796999999991385,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10999999999967258,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "123,152,000,000",
+      "value": 123152000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "COST 10-K 2018-09-02 CostOfGoodsAndServicesSold [0000909832-20-000017]"
+     },
+     {
+      "text": "2018",
+      "value": 2018.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-034",
@@ -3330,9 +5707,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.625,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "132,886,000,000",
+      "value": 132886000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "COST 10-K 2019-09-01 CostOfGoodsAndServicesSold [0000909832-21-000014]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-035",
@@ -3341,9 +5747,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.5309999999881256,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.0929999999998472,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "144,939,000,000",
+      "value": 144939000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "COST 10-K 2020-08-30 CostOfGoodsAndServicesSold [0000909832-22-000021]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-036",
@@ -3352,9 +5787,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.8440000000118744,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "268,000,000",
+      "value": 268000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "CVX 10-K 2022-12-31 ResearchAndDevelopmentExpense [0000093410-25-000009]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-037",
@@ -3363,9 +5827,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.8589999999967404,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.0929999999998472,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "13,543,000,000",
+      "value": 13543000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "INTC 10-K 2018-12-29 ResearchAndDevelopmentExpense [0000050863-21-000010]"
+     },
+     {
+      "text": "2018",
+      "value": 2018.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-038",
@@ -3374,9 +5867,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.875,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10999999999967258,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "13,362,000,000",
+      "value": 13362000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "INTC 10-K 2019-12-28 ResearchAndDevelopmentExpense [0000050863-22-000007]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-039",
@@ -3385,9 +5907,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 39.46899999998277,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "13,556,000,000",
+      "value": 13556000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "INTC 10-K 2020-12-26 ResearchAndDevelopmentExpense [0000050863-23-000006]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-040",
@@ -3396,9 +5947,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 2.25,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.07800000000042928,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "15,190,000,000",
+      "value": 15190000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "INTC 10-K 2021-12-25 ResearchAndDevelopmentExpense [0000050863-24-000010]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-041",
@@ -3407,9 +5987,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 10.39100000000326,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "3,838,000,000",
+      "value": 3838000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "CVX 10-K 2018-12-31 SellingGeneralAndAdministrativeExpense [0000093410-21-000009]"
+     },
+     {
+      "text": "2018",
+      "value": 2018.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-042",
@@ -3418,9 +6027,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.7650000000139698,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10900000000037835,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "4,143,000,000",
+      "value": 4143000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "CVX 10-K 2019-12-31 SellingGeneralAndAdministrativeExpense [0000093410-22-000019]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-043",
@@ -3429,9 +6067,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.437999999994645,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "4,213,000,000",
+      "value": 4213000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "CVX 10-K 2020-12-31 SellingGeneralAndAdministrativeExpense [0000093410-23-000009]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-044",
@@ -3440,9 +6107,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.985000000015134,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10900000000037835,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "4,014,000,000",
+      "value": 4014000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "CVX 10-K 2021-12-31 SellingGeneralAndAdministrativeExpense [0000093410-24-000013]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-045",
@@ -3451,9 +6147,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.75,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10999999999967258,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "6,950,000,000",
+      "value": 6950000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "INTC 10-K 2018-12-29 SellingGeneralAndAdministrativeExpense [0000050863-21-000010]"
+     },
+     {
+      "text": "2018",
+      "value": 2018.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-046",
@@ -3462,9 +6187,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 28.687999999994645,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "2,702,000,000",
+      "value": 2702000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "JNJ 10-K 2018-12-30 IncomeTaxExpenseBenefit [0000200406-21-000008]"
+     },
+     {
+      "text": "2018",
+      "value": 2018.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-047",
@@ -3473,9 +6227,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 12.78100000001723,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.0929999999998472,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "2,209,000,000",
+      "value": 2209000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "JNJ 10-K 2019-12-29 IncomeTaxExpenseBenefit [0000200406-22-000022]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-048",
@@ -3484,9 +6267,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 10.48399999999674,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.11000000000058208,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "1,783,000,000",
+      "value": 1783000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "JNJ 10-K 2021-01-03 IncomeTaxExpenseBenefit [0000200406-23-000016]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-049",
@@ -3495,9 +6307,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.8289999999979045,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "1,377,000,000",
+      "value": 1377000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "JNJ 10-K 2022-01-02 IncomeTaxExpenseBenefit [0000200406-24-000013]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-050",
@@ -3506,9 +6347,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.687000000005355,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "2,989,000,000",
+      "value": 2989000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "JNJ 10-K 2023-01-01 IncomeTaxExpenseBenefit [0000200406-25-000038]"
+     },
+     {
+      "text": "2023",
+      "value": 2023.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-051",
@@ -3517,9 +6387,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.6410000000032596,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10899999999946886,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "39,286,100,000",
+      "value": 39286100000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "LLY 10-K 2019-12-31 Assets [0000059478-21-000083]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-052",
@@ -3528,9 +6427,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 2.1089999999967404,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10900000000037835,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "46,633,100,000",
+      "value": 46633100000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "LLY 10-K 2020-12-31 Assets [0000059478-22-000068]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-053",
@@ -3539,9 +6467,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.7189999999827705,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "48,806,000,000",
+      "value": 48806000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "LLY 10-K 2021-12-31 Assets [0000059478-23-000082]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-054",
@@ -3550,9 +6507,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 39.625,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "49,489,800,000",
+      "value": 49489800000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "LLY 10-K 2022-12-31 Assets [0000059478-24-000065]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-055",
@@ -3561,9 +6547,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.9219999999913853,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.0929999999998472,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "64,006,300,000",
+      "value": 64006300000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "LLY 10-K 2023-12-31 Assets [0000059478-25-000067]"
+     },
+     {
+      "text": "2023",
+      "value": 2023.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-056",
@@ -3572,9 +6587,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 10.328000000008615,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "14,228,000,000",
+      "value": 14228000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "LOW 10-K 2019-02-01 AssetsCurrent [0000060667-20-000036]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-057",
@@ -3583,9 +6627,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.9219999999913853,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "15,318,000,000",
+      "value": 15318000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "LOW 10-K 2020-01-31 AssetsCurrent [0000060667-21-000026]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-058",
@@ -3594,9 +6667,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.7030000000086147,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "22,326,000,000",
+      "value": 22326000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "LOW 10-K 2021-01-29 AssetsCurrent [0000060667-22-000038]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-059",
@@ -3605,9 +6707,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.7660000000032596,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "20,060,000,000",
+      "value": 20060000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "LOW 10-K 2022-01-28 AssetsCurrent [0000060667-23-000034]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-060",
@@ -3616,9 +6747,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.7969999999913853,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10900000000037835,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "21,442,000,000",
+      "value": 21442000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "LOW 10-K 2023-02-03 AssetsCurrent [0000060667-24-000033]"
+     },
+     {
+      "text": "2023",
+      "value": 2023.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-061",
@@ -3627,9 +6787,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 28.655999999988126,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "3,950,000,000",
+      "value": 3950000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "NVDA 10-K 2019-01-27 Liabilities [0001045810-20-000010]"
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-062",
@@ -3638,9 +6827,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 13.0,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.15599999999994907,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "104,148,000,000",
+      "value": 104148000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PFE 10-K 2019-12-31 Liabilities [0000078003-21-000038]"
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-063",
@@ -3649,9 +6867,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 10.375,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "90,756,000,000",
+      "value": 90756000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PFE 10-K 2020-12-31 Liabilities [0000078003-22-000027]"
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-064",
@@ -3660,9 +6907,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.7650000000139698,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "104,013,000,000",
+      "value": 104013000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PFE 10-K 2021-12-31 Liabilities [0000078003-23-000024]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-065",
@@ -3671,9 +6947,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 2.48499999998603,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "101,288,000,000",
+      "value": 101288000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PFE 10-K 2022-12-31 Liabilities [0000078003-24-000039]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-066",
@@ -3682,9 +6987,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.4690000000118744,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10899999999946886,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "22,220,000,000",
+      "value": 22220000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "MRK 10-K 2019-12-31 LiabilitiesCurrent [0000310158-21-000004]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-067",
@@ -3693,9 +7027,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.7179999999934807,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10900000000037835,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "27,327,000,000",
+      "value": 27327000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "MRK 10-K 2020-12-31 LiabilitiesCurrent [0000310158-22-000003]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-068",
@@ -3704,9 +7067,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.625,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.09400000000005093,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "23,872,000,000",
+      "value": 23872000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "MRK 10-K 2021-12-31 LiabilitiesCurrent [0001628280-23-005061]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-069",
@@ -3715,9 +7107,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 38.953000000008615,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "24,239,000,000",
+      "value": 24239000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "MRK 10-K 2022-12-31 LiabilitiesCurrent [0001628280-24-006850]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-070",
@@ -3762,9 +7183,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 12.64100000000326,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04700000000048021,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-071",
@@ -3773,9 +7206,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.5309999999881256,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10899999999946886,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "63,143,000,000",
+      "value": 63143000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PFE 10-K 2019-12-31 StockholdersEquity [0000078003-21-000038]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-072",
@@ -3784,9 +7246,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.5780000000086147,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.11000000000058208,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "24,910,000,000",
+      "value": 24910000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PSX 10-K 2019-12-31 StockholdersEquity [0001534701-21-000074]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-073",
@@ -3795,9 +7286,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.4530000000086147,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.07800000000042928,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "18,984,000,000",
+      "value": 18984000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PSX 10-K 2020-12-31 StockholdersEquity [0001534701-22-000078]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-074",
@@ -3806,9 +7326,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.6559999999881256,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.07800000000042928,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "19,166,000,000",
+      "value": 19166000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PSX 10-K 2021-12-31 StockholdersEquity [0001534701-23-000053]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-075",
@@ -3817,9 +7366,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.5789999999979045,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.10999999999967258,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "29,494,000,000",
+      "value": 29494000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PSX 10-K 2022-12-31 StockholdersEquity [0001534701-24-000078]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-076",
@@ -3828,9 +7406,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 28.203000000008615,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.0929999999998472,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     },
+     {
+      "text": "1,614,000,000",
+      "value": 1614000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "PSX 10-K 2019-12-31 CashAndCashEquivalentsAtCarryingValue [0001534701-21-000074]"
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-077",
@@ -3839,9 +7446,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 12.921999999991385,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.11000000000058208,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "11,839,000,000",
+      "value": 11839000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "QCOM 10-K 2019-09-29 CashAndCashEquivalentsAtCarryingValue [0001728949-20-000067]"
+     },
+     {
+      "text": "2019",
+      "value": 2019.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-078",
@@ -3850,9 +7486,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 12.46799999999348,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.13999999999941792,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "6,707,000,000",
+      "value": 6707000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "QCOM 10-K 2020-09-27 CashAndCashEquivalentsAtCarryingValue [0001728949-21-000076]"
+     },
+     {
+      "text": "2020",
+      "value": 2020.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-079",
@@ -3861,9 +7526,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.5160000000032596,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.14100000000053114,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "7,116,000,000",
+      "value": 7116000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "QCOM 10-K 2021-09-26 CashAndCashEquivalentsAtCarryingValue [0000804328-22-000021]"
+     },
+     {
+      "text": "2021",
+      "value": 2021.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "num-080",
@@ -3872,9 +7566,38 @@
    "refused": false,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 1.5150000000139698,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [
+     {
+      "text": "2,773,000,000",
+      "value": 2773000000.0,
+      "status": "supported",
+      "how": "digits",
+      "source": "QCOM 10-K 2022-09-25 CashAndCashEquivalentsAtCarryingValue [0000804328-23-000055]"
+     },
+     {
+      "text": "2022",
+      "value": 2022.0,
+      "status": "context",
+      "how": "period",
+      "source": ""
+     }
+    ],
+    "markers": [
+     1
+    ],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "una-001",
@@ -3919,9 +7642,24 @@
     }
    ],
    "citations": [],
-   "llm_calls": 1,
-   "seconds": 12.452999999979511,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.14099999999962165,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [
+     "retrieval_miss",
+     "router_wrong"
+    ],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "una-002",
@@ -3966,9 +7704,24 @@
     }
    ],
    "citations": [],
-   "llm_calls": 1,
-   "seconds": 9.812999999994645,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [
+     "retrieval_miss",
+     "router_wrong"
+    ],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "una-003",
@@ -4013,9 +7766,23 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 12.297000000020489,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [
+     "router_wrong"
+    ],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "una-004",
@@ -4060,9 +7827,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 12.687000000005355,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.03099999999994907,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "una-005",
@@ -4107,9 +7886,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 12.796999999991385,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04700000000048021,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "una-006",
@@ -4154,9 +7945,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 42.328000000008615,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.125,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "una-007",
@@ -4165,9 +7968,21 @@
    "refused": true,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 1,
-   "seconds": 1.062999999994645,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.014999999999417923,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "una-008",
@@ -4176,9 +7991,21 @@
    "refused": true,
    "retrieved": [],
    "citations": [],
-   "llm_calls": 1,
-   "seconds": 0.7179999999934807,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.016000000000531145,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "una-009",
@@ -4223,9 +8050,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 15.296999999991385,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.04699999999957072,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   },
   {
    "qid": "una-010",
@@ -4270,9 +8109,21 @@
     }
    ],
    "citations": [],
-   "llm_calls": 2,
-   "seconds": 13.578000000008615,
-   "error": ""
+   "llm_calls": 0,
+   "seconds": 0.03099999999994907,
+   "error": "",
+   "verdict": {
+    "ok": true,
+    "numbers": [],
+    "markers": [],
+    "dangling": [],
+    "unlocatable": [],
+    "uncited": [],
+    "unrechecked": [],
+    "taxonomy": [],
+    "reasons": []
+   },
+   "blocked": false
   }
  ]
 }

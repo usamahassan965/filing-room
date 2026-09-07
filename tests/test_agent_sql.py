@@ -261,3 +261,47 @@ def test_the_tool_schema_is_generated_from_the_registry(tool):
     assert schema["name"] == "lookup_fact"
     assert "Total current assets" in schema["concepts"]
     assert set(schema["parameters"]) == {"ticker", "concept", "period_end"}
+
+
+# --- the recheck path (M6) --------------------------------------------------
+
+
+def test_a_recheck_reads_the_fact_by_its_identity_not_by_a_phrase(tool):
+    """The verifier's read has to bypass the resolver it is checking."""
+    row = tool.recheck("TST", "Revenues", period_end="2024-12-31")
+    assert row is not None
+    assert row.val == 200.0
+    assert row.tag == "Revenues"
+
+
+def test_a_recheck_is_case_insensitive_in_the_ticker_only(tool):
+    assert tool.recheck("tst", "Revenues", period_end="2024-12-31") is not None
+    # The tag is an identifier, not a phrase. A near-miss must miss.
+    assert tool.recheck("TST", "revenues", period_end="2024-12-31") is None
+
+
+def test_a_recheck_can_reach_a_tag_the_resolver_would_refuse(tool):
+    """Goodwill is outside the registry, so `lookup` will not ask for it.
+
+    The recheck still finds it, and that asymmetry is the point: the allow-list
+    governs what a *question* may reach, and the verifier is not asking a
+    question -- it is confirming a number the system already produced.
+    """
+    with pytest.raises(UnknownConcept):
+        tool.resolver.require("goodwill")
+    row = tool.recheck("TST", "Goodwill", period_end="2024-12-31")
+    assert row is not None and row.val == 50.0
+
+
+def test_a_recheck_outside_the_period_slack_returns_nothing(tool):
+    assert tool.recheck("TST", "Revenues", period_end="2020-12-31") is None
+
+
+def test_a_recheck_without_a_period_takes_the_most_recent(tool):
+    row = tool.recheck("TST", "Revenues")
+    assert row is not None and row.val == 200.0
+
+
+def test_a_recheck_can_be_pinned_to_one_filing(tool):
+    assert tool.recheck("TST", "Revenues", accn="a-1").val == 100.0
+    assert tool.recheck("TST", "Revenues", accn="nope") is None

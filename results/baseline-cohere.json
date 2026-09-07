@@ -17,7 +17,7 @@
   "max_tokens": 512,
   "note": "the baseline retriever with command-a -- the generator ablation"
  },
- "fingerprint": "21318691517af2fbb8f29159c31482bc64fc6552b0f7a4c275ed65d6d1436ef6",
+ "fingerprint": "cec9b382c679b0f9918802ff4ee933550dc8abced5442aac63928f0e3573823b",
  "dataset": {
   "path": "C:\\Users\\Usama\\vscode_projects\\Filing_Agentic_RAG\\data\\eval\\questions_v1.0.jsonl",
   "sha256": "38ee1f9188cda1597dffbcfdaeea7daaccb6e762b248b1aec3cdb185de35692f",

@@ -107,11 +107,27 @@ class Outcome:
     llm_calls: int = 0
     seconds: float = 0.0
     error: str = ""
+    # M6. The verifier's finding, carried on the outcome rather than recomputed
+    # at scoring time -- it has to be, because a results file holds answers and
+    # citations but not the evidence bodies or the fact values the check reads,
+    # and re-deriving it later would mean re-running the questions. `blocked`
+    # says the guard acted; `verdict` says what it found, whether it acted or
+    # not. An outcome from a run with verification off carries neither.
+    verdict: dict[str, Any] | None = None
+    blocked: bool = False
+
+    @property
+    def flagged(self) -> bool:
+        """The verifier failed this answer -- whatever the guard did about it."""
+        return self.verdict is not None and not self.verdict.get("ok", True)
 
     def to_json(self) -> dict[str, Any]:
         d = asdict(self)
         d["retrieved"] = [c.to_json() for c in self.retrieved]
         d["citations"] = list(self.citations)
+        if self.verdict is None:
+            d.pop("verdict")
+            d.pop("blocked")
         return d
 
     @classmethod
@@ -129,7 +145,23 @@ class Outcome:
 # Matches 1,234 / 1234.5 / .5 -- and nothing else. Percentages, dates and share
 # counts all match too; that is fine, because every candidate is tried and the
 # question is only scored right if one of them is the gold value.
-_NUMBER = re.compile(r"(?<![\w.])(\(?)\$?\s?(\d{1,3}(?:,\d{3})+|\d+(?:\.\d+)?|\.\d+)(\)?)")
+#
+# Both ways a filing writes a negative are read: accounting parentheses, and a
+# leading minus. The minus was missing until M6's verifier flagged num-015 --
+# an answer stating COP's -2,701,000,000 loss, matching the store exactly, and
+# scored wrong because the sign was dropped on the way in and a loss was
+# compared against a profit. The leading `-` can only start a match where the
+# character before it is not a word character, which is what keeps it from
+# eating the hyphens in "2022-08-28" or the range in "10-15%".
+_NUMBER = re.compile(r"(?<![\w.])([-(]?)\$?\s?(\d{1,3}(?:,\d{3})+|\d+(?:\.\d+)?|\.\d+)(\)?)")
+
+
+def _signed(value: float, opener: str, closer: str) -> float:
+    """Apply whichever negative notation the text used."""
+    if opener == "-" or (opener == "(" and closer == ")"):
+        return -value
+    return value
+
 
 # A filing's income statement is in millions and its answer usually is too, so
 # a bare "16,434" has to be allowed to mean 16.4 billion. Every scale is tried
@@ -161,8 +193,7 @@ def parse_numbers(text: str) -> list[float]:
             val = float(raw)
         except ValueError:  # pragma: no cover - the pattern cannot produce this
             continue
-        if m.group(1) == "(" and m.group(3) == ")":
-            val = -val
+        val = _signed(val, m.group(1), m.group(3))
         tail = text[m.end() : m.end() + 14]
         word = _WORD_SCALE.match(tail.strip())
         scales = [s for _, s in _SCALES]
@@ -241,6 +272,18 @@ class SliceScore:
     citations_made: int = 0
     citations_resolvable: float | None = None
     citations_supported: float | None = None
+    # M6 verification, counted only over outcomes that carried a verdict. A run
+    # with the verifier off leaves every one of these None and prints no
+    # verification table at all -- which is the honest rendering, because a
+    # check that never ran is not a check that found nothing. `figures_checked`
+    # is the denominator of `hallucinated` and sits beside it for the same
+    # reason `retrieval_n` sits beside hit@k.
+    verified_n: int = 0
+    figures_checked: int = 0
+    hallucinated: float | None = None
+    flag_rate: float | None = None
+    block_rate: float | None = None
+    locator_rate: float | None = None
     errors: int = 0
     llm_calls: int = 0
     seconds: float = 0.0
@@ -294,6 +337,11 @@ def _score_group(
     per_k: dict[str, dict[int, list[float]]] = {"hit": {}, "rec": {}, "ndcg": {}}
     resolvable: list[float] = []
     supported: list[float] = []
+    flags: list[float] = []
+    blocks: list[float] = []
+    bad_figures = 0
+    located = 0
+    markers = 0
 
     for q in questions:
         o = outcomes.get(q.id)
@@ -332,6 +380,23 @@ def _score_group(
             c = by_id.get(cid)
             supported.append(float(c is not None and q.is_gold(c.accn, c.char_start, c.char_end)))
 
+        # The verdict is read, never recomputed: the check needs the evidence
+        # bodies, and those are gone by the time a results file is scored.
+        if o.verdict is not None:
+            s.verified_n += 1
+            flags.append(float(o.flagged))
+            blocks.append(float(o.blocked))
+            for claim in o.verdict.get("numbers", ()):
+                if claim.get("status") == "context":
+                    continue
+                s.figures_checked += 1
+                bad_figures += int(claim.get("status") == "unsupported")
+            made = len(o.verdict.get("markers", ()))
+            located += made
+            markers += (
+                made + len(o.verdict.get("dangling", ())) + len(o.verdict.get("unlocatable", ()))
+            )
+
     if routed:
         s.router_accuracy = _mean(routed)
     if em:
@@ -347,6 +412,12 @@ def _score_group(
     if resolvable:
         s.citations_resolvable = _mean(resolvable)
         s.citations_supported = _mean(supported)
+    if s.verified_n:
+        s.flag_rate = _mean(flags)
+        s.block_rate = _mean(blocks)
+        s.hallucinated = bad_figures / s.figures_checked if s.figures_checked else 0.0
+        if markers:
+            s.locator_rate = located / markers
     return s
 
 
@@ -419,4 +490,32 @@ def to_markdown(card: Scorecard, *, title: str = "") -> str:
             str(r.llm_calls),
         ]
         lines.append("| " + " | ".join(cells) + " |")
+    lines += _verification_table(rows)
     return "\n".join(lines) + "\n"
+
+
+def _verification_table(rows: list[SliceScore]) -> list[str]:
+    """The M6 columns, as their own table under the main one.
+
+    Six more columns on a table already fourteen wide would be unreadable, and
+    they answer a different question: the first table asks whether the answer
+    was right, this one asks whether it was checkable. It is absent entirely
+    when no row carries a verdict -- a run with the verifier off has nothing to
+    say here, and saying it in zeroes would read as a perfect score.
+    """
+    if not any(r.verified_n for r in rows):
+        return []
+    head = ["slice", "verified", "figures", "hallucinated", "locator", "flagged", "blocked"]
+    out = ["", "| " + " | ".join(head) + " |", "|" + "|".join(["---"] * len(head)) + "|"]
+    for r in rows:
+        cells = [
+            r.name,
+            str(r.verified_n),
+            str(r.figures_checked),
+            _pct(r.hallucinated),
+            _pct(r.locator_rate),
+            _pct(r.flag_rate),
+            _pct(r.block_rate),
+        ]
+        out.append("| " + " | ".join(cells) + " |")
+    return out

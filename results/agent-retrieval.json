@@ -17,7 +17,7 @@
   "max_tokens": 0,
   "note": "the agent's hybrid retriever and local cross-encoder reranker, with the plan and synthesise calls switched off -- no hosted call at all"
  },
- "fingerprint": "5b9d90f0d423c480a555c233b1268bd54c3425da6161132a6ac2f4af3be4683b",
+ "fingerprint": "fdff36c1930b434dd35a466c558a3e3264614c418a1f2135ea51208a4b791a5f",
  "dataset": {
   "path": "C:\\Users\\Usama\\vscode_projects\\Filing_Agentic_RAG\\data\\eval\\questions_v1.0.jsonl",
   "sha256": "38ee1f9188cda1597dffbcfdaeea7daaccb6e762b248b1aec3cdb185de35692f",

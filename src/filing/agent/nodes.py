@@ -46,6 +46,7 @@ from filing.agent.state import (
 # rule, and comparing the two is the entire point of running both. The import
 # goes this direction only -- the runner reaches the agent through a function-
 # local import, so there is no cycle.
+from filing.agent.verify import guard_answer, verify_answer
 from filing.eval.runner import REFUSAL
 from filing.tracing import get_tracer
 
@@ -120,6 +121,13 @@ class Tools:
     # earns its place by assumption. Off, the node passes the fused order
     # through and the agent's text branch is RRF alone.
     rerank: bool = True
+    # M6's verifier and guard. Off by default, and that default is load-bearing:
+    # `agent` is the config M5's committed numbers were measured under, and a
+    # gate that silently changed the behaviour of the previous gate's headline
+    # run would make the comparison it exists to support meaningless. The
+    # guarded config turns them on beside it.
+    verify: bool = False
+    guard: str = "block"
     temperature: float = 0.0
     max_tokens: int = 512
     chat_role: str = "chat"
@@ -425,6 +433,63 @@ class Nodes:
                 "refused": REFUSAL.lower() in text.lower(),
                 "llm_calls": calls,
             }
+
+    # -- verify ----------------------------------------------------------
+    def verify(self, state: AgentState) -> dict[str, Any]:
+        """Check the prose against the evidence it was written from. No call.
+
+        The last node, and the only one that reads the model's output rather
+        than feeding it. Everything it does is arithmetic and string matching,
+        so it costs nothing and cannot itself hallucinate -- which is the whole
+        argument for putting a deterministic verifier here instead of a second
+        model asked whether the first one was telling the truth.
+
+        The verdict is computed whatever the guard mode is. Blocking is a
+        decision about what to *do* with the finding; the finding itself goes on
+        the span either way, because a run that suppressed its own failure
+        taxonomy when the guard was off would have no failure gallery to filter.
+        """
+        answer = state.get("answer", "")
+        evidence = list(state.get("evidence") or [])
+        with self.t.tracer.start_as_current_span("agent.verify") as span:
+            if not self.t.verify:
+                span.set_attribute("filing.verify.enabled", False)
+                return {}
+            verdict = verify_answer(
+                answer,
+                evidence,
+                question=state.get("question", ""),
+                route=state.get("route", ""),
+                grade=state.get("grade"),
+                repairs=state.get("repairs", 0),
+                repair_log=list(state.get("repair_log") or []),
+                sql=self.t.sql,
+                refused=bool(state.get("refused")),
+            )
+            guarded, blocked = guard_answer(answer, verdict, mode=self.t.guard, refusal=REFUSAL)
+            span.set_attribute("filing.verify.enabled", True)
+            span.set_attribute("filing.verify.ok", verdict.ok)
+            span.set_attribute("filing.verify.mode", self.t.guard)
+            span.set_attribute("filing.verify.blocked", blocked)
+            span.set_attribute("filing.verify.figures", len(verdict.checked))
+            span.set_attribute("filing.verify.unsupported", len(verdict.unsupported))
+            span.set_attribute("filing.verify.citations", len(verdict.markers))
+            span.set_attribute("filing.verify.dangling", len(verdict.dangling))
+            span.set_attribute("filing.verify.unlocatable", len(verdict.unlocatable))
+            span.set_attribute("filing.verify.uncited", len(verdict.uncited))
+            # One list attribute and one joined string. Phoenix filters on the
+            # string ("failure.kind contains synthesis_drift"), which is what
+            # makes the gallery a filter rather than a manual read; the list is
+            # for anything reading the span programmatically.
+            span.set_attribute("filing.failure.kind", ",".join(verdict.taxonomy))
+            span.set_attribute("filing.failure.kinds", list(verdict.taxonomy))
+            span.set_attribute("filing.verify.reason", "; ".join(verdict.reasons)[:400])
+            out: dict[str, Any] = {"verdict": verdict, "flagged": not verdict.ok}
+            if blocked:
+                out["answer"] = guarded
+                out["refused"] = True
+                out["blocked"] = True
+            return out
 
 
 # --------------------------------------------------------------------------

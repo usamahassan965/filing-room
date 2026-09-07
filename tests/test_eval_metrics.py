@@ -309,3 +309,116 @@ def test_the_baseline_is_untouched_by_the_exclusion():
     card = metrics.score([q_numeric()], outs)
     assert card.slices["numeric"].retrieval_n == 1
     assert card.slices["numeric"].hit_rate[5] == 1.0
+
+
+# ------------------------------------------------- the M6 verification columns
+
+
+def _verdict(ok=True, numbers=(), markers=(), dangling=()):
+    """A verdict as it arrives on an outcome: JSON, not the dataclass.
+
+    The results file is what the scorer reads, and by then the verdict has been
+    through `to_json`. Building the dict directly is the honest fixture.
+    """
+    return {
+        "ok": ok,
+        "numbers": list(numbers),
+        "markers": list(markers),
+        "dangling": list(dangling),
+        "unlocatable": [],
+        "uncited": [],
+        "unrechecked": [],
+        "taxonomy": [],
+        "reasons": [],
+    }
+
+
+def _num(status, value=1.0):
+    return {"text": str(value), "value": value, "status": status, "how": "", "source": ""}
+
+
+def test_a_run_without_verification_reports_no_verification_columns():
+    """Not a clean zero. A check that never ran found nothing because it never ran."""
+    card = metrics.score([q_numeric()], [Outcome(qid="num-001", route="sql", answer="$1,000")])
+    row = card.slices["numeric"]
+    assert row.verified_n == 0
+    assert row.hallucinated is None and row.flag_rate is None
+    assert "hallucinated" not in metrics.to_markdown(card)
+
+
+def test_the_hallucination_rate_is_over_figures_not_over_answers():
+    """Two answers, four figures, one of them invented -- 25%, not 50%."""
+    outs = [
+        Outcome(
+            qid="num-001",
+            route="sql",
+            answer="$1,000",
+            verdict=_verdict(numbers=[_num("supported"), _num("derived")]),
+        ),
+        Outcome(
+            qid="num-002",
+            route="sql",
+            answer="$1,000",
+            verdict=_verdict(ok=False, numbers=[_num("supported"), _num("unsupported")]),
+        ),
+    ]
+    card = metrics.score([q_numeric(), q_numeric(qid="num-002")], outs)
+    row = card.slices["numeric"]
+    assert row.verified_n == 2
+    assert row.figures_checked == 4
+    assert row.hallucinated == 0.25
+    assert row.flag_rate == 0.5
+
+
+def test_a_year_is_not_in_the_hallucination_denominator():
+    """`context` figures are the question's own numbers echoed back, and a
+    denominator that counted them would flatter every rate computed from it."""
+    outs = [
+        Outcome(
+            qid="num-001",
+            route="sql",
+            answer="$1,000",
+            verdict=_verdict(numbers=[_num("context"), _num("supported")]),
+        )
+    ]
+    card = metrics.score([q_numeric()], outs)
+    assert card.slices["numeric"].figures_checked == 1
+
+
+def test_the_locator_rate_counts_markers_not_answers():
+    outs = [
+        Outcome(
+            qid="num-001",
+            route="sql",
+            answer="a [1][2][9]",
+            verdict=_verdict(ok=False, markers=[1, 2], dangling=[9]),
+        )
+    ]
+    card = metrics.score([q_numeric()], outs)
+    assert card.slices["numeric"].locator_rate == pytest.approx(2 / 3)
+
+
+def test_flagged_and_blocked_are_reported_apart():
+    """The bail-out clause needs both numbers: how many the guard would have
+    stopped, and how many it did."""
+    outs = [
+        Outcome(qid="num-001", route="sql", answer="a", verdict=_verdict(ok=False), blocked=True),
+        Outcome(qid="num-002", route="sql", answer="a", verdict=_verdict(ok=False)),
+    ]
+    card = metrics.score([q_numeric(), q_numeric(qid="num-002")], outs)
+    row = card.slices["numeric"]
+    assert row.flag_rate == 1.0
+    assert row.block_rate == 0.5
+    table = metrics.to_markdown(card)
+    assert "hallucinated" in table and "blocked" in table
+
+
+def test_an_outcome_with_a_verdict_round_trips():
+    o = Outcome(qid="num-001", answer="a", verdict=_verdict(), blocked=True)
+    assert Outcome.from_json(o.to_json()) == o
+
+
+def test_a_pre_m6_outcome_keeps_its_exact_shape():
+    """Results files written before the verifier existed must not gain keys."""
+    d = Outcome(qid="num-001", answer="a").to_json()
+    assert "verdict" not in d and "blocked" not in d

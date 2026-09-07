@@ -1,10 +1,10 @@
-"""The graph, assembled. Nine nodes, two conditional edges, one bounded loop.
+"""The graph, assembled. Eleven nodes, two conditional edges, one bounded loop.
 
 Written with LangGraph for one reason that survives contact with an interviewer:
 the topology is a value. ``build_graph().get_graph().draw_mermaid()`` prints the
 diagram, so "plan -> route -> retrieve -> rerank -> grade -> repair ->
-synthesise" is something a reader can check rather than something they have to
-reconstruct from a call stack. The repair budget is the clearest case: it is not
+synthesise -> verify" is something a reader can check rather than something they
+have to reconstruct from a call stack. The repair budget is the clearest case: it is not
 a ``while`` loop somebody has to be trusted to have bounded correctly, it is a
 conditional edge that has no branch to take once the counter reaches two.
 
@@ -18,6 +18,8 @@ The shape::
                        repair <────── (not ok, budget left) ──────────┤
                          │                                            │
                          └──> route (again)          synthesise <─────┘
+                                                          │
+                                                       verify
                                                           │
                                                         END
 
@@ -54,6 +56,7 @@ def build_graph(tools: Tools) -> Any:
     g.add_node("grade", nodes.grade)
     g.add_node("repair", nodes.repair)
     g.add_node("synthesise", nodes.synthesise)
+    g.add_node("verify", nodes.verify)
 
     g.set_entry_point("plan")
     g.add_edge("plan", "route")
@@ -77,7 +80,13 @@ def build_graph(tools: Tools) -> Any:
         "grade", should_repair, {"repair": "repair", "synthesise": "synthesise"}
     )
     g.add_edge("repair", "route")
-    g.add_edge("synthesise", END)
+    # Verification is a node rather than a wrapper around the runner, so it
+    # gets a span like every other step and shows up in the exported trace. An
+    # unconditional edge: the check runs on every answer, including refusals,
+    # and the `verify` flag decides whether it does anything rather than
+    # whether the graph has the shape it is documented to have.
+    g.add_edge("synthesise", "verify")
+    g.add_edge("verify", END)
     return g.compile()
 
 

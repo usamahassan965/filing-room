@@ -6,12 +6,14 @@ against the source, and every answer traceable to the filing it came from.
 
 Runs on free API tiers. Full build plan: [`docs/build-plan.html`](docs/build-plan.html).
 
-**Status: M5 shipped — the agent answers the same 150 questions at 97.5% exact
-on numbers against the baseline's 7.5%, and its retriever more than doubles the
-baseline's ceiling before a single model call. One gate criterion is missed and
-said so below.**
+**Status: M6 shipped — the agent answers the same 150 questions at 98.8% exact
+on numbers against the baseline's 7.5%, and every figure it prints is now
+recomputed against the source before it ships: 0 hallucinated figures in 133,
+every citation resolving, and 426 of 427 deliberately corrupted answers caught.
+One M5 gate criterion is still missed and still said so below.**
 M0 the rig, M1 the corpus, M2 the fact store, M3 the text index and the entity
-graph, M4 the frozen question set and the naive baseline, M5 the routed agent.
+graph, M4 the frozen question set and the naive baseline, M5 the routed agent,
+M6 the verifier and the failure taxonomy.
 
 | Gate | What it produced | Check |
 |---|---|---|
@@ -20,9 +22,10 @@ graph, M4 the frozen question set and the naive baseline, M5 the routed agent.
 | **M2** the numbers | 514,649 facts, 25 metrics, 0 duplicate keys | `filing numbers` — 5/5 |
 | **M3** the text | 58,844 chunks, 32,218 indexed, 2,986 graph edges | `filing text` — 6/6 |
 | **M4** the yardstick | 150 frozen questions, 260 gold spans, naive index of 48,934 chunks | `filing.eval run --config baseline` — 150/150, 4 live calls |
-| **M5** the agent | router + 3 stores + grader + repair(≤2), 97.5% numeric exact, router 0.833 | `filing.eval run --config agent` — 150/150, 0 errors, 290 calls |
+| **M5** the agent | router + 3 stores + grader + repair(≤2), 98.8% numeric exact, router 0.833 | `filing.eval run --config agent` — 150/150, 0 errors, 290 calls |
+| **M6** the guard | numeric verifier, citation resolver, abstention guard, 4-tag taxonomy | `filing.eval run --config agent-guarded` — 0 hallucinated / 133, 0 blocked |
 
-678 tests, `ruff` clean, and no test may open a socket off this machine.
+784 tests, `ruff` clean, and no test may open a socket off this machine.
 
 ---
 
@@ -62,10 +65,13 @@ filing chunks     # parse + split + chunk the filing text, cached to parquet
 filing index      # embed the narrative chunks into Qdrant, build BM25 beside
 filing graph      # entity/relation extraction into a NetworkX graph
 filing text       # M3 gate: 6 checks over the chunks, indexes and graph
+filing failures   # M6: the failure taxonomy, counted by a Phoenix filter
 
 python -m filing.eval verify                        # the frozen 150 still land on their spans
 python -m filing.eval run --config baseline-retrieval   # score the retriever, no LLM at all
 python -m filing.eval run --config agent            # M5 gate: the routed agent over all 150
+python -m filing.eval run --config agent-guarded    # M6 gate: the same agent, verified before it ships
+python -m filing.eval run --config agent-flagged    # the same check, reported instead of enforced
 python -m filing.eval trace --qid num-001 --live    # one question's span tree, into docs/
 python -m filing.eval depth --depth 500             # how far down the ranking the evidence sits
 ```
@@ -510,11 +516,14 @@ flowchart LR
     grade -. thin, budget left .-> repair
     repair --> route
     grade -. good enough, or budget spent .-> synthesise
-    synthesise --> done([answer + citations])
+    synthesise --> verify
+    verify --> done([answer + citations])
 ```
 
 That is the compiled graph, not a drawing of one —
 `build_graph(Tools()).get_graph().draw_mermaid()` produces the same edges.
+`verify` is M6's and is drawn here rather than in a second diagram, because the
+claim above only stays true if this picture is the current graph.
 `repair → route` is the only cycle, and a hard counter plus the graph's
 `recursion_limit` are what stop it; the bound of two is a unit test, not a
 comment.
@@ -527,13 +536,16 @@ restated, so one rule scores both systems.
 
 | | baseline | agent | |
 |---|---|---|---|
-| numeric exact match | 7.5% | **97.5%** | +90.0 |
+| numeric exact match | 7.5% | **98.8%** | +91.3 |
 | numeric router accuracy | 0.0% | **98.8%** | +98.8 |
 | narrative hit@5 | 15.0% | **40.7%** | +25.7 |
 | narrative cite-gold | 12.9% | **28.0%** | +15.1 |
 | unanswerable abstention | 100% | 100% | — |
 | overall router accuracy | 27.3% | 83.3% | +56.0 |
 | LLM calls | 4 | 290 | |
+
+That 98.8% read 97.5% until M6's verifier found a sign bug in the scorer, not
+in the agent — see [M6](#m6--the-guard). One question moved; nothing else did.
 
 150 questions, 0 errors, 25 minutes, 290 hosted calls — under two per question,
 which is the budget the design was built to: plan and route are one call,
@@ -548,11 +560,11 @@ question set was frozen in M4 with three slices — numeric, narrative,
 unanswerable — and no multi-hop among them. Unfreezing it to add the slice the
 gate wanted would leave the baseline and the agent unmeasurable against each
 other, so the criterion is restated against the **numeric** slice, where the
-routing decision is the one multi-hop would have tested. It clears by +90.0
+routing decision is the one multi-hop would have tested. It clears by +91.3
 rather than +20. The substitution weakens the gate and is recorded here because
 it is not visible in the table.
 
-**The 97.5% is partly a tautology, and here is the part that is not.** The
+**The 98.8% is partly a tautology, and here is the part that is not.** The
 numeric questions were generated from `facts_current`, and the SQL branch
 queries `facts_current`. A system that resolves the metric name and the period
 correctly is *expected* to return the same row. What the number does establish
@@ -660,12 +672,175 @@ committed traces are live, so their costs and their latencies are the real ones.
 
 ---
 
+## M6 — the guard
+
+M5 shipped an agent that answers well. This gate asks the harder question:
+**when it is wrong, does anything notice?** So every derived figure is
+recomputed against the store it came from, every citation must resolve to
+something with a locator, and what went wrong is tagged onto the span so the
+failure gallery is a filter rather than a read.
+
+None of it calls a model. `src/filing/agent/verify.py` is arithmetic, regex and
+a DuckDB lookup — an LLM-as-judge would be one unverified system checking
+another, and the point of the gate is to have exactly one thing in the loop that
+cannot hallucinate.
+
+| | agent-flagged | agent-guarded |
+|---|---|---|
+| answers verified | 150 | 150 |
+| figures checked | 133 | 133 |
+| **hallucinated figures** | **0.0%** (0/133) | **0.0%** (0/133) |
+| **citations resolving to a locator** | **100.0%** (164/164) | **100.0%** |
+| dangling / unlocatable markers | 0 / 0 | 0 / 0 |
+| abstains on the unanswerable | 10/10 | 10/10 |
+| **flag rate on answerable** | **0.00%** (0/140) | — |
+| answers blocked | 0 | **0** |
+
+```bash
+python -m filing.eval run --config agent-flagged     # log-and-flag
+python -m filing.eval run --config agent-guarded     # hard-block
+```
+
+The two configs are the same check reported two ways, which is what makes the
+trade-off legible: `flag` computes every verdict and replaces nothing, `block`
+substitutes a refusal. The bail-out clause in the plan — *"if the guard rejects
+too many valid answers, switch it to log-and-flag and report the flag rate"* —
+turned out not to be needed. Block mode costs zero answers, so it can stay on.
+
+The locator criterion is met on **all 150 answers**, not the 30 the plan asked
+to sample. Sampling was the affordance for a check that needs a human; this one
+does not need a human.
+
+All 133 supported figures matched on the **digits** tier, meaning the exact
+digit sequence was found in the evidence or the store. None needed the looser
+rescaling tier that exists for "$1.2 billion" against `1,200,000,000`. That is
+worth knowing because the loose tier is where a verifier goes to lie to itself.
+
+### The verifier's first six flags were all its own bugs
+
+The first M6 run flagged six answers. Not one was a hallucination:
+
+| what the verifier reported | what was actually true |
+|---|---|
+| three hallucinated figures in `[2, 3, 5]` | a multi-marker citation, whose digits were read as claims |
+| a sentence citing nothing | the same multi-marker, unrecognised, so no marker was found in it |
+| two figures in `2022-08-28` | the date a period ends |
+| every abstention contradicting the store | a refusal checked against fact evidence it never claimed |
+
+Four regex-and-scope defects, all in the verifier. Fixing them took the
+narrative hallucination rate from 14.7% to 0.0% and the flag rate from 4.0% to
+0.0%. The uncomfortable version of that sentence is that a verifier written
+carefully and unit-tested still shipped four false positives, and the only
+reason they were caught is that six flags on 150 answers is a small enough
+number to read every one.
+
+**And it found a bug in the scorer.** `num-015` asks for a ConocoPhillips loss.
+The agent answered −2,701,000,000, which matches the fact store exactly, and M5
+scored it wrong. The note in the M5 write-up said "possible sign convention,
+uninvestigated". The number reader in `eval/metrics.py` understood accounting
+parentheses but not a leading minus sign, so a loss was being compared against a
+profit. That is why **the M5 numeric exact match in this README now reads 98.8%
+rather than the 97.5% it read before** — one question, and the fix is a
+four-character regex change with a test.
+
+### A check that never fires proves nothing
+
+Zero flags is the good outcome and the unconvincing one. So every answer the
+agent actually produced was broken on purpose, four ways, and the verifier was
+asked how many it would let past.
+
+```bash
+./.conda/python.exe scripts/m6_negative_control.py
+```
+
+| mutation | applied | caught | |
+|---|---|---|---|
+| bend the first figure by ×1.37 | 97 | 96 | 99.0% |
+| append a citation past the end of the evidence | 116 | 116 | 100.0% |
+| strip every citation marker | 116 | 116 | 100.0% |
+| swap the first figure for one from nowhere | 98 | 98 | 100.0% |
+| **total** | **427** | **426** | **99.8%** |
+
+and **116/116 unmutated answers still pass**, which is the half that matters
+more: a guard that catches everything by failing everything is not a guard.
+Results land in [`results/m6-negative-control.json`](results/m6-negative-control.json).
+
+The one escape is honest. `nar-048` states that a trial "did not meet the
+primary endpoints" — bending the trial's phase number from 4 to 5.48 produces a
+figure the evidence does not contain, but the sentence's claim is qualitative
+and the figure is a label, not a measurement. The verifier does not check labels.
+
+The control also found a hole the unit tests did not: `uncited_claims` was
+**figure-scoped**, so a purely qualitative narrative answer with every marker
+stripped passed vacuously. That is precisely the "claim without a resolvable
+locator" the gate forbids. The rule added is deliberately weaker than the
+per-sentence one — an answer built on evidence must cite *something* — and it
+costs nothing, because all 116 real answers already satisfied it.
+
+### The failure taxonomy, as a query
+
+Four tags, written onto every `agent.verify` span. `router_wrong` is named for a
+stronger claim than the evidence supports, and the docstring says so: the agent
+has no gold labels at answer time, so what it can actually observe is that the
+router's store did not survive contact with the repair loop.
+
+```bash
+filing failures                          # counts, straight out of Phoenix
+filing failures --kind synthesis_drift   # example traces, with URLs
+```
+
+| filter | spans | what it means |
+|---|---|---|
+| `retrieval_miss` | 70 | the chosen store returned nothing, or nothing relevant |
+| `router_wrong` | 35 | the router's store was abandoned by a repair |
+| `grader_false_positive` | 6 | the grader passed evidence the verifier then failed |
+| `synthesis_drift` | 6 | a figure in the answer is not in the evidence |
+
+Those are lifetime counts across every run in the project. On the final
+`agent-flagged` run alone it is `retrieval_miss: 10, router_wrong: 5`, and the
+other two are zero — they existed only because of the parse bugs above.
+
+Every number there is the length of a **server-side filter result**, not a local
+grep over downloaded spans, and the expressions are printed beside the counts so
+they can be pasted into the Phoenix UI. The distinction is the whole criterion,
+and it very nearly went unmet by accident:
+
+```
+attributes["filing"]["failure"]["kinds"]     # 70 spans
+attributes["filing.failure.kinds"]           # 0
+attributes.filing.failure.kinds              # 0
+```
+
+Phoenix un-flattens OTel attribute keys into nested JSON and resolves only the
+bracket-chained form. The other two do not raise — they parse, run, and return
+empty, which reads exactly like *nothing ever failed*. An observability query
+whose broken state is indistinguishable from a clean run is worse than none, so
+`filing failures` cross-checks the per-tag filters against a tag-agnostic count
+and prints `consistent` or `inconsistent` on the strength of it.
+
+### What this gate does not do
+
+The verifier checks that a figure is **in the evidence** and that a citation
+**points at something with a locator**. It does not check that the evidence
+supports the sentence built around it, and it cannot: that is a semantic
+judgement, and the moment a model makes it, the one component in the loop that
+cannot hallucinate stops being that. `cite gold` — the 28.0% in the M5 table —
+is the metric that measures the harder thing, it is scored against gold spans
+rather than by the agent, and it is not where this gate claims a win.
+
+Verification is **off in the headline `agent` config** (`verify=False`). M5's
+numbers are M5's numbers; M6 ships beside them as two new configs rather than
+quietly moving the baseline.
+
+---
+
 ## Layout
 
 ```
 src/filing/
 ├── config.py        settings + MODEL_REGISTRY — the only place model IDs live
-├── tracing.py       phoenix / openinference wiring
+├── tracing.py       phoenix / openinference wiring — the write side
+├── gallery.py       the read side: the failure taxonomy as a server-side filter
 ├── cli.py           every command above
 ├── llm/
 │   ├── base.py            the three-verb interface
@@ -693,10 +868,11 @@ src/filing/
 │   └── evalset.py         30 smoke questions, gold by predicate, the metrics
 ├── agent/
 │   ├── state.py           the typed state and the one evidence schema
-│   ├── nodes.py           plan, route, retrieve{sql,text,graph}, rerank, grade, repair, synthesise
+│   ├── nodes.py           plan, route, retrieve{sql,text,graph}, rerank, grade, repair, synthesise, verify
 │   ├── graph.py           the LangGraph wiring — one cycle, bounded
 │   ├── sql.py             text-to-SQL, constrained to the metric registry
 │   ├── entities.py        the graph store as a retriever
+│   ├── verify.py          every figure and every citation, checked without a model
 │   └── trace.py           one question's spans, captured in-process
 └── eval/
     ├── dataset.py         the frozen 150, their gold spans and their slices
@@ -707,7 +883,8 @@ src/filing/
     └── depth.py           how far down the ranking the evidence actually sits
 
 scripts/eval_v1_0/   the authoring record — rebuilds the frozen set byte for byte
-tests/               678 tests, no network and no API key
+scripts/m6_negative_control.py   breaks 116 real answers four ways, measures the catch rate
+tests/               784 tests, no network and no API key
 results/             one committed JSON + markdown table per config
 docs/                build plan, corpus notes, the baseline write-up, two agent traces
 ```

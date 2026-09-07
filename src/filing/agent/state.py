@@ -212,6 +212,15 @@ class AgentState(TypedDict, total=False):
     answer: str
     refused: bool
 
+    # verify. `flagged` and `blocked` are kept apart on purpose: an answer the
+    # verifier failed is flagged whatever the guard mode is, and blocked only
+    # when the guard was set to act on it. Collapsing them into one field would
+    # make the flag rate unreadable in exactly the run where it matters -- the
+    # one where the bail-out clause is being considered.
+    verdict: Any
+    flagged: bool
+    blocked: bool
+
     # bookkeeping the runner reads back
     llm_calls: Annotated[int, operator.add]
     seconds: float

@@ -18,7 +18,7 @@
   "max_tokens": 0,
   "note": "the same hybrid retrieval, fused order only -- the reranker ablated out"
  },
- "fingerprint": "1a8bd04565101fb1d72b60dbe161ee8a3f1898f36d15b33ab6421f5a908c8006",
+ "fingerprint": "42ee5c50210135c76982a1c43ccb2f0f47ba4cd18a5353f7b25d3bec8e6a788f",
  "dataset": {
   "path": "C:\\Users\\Usama\\vscode_projects\\Filing_Agentic_RAG\\data\\eval\\questions_v1.0.jsonl",
   "sha256": "38ee1f9188cda1597dffbcfdaeea7daaccb6e762b248b1aec3cdb185de35692f",

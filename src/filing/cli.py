@@ -11,6 +11,7 @@
     filing index    embed the narrative chunks and build the BM25 index
     filing graph    extract the entity graph from those same chunks
     filing text     the M3 gate -- six checks, exit code 0 or 1
+    filing failures the M6 failure gallery, counted by a Phoenix filter
 
 No gate in this project advances on a claim, so the gate commands assert rather
 than print: ``smoke`` fails loudly if the cache is not deduplicating requests or
@@ -780,6 +781,78 @@ def graph(
     console.print(table)
     console.print("  most connected: " + ", ".join(f"{n} ({d})" for n, d in report.top_nodes[:8]))
     console.print(f"  [dim]{report.seconds / 60:.1f} minutes[/dim]")
+
+
+@app.command()
+def failures(
+    kind: Annotated[
+        str | None, typer.Option("--kind", help="Show example traces for one tag.")
+    ] = None,
+    limit: Annotated[int, typer.Option("--limit", help="Examples to show.")] = 5,
+) -> None:
+    """The M6 failure gallery, counted by Phoenix rather than read by hand.
+
+    Every number below is the length of a server-side filter's result, and the
+    expression that produced it is printed beside it -- paste one into the
+    Phoenix UI's filter box and you get the same spans. That is the whole
+    claim: the gallery is a filter.
+
+    The consistency line is not decoration. Phoenix answers a misspelt
+    attribute path with an empty result rather than an error, so a broken
+    query and a clean run look identical; cross-checking the per-tag filters
+    against a tag-agnostic one is what tells them apart.
+    """
+    from filing.agent.verify import TAXONOMY
+    from filing.gallery import QUERIES, Gallery, collect, examples, trace_url
+
+    cfg = settings()
+    g: Gallery = collect(cfg=cfg)
+    console.rule(f"[bold]failure gallery[/bold] -- {g.project} @ {g.endpoint}")
+
+    if not g.counts and g.errors:
+        console.print("[red]Phoenix did not answer.[/red] Is the collector running?")
+        console.print(f"  [dim]{next(iter(g.errors.values()))}[/dim]")
+        raise typer.Exit(1)
+
+    table = Table("filter", "spans", "expression", box=None, pad_edge=False)
+    for label in ("verified", "flagged", "blocked", "tagged"):
+        n = g.counts.get(label)
+        table.add_row(label, "err" if n is None else f"{n:,}", f"[dim]{QUERIES[label]}[/dim]")
+    table.add_row("", "", "")
+    for tag in TAXONOMY:
+        n = g.counts.get(tag)
+        table.add_row(tag, "err" if n is None else f"{n:,}", f"[dim]{QUERIES[tag]}[/dim]")
+    console.print(table)
+
+    for tag, why in TAXONOMY.items():
+        console.print(f"  [dim]{tag:<22} {why}[/dim]")
+
+    console.print()
+    if g.consistent:
+        console.print("  [green]consistent[/green] -- per-tag filters cover every tagged span")
+    else:
+        console.print(
+            "  [yellow]inconsistent[/yellow] -- a tag filter matched fewer spans than exist; "
+            "check the attribute path before trusting a zero"
+        )
+
+    if kind:
+        if kind not in TAXONOMY:
+            console.print(f"[red]unknown tag[/red] {kind!r}; known: {', '.join(TAXONOMY)}")
+            raise typer.Exit(1)
+        console.print()
+        console.rule(f"[bold]{kind}[/bold]")
+        rows = examples(kind, limit=limit, cfg=cfg)
+        if not rows:
+            console.print("  [dim]no spans carry this tag[/dim]")
+        for r in rows:
+            # Rich reads square brackets as markup, so the tag list gets its
+            # own delimiter rather than the obvious one silently vanishing.
+            tags = " + ".join(r["kinds"]) or "none"
+            console.print(f"  {r['start_time']}  {tags}  mode={r['mode']}")
+            if r["reason"]:
+                console.print(f"    [dim]{r['reason'][:160]}[/dim]")
+            console.print(f"    [dim]{trace_url(r['trace_id'], cfg=cfg)}[/dim]")
 
 
 @app.command()

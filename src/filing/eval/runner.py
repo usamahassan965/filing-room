@@ -29,7 +29,7 @@ import hashlib
 import json
 import time
 from collections.abc import Callable
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 from typing import Any
 
@@ -87,6 +87,11 @@ class EvalConfig:
     collection: str = ""
     generate: bool = True
     rerank: bool = True
+    # M6. `verify` runs the deterministic checker over every finished answer;
+    # `guard` decides what to do with a failing verdict. Off by default, so the
+    # M5 configs describe the same experiment they described before M6 existed.
+    verify: bool = False
+    guard: str = "block"
     dataset_version: str = dataset.DATASET_VERSION
     prompt_version: str = PROMPT_VERSION
     temperature: float = 0.0
@@ -141,8 +146,39 @@ class EvalConfig:
         the same config over a different question set is a different experiment,
         and the commonest way an eval quietly stops being comparable is that
         someone fixed a typo in a question.
+
+        **Fields sitting at their default are left out**, and that is a repair
+        rather than a nicety. The first version hashed every field, so adding a
+        field -- ``rerank`` in M5, ``verify`` and ``guard`` here -- changed the
+        fingerprint of every config that had never heard of it, including ones
+        whose results were already committed. The fingerprint's whole job is to
+        say "these two numbers are comparable", and it was quietly answering no
+        to runs that were in fact identical. A field nobody set is a choice
+        nobody made, so it does not go in the hash, and a later gate can add one
+        without invalidating an earlier gate's results file.
+
+        The cost is stated rather than hidden: *changing a default* now moves
+        every fingerprint that relied on it. That is the correct behaviour --
+        changing a default changes the experiment -- but it means defaults in
+        this dataclass are part of the published record, not an implementation
+        detail. The guard against silent drift is
+        ``test_every_committed_results_file_still_recomputes_its_own_fingerprint``,
+        which reconstructs each committed config from its own results file and
+        asserts the hash comes back.
+
+        Changing the scheme moved every existing fingerprint once, at M6. The
+        eleven committed results files were rewritten with their recomputed
+        values and their outcome-cache directories renamed to match, so no
+        answer was re-generated and no number moved -- only the label the file
+        carries for the experiment that produced it. That migration is in the
+        history, and the test above is why it should not need doing again.
         """
-        body = json.dumps(asdict(self) | {"dataset_sha256": dataset_sha}, sort_keys=True)
+        defaults = {f.name: f.default for f in fields(self)}
+        body = json.dumps(
+            {k: v for k, v in asdict(self).items() if v != defaults.get(k)}
+            | {"dataset_sha256": dataset_sha},
+            sort_keys=True,
+        )
         return hashlib.sha256(body.encode("utf-8")).hexdigest()
 
 
@@ -282,6 +318,44 @@ CONFIGS: dict[str, EvalConfig] = {
         k=max(metrics.KS),
         chunker="semantic",
         note="the same hybrid retrieval, fused order only -- the reranker ablated out",
+    ),
+    # M6. `agent` with the verifier and the guard switched on, and identical in
+    # every other field -- same retriever, same generator, same prompt, same
+    # k -- so the difference between the two results files is one node. It is a
+    # separate config rather than a change to `agent` for the reason M5's
+    # reranker ablation was: the previous gate's headline numbers have to stay
+    # measurable, and a gate that edits the run it is being compared against is
+    # not reporting an improvement, it is moving the baseline.
+    #
+    # The guard blocks by default. If it turns out to reject too many valid
+    # answers, `--guard flag` runs the same check and reports the flag rate
+    # instead, which is M6's bail-out written down in advance.
+    "agent-guarded": EvalConfig(
+        name="agent-guarded",
+        system="agent",
+        k=5,
+        chat_role="chat_fast",
+        chunker="semantic",
+        verify=True,
+        guard="block",
+        note=(
+            "the agent, with every figure verified against its evidence and every "
+            "citation resolved to a locator before the answer ships"
+        ),
+    ),
+    # The same verification, reported instead of enforced. Every verdict is
+    # computed and written to the span; nothing is replaced. The pair of configs
+    # is what makes the trade-off legible -- how many answers the guard would
+    # have blocked, and how many of those were actually wrong.
+    "agent-flagged": EvalConfig(
+        name="agent-flagged",
+        system="agent",
+        k=5,
+        chat_role="chat_fast",
+        chunker="semantic",
+        verify=True,
+        guard="flag",
+        note="the same verification, log-and-flag rather than hard-block",
     ),
 }
 
@@ -489,6 +563,8 @@ def build_agent_tools(cfg: Settings, *, backend: Any, config: EvalConfig) -> Any
         chat_role=config.chat_role,
         generate=config.generate,
         rerank=config.rerank,
+        verify=config.verify,
+        guard=config.guard,
     )
 
 
@@ -527,6 +603,12 @@ def answer_agent(
     evidence = list(state.get("evidence") or [])
     text_evidence = [e for e in evidence if e.chunk_id]
     answer = str(state.get("answer") or "")
+    # The verdict is computed inside the graph, at the only moment the
+    # evidence bodies and the fact values still exist. A results file carries
+    # answers and citations, not the evidence they were written from, so a
+    # verifier that ran at scoring time would be checking prose against
+    # nothing. It comes out here as JSON for the same reason.
+    verdict = state.get("verdict")
     refused = bool(state.get("refused")) or (bool(answer) and REFUSAL.lower() in answer.lower())
 
     route = str(state.get("route") or "")
@@ -558,6 +640,8 @@ def answer_agent(
         llm_calls=int(state.get("llm_calls") or 0),
         seconds=time.monotonic() - started,
         error=str(state.get("error") or ""),
+        verdict=verdict.to_json() if verdict is not None else None,
+        blocked=bool(state.get("blocked")),
     )
 
 
