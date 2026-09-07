@@ -26,8 +26,8 @@ Six configurations, one question set, one command to rebuild
 | rung | config | hit@10 | nDCG@10 | numeric exact | cite→gold | halluc | calls/q | p50 |
 |---|---|---|---|---|---|---|---:|---:|
 | naive + generate | `baseline` | 7.9% | 5.0% | 7.5% | 13.9% | — | 1.00 | 1.0s |
-| + router, grader, repair | `agent` | 40.0% (+32.1) | 26.7% (+21.7) | **98.8%** (+91.3) | 28.0% (+14.1) | — | 2.00 | 14.8s |
-| + verifier | `agent-guarded` | 40.0% (=) | 26.7% (=) | 98.8% (=) | 28.0% (=) | **0.0%** | 2.00 | 12.0s |
+| + router, grader, repair | `agent` | 40.0% (+32.1) | 26.7% (+21.7) | **98.8%** (+91.3) | 28.0% (+14.1) | — | 2.00 | 10.9s |
+| + verifier | `agent-guarded` | 40.0% (=) | 26.7% (=) | 98.8% (=) | 28.0% (=) | **0.0%** | 2.00 | 11.4s |
 
 And the retrieval lane underneath it, with the generator switched off entirely —
 a ceiling on everything above, because a writer cannot cite evidence the search
@@ -35,9 +35,9 @@ never returned:
 
 | rung | config | hit@5 | hit@10 | nDCG@10 | p50 |
 |---|---|---|---|---|---:|
-| naive | `baseline-retrieval` | 7.9% | 15.7% | 7.4% | 0.2s |
-| + hybrid | `agent-retrieval-norerank` | 25.0% (+17.1) | 31.4% (+15.7) | 17.5% (+10.2) | 0.2s |
-| + rerank | `agent-retrieval` | 19.3% (−5.7) | 25.7% (−5.7) | 15.5% (−2.1) | 12.0s |
+| naive | `baseline-retrieval` | 7.9% | 15.7% | 7.4% | 0.1s |
+| + hybrid | `agent-retrieval-norerank` | 25.0% (+17.1) | 31.4% (+15.7) | 17.5% (+10.2) | 0.1s |
+| + rerank | `agent-retrieval` | 19.3% (−5.7) | 25.7% (−5.7) | 15.5% (−2.1) | 9.1s |
 
 The last row is the one worth stopping on. **The cross-encoder reranker makes
 retrieval worse** — six points of hit@10 and two of nDCG, for seventy-five times

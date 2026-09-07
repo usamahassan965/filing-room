@@ -8,9 +8,9 @@ Every rung here is the same 150 questions with the generator switched off, so th
 
 | rung | config | n | hit@5 | hit@10 | nDCG@10 | exact | cite->gold | halluc | calls/q | p50 s | p95 s | ready s |
 |---|---|---:|---|---|---|---|---|---|---:|---:|---:|---:|
-| naive | `baseline-retrieval` | 140 | 7.9% | 15.7% | 7.4% | -- | -- | -- | 0.00 | 0.2 | 53.0 | 0.0 |
-| + hybrid | `agent-retrieval-norerank` | 140 | 25.0% (+17.1) | 31.4% (+15.7) | 17.5% (+10.2) | -- | -- | -- | 0.00 | 0.2 | 3.8 | 0.0 |
-| + rerank | `agent-retrieval` | 140 | 19.3% (-5.7) | 25.7% (-5.7) | 15.5% (-2.1) | -- | -- | -- | 0.00 | 12.0 | 23.6 | 0.0 |
+| naive | `baseline-retrieval` | 140 | 7.9% | 15.7% | 7.4% | -- | -- | -- | 0.00 | 0.1 | 0.2 | 43.9 |
+| + hybrid | `agent-retrieval-norerank` | 140 | 25.0% (+17.1) | 31.4% (+15.7) | 17.5% (+10.2) | -- | -- | -- | 0.00 | 0.1 | 0.4 | 2.8 |
+| + rerank | `agent-retrieval` | 140 | 19.3% (-5.7) | 25.7% (-5.7) | 15.5% (-2.1) | -- | -- | -- | 0.00 | 9.1 | 28.4 | 24.8 |
 
 - **naive** (`baseline-retrieval`) -- fixed 2,048-char chunks, dense top-10, no fusion and no reranker
 - **+ hybrid** (`agent-retrieval-norerank`) -- semantic chunks, dense and BM25 fused by RRF, fused order kept
@@ -22,9 +22,9 @@ The same 150 questions end to end at `gemini-3.5-flash-lite`, held constant acro
 
 | rung | config | n | hit@5 | hit@10 | nDCG@10 | exact | cite->gold | halluc | calls/q | p50 s | p95 s | ready s |
 |---|---|---:|---|---|---|---|---|---|---:|---:|---:|---:|
-| naive + generate | `baseline` | 150 | 7.9% | 7.9% | 5.0% | 7.5% | 13.9% | -- | 1.00 | 1.0 | 5.8 | 0.0 |
-| + router, grader, repair | `agent` | 150 | 40.0% (+32.1) | 40.0% (+32.1) | 26.7% (+21.7) | 98.8% (+91.3) | 28.0% (+14.1) | -- | 2.00 | 14.8 | 17.9 | 0.0 |
-| + verifier | `agent-guarded` | 150 | 40.0% (=) | 40.0% (=) | 26.7% (=) | 98.8% (=) | 28.0% (=) | 0.0% | 2.00 | 12.0 | 17.6 | 0.0 |
+| naive + generate | `baseline` | 150 | 7.9% | 7.9% | 5.0% | 7.5% | 13.9% | -- | 1.00 | 1.0 | 1.4 | 7.2 |
+| + router, grader, repair | `agent` | 150 | 40.0% (+32.1) | 40.0% (+32.1) | 26.7% (+21.7) | 98.8% (+91.3) | 28.0% (+14.1) | -- | 2.00 | 10.9 | 13.8 | 18.4 |
+| + verifier | `agent-guarded` | 150 | 40.0% (=) | 40.0% (=) | 26.7% (=) | 98.8% (=) | 28.0% (=) | 0.0% | 2.00 | 11.4 | 13.2 | 16.0 |
 
 - **naive + generate** (`baseline`) -- dense top-5 into one prompt, one LLM call, no router and no grader
 - **+ router, grader, repair** (`agent`) -- plan, route to sql|text|graph, rerank, grade, repair at most twice

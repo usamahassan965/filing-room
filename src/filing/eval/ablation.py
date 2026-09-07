@@ -135,10 +135,33 @@ class Timing:
     llm_calls: int
     seconds: tuple[float, ...]
     warmup: float = 0.0
+    #: Every question the pass ran, warm-up included. Zero means "not
+    #: recorded", and the property below falls back to the timed count.
+    ran: int = 0
+
+    @property
+    def questions(self) -> int:
+        if self.ran:
+            return self.ran
+        # A timing file written before ``questions_run`` existed still records
+        # a warm-up, and a recorded warm-up is evidence that one more question
+        # ran than was timed.
+        return self.n + 1 if self.warmup else self.n
 
     @property
     def calls_per_question(self) -> float:
-        return self.llm_calls / self.n if self.n else 0.0
+        """Calls over *every* question the pass ran, warm-up included.
+
+        The warm-up leaves the latency percentiles and stays in the cost
+        average, and the asymmetry is the point: a cold process is slow because
+        a model is loading off disk, but it does not make an extra API call.
+        The warm-up question costs exactly what the eight after it cost. So
+        dividing a nine-question call total by the eight timed questions -- the
+        first version of this fix did -- inflates every cost figure in the
+        table by an eighth, which is how holding out a contaminated number
+        contaminates a clean one.
+        """
+        return self.llm_calls / self.questions if self.questions else 0.0
 
     @property
     def p50(self) -> float:
@@ -160,6 +183,7 @@ class Timing:
             "config": self.config,
             "n": self.n,
             "llm_calls": self.llm_calls,
+            "questions_run": self.questions,
             "calls_per_question": round(self.calls_per_question, 2),
             "warmup_seconds": round(self.warmup, 2),
             "p50_seconds": round(self.p50, 2),
@@ -264,6 +288,7 @@ def load_timings(root: Path) -> dict[str, Timing]:
             llm_calls=int(entry["llm_calls"]),
             seconds=tuple(float(s) for s in entry.get("seconds", [])),
             warmup=float(entry.get("warmup_seconds", 0.0)),
+            ran=int(entry.get("questions_run") or 0),
         )
     return out
 
@@ -486,6 +511,7 @@ def measure(
             llm_calls=report.llm_calls,
             seconds=tuple(timed),
             warmup=warmup,
+            ran=len(seconds) or report.answered,
         )
         out.append(timing)
         if on_rung is not None:

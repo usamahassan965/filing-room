@@ -9,6 +9,8 @@ have a test here, because both would look completely fine in the output.
 from __future__ import annotations
 
 import json
+import pathlib
+import re
 
 import pytest
 
@@ -170,7 +172,11 @@ def test_a_timing_file_fills_the_cost_columns(ladder_dir):
     rows = ablation.build(ladder_dir)
     agent = next(r for r in rows if r.name == "agent")
     assert agent.timing is not None
-    assert agent.timing.calls_per_question == pytest.approx(2.25)
+    # Nine calls over *five* questions, not over the four that were timed. The
+    # warm-up is held out of the percentiles and kept in the cost average --
+    # see Timing.calls_per_question for why that asymmetry is the correct one.
+    assert agent.timing.questions == 5
+    assert agent.timing.calls_per_question == pytest.approx(1.8)
     assert agent.timing.p50 == pytest.approx(2.5)
     # Nearest-rank at n=4 is the slowest question. Interpolating would report a
     # p95 of about 28 seconds, a number no question in the sample took.
@@ -180,9 +186,60 @@ def test_a_timing_file_fills_the_cost_columns(ladder_dir):
     # that made the first version of this column meaningless.
     assert agent.timing.warmup == pytest.approx(53.0)
     md = ablation.to_markdown(rows, timings_present=True)
-    assert "| 2.25 | 2.5 | 40.0 | 53.0 |" in md
+    assert "| 1.80 | 2.5 | 40.0 | 53.0 |" in md
     # Rungs without a timing entry keep their dashes rather than borrowing one.
     assert "| -- | -- | -- | -- |" in md
+
+
+def test_the_readme_tables_do_not_drift_from_the_generated_one():
+    """The README's ladder is hand-copied, and a hand copy goes stale.
+
+    It did, immediately: a re-measurement moved the agent's p50 from 14.8s to
+    10.9s in ``results/ablation.md`` and the README went on quoting 14.8 --
+    a number wrong about its own run, which is precisely the class of failure
+    the gate exists to catch and the one place the gate could not see. Cheaper
+    to assert than to remember.
+    """
+    root = pathlib.Path(__file__).resolve().parents[1]
+    generated = (root / "results" / ablation.TABLE_MD).read_text(encoding="utf-8")
+    readme = (root / "README.md").read_text(encoding="utf-8")
+
+    def rows(text: str) -> dict[str, list[list[str]]]:
+        """Every markdown row that names a config, keyed by that name.
+
+        A list per name rather than one row, because the README mentions some
+        of these configs in more than one table and the ladder is not always
+        the last of them.
+        """
+        out: dict[str, list[list[str]]] = {}
+        for line in text.splitlines():
+            if not line.startswith("|"):
+                continue
+            parts = [c.strip() for c in line.strip().strip("|").split("|")]
+            named = [c for c in parts if c.startswith("`") and c.endswith("`")]
+            if named:
+                out.setdefault(named[0].strip("`"), []).append(parts)
+        return out
+
+    gen, doc = rows(generated), rows(readme)
+    assert gen, "no rows parsed out of the generated table"
+    checked = set()
+    for name, candidates in doc.items():
+        if name not in gen:
+            continue
+        # A README ladder row is one that ends in a p50: "10.9s". The other
+        # tables that name a config are not this one.
+        for row in candidates:
+            if not re.fullmatch(r"\d+(?:\.\d+)?s", row[-1]):
+                continue
+            # p50 is third from the end in the generated table (p50, p95, ready).
+            assert row[-1].rstrip("s") == gen[name][0][-3], (
+                f"{name}: README says p50 {row[-1]}, results/{ablation.TABLE_MD} "
+                f"says {gen[name][0][-3]}s -- regenerate the table and copy it across"
+            )
+            checked.add(name)
+    missing = {r.config for r in ablation.LADDER} - checked
+    assert not missing, f"no README ladder row found for {sorted(missing)}"
 
 
 def test_a_missing_rung_names_the_command_that_would_produce_it(tmp_path):
@@ -190,6 +247,25 @@ def test_a_missing_rung_names_the_command_that_would_produce_it(tmp_path):
     with pytest.raises(ablation.MissingResults) as excinfo:
         ablation.build(tmp_path)
     assert "python -m filing.eval run --config" in str(excinfo.value)
+
+
+def test_the_warmup_question_leaves_the_percentiles_but_not_the_cost():
+    """The one number the warm-up fix could quietly have got wrong.
+
+    Holding the first question out of p50/p95 is right -- it is a model
+    loading off disk. Holding it out of ``calls/q`` is wrong, because a cold
+    process makes no extra API call: the warm-up costs what every other
+    question costs. Divide the run's calls by the timed count and every cost
+    figure in the table comes out an eighth too high.
+    """
+    timed = ablation.Timing(config="x", n=8, llm_calls=18, seconds=(1.0,) * 8, warmup=40.0, ran=9)
+    assert timed.calls_per_question == pytest.approx(2.0)
+    assert timed.p50 == pytest.approx(1.0)  # the 40s warm-up is nowhere in here
+    # An older file has no questions_run; the recorded warm-up still counts.
+    legacy = ablation.Timing(config="x", n=8, llm_calls=18, seconds=(1.0,) * 8, warmup=40.0)
+    assert legacy.questions == 9
+    # And with no warm-up recorded at all, the timed count is all there is.
+    assert ablation.Timing(config="x", n=8, llm_calls=8, seconds=(1.0,) * 8).questions == 8
 
 
 def test_an_empty_timing_list_is_not_a_zero_second_answer():
