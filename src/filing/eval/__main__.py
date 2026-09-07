@@ -102,6 +102,41 @@ def _cmd_depth(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_trace(args: argparse.Namespace) -> int:
+    """Run one question of the frozen set and write its span tree to docs/.
+
+    A command rather than a note saying which button in Phoenix to press. The
+    gate's artefact is a file, and a file nobody can regenerate is a screenshot.
+    """
+    from filing.agent.trace import capture_question, write_trace
+    from filing.eval.runner import build_agent_tools
+    from filing.llm.factory import build_backend
+
+    cfg = settings()
+    ec = get_config(args.config).resolved(cfg)
+    path = dataset.dataset_path(Path(cfg.data_dir), args.version)
+    questions = {q.id: q for q in dataset.read(path)}
+    try:
+        q = questions[args.qid]
+    except KeyError:
+        print(f"no question {args.qid!r} in {path}", file=sys.stderr)
+        return 1
+
+    backend = build_backend(cfg, ec.chat_backend or None) if ec.generate else None
+    tools = build_agent_tools(cfg, backend=backend, config=ec)
+    state, spans = capture_question(q.question, tools=tools, qid=q.id)
+
+    out = write_trace(Path(args.out), question=q.question, qid=q.id, state=state, spans=spans)
+    names = [s["name"] for s in spans]
+    print(f"{len(spans)} spans: {' -> '.join(n.removeprefix('agent.') for n in names)}")
+    print(
+        f"route={state.get('route')} repairs={state.get('repairs')} "
+        f"llm_calls={state.get('llm_calls')} refused={state.get('refused')}"
+    )
+    print(f"wrote {out}")
+    return 0 if spans else 1
+
+
 def _cmd_run(args: argparse.Namespace) -> int:
     cfg = settings()
     ec = get_config(args.config)
@@ -145,6 +180,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--slice", action="append", choices=list(dataset.SLICES))
     p.add_argument("--no-cache", action="store_true", help="re-answer even if cached")
     p.set_defaults(func=_cmd_run)
+
+    p = sub.add_parser("trace", help="export one question's span tree to docs/")
+    p.add_argument("--qid", default="num-001", help="question id from the frozen set")
+    p.add_argument("--config", default="agent", choices=sorted(CONFIGS))
+    p.add_argument("--version", default=dataset.DATASET_VERSION)
+    p.add_argument("--out", default="docs/trace_example.json")
+    p.set_defaults(func=_cmd_trace)
 
     p = sub.add_parser("dataset", help="describe the frozen question set")
     p.add_argument("--version", default=dataset.DATASET_VERSION)

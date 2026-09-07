@@ -118,7 +118,18 @@ def run_question(
         "candidates": [],
     }
     try:
-        final: AgentState = app.invoke(state, {"recursion_limit": recursion_limit})
+        # One span around the whole question, so the node spans have a parent to
+        # hang from. Without it every node is a root and the "trace" is ten
+        # unrelated spans that happen to share a process -- which is how the
+        # exported trace ends up a list where a reader expects a tree.
+        with tools.tracer.start_as_current_span("agent.question") as span:
+            span.set_attribute("qid", qid)
+            span.set_attribute("question", question[:200])
+            final: AgentState = app.invoke(state, {"recursion_limit": recursion_limit})
+            span.set_attribute("route", str(final.get("route", "")))
+            span.set_attribute("repairs", int(final.get("repairs", 0)))
+            span.set_attribute("llm_calls", int(final.get("llm_calls", 0)))
+            span.set_attribute("refused", bool(final.get("refused", False)))
     except Exception as exc:  # noqa: BLE001 - one bad question must not end the run
         final = dict(state)  # type: ignore[assignment]
         final["error"] = f"{type(exc).__name__}: {exc}"
