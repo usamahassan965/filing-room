@@ -20,7 +20,7 @@ graph, M4 the frozen question set and the naive baseline.
 | **M3** the text | 58,844 chunks, 32,218 indexed, 2,986 graph edges | `filing text` — 6/6 |
 | **M4** the yardstick | 150 frozen questions, 260 gold spans, naive index of 48,934 chunks | `filing.eval run --config baseline` — 150/150, 4 live calls |
 
-568 tests, `ruff` clean, and no test may open a socket off this machine.
+555 tests, `ruff` clean, and no test may open a socket off this machine.
 
 ---
 
@@ -93,7 +93,7 @@ The filings themselves are not, either. Clone, set `SEC_USER_AGENT`, and run
 | Sliding-window limiter | `llm/limiter.py` | Per model, not per provider. Proven by unit test, not by hope. |
 | Content-hash cache | `llm/cache.py` | Five weeks of eval re-runs on a finite free-tier budget. |
 | Tracing | `tracing.py` | On from the first commit, because M5–M7 read these spans. |
-| Three backends | `llm/gemini.py`, `llm/nvidia.py`, `llm/fallback_ollama.py` | One interface, three providers. `LLM_BACKEND` picks. |
+| Three backends | `llm/gemini.py`, `llm/fallback_ollama.py`, `llm/local.py` | One interface; hosted, self-hosted, in-process. `LLM_BACKEND` picks. |
 | Local reranker | `llm/rerank_local.py` | A real cross-encoder, no key and no quota — the one verb Gemini does not serve. |
 
 `smoke` runs five checks and exits non-zero if any fails: **chat**, **embed** (a
@@ -126,7 +126,9 @@ The same lever handles a whole provider dying, which is also not hypothetical:
 this project moved off NVIDIA NIM mid-M0 when its account verification proved
 impassable. That cost one new backend file and one registry entry; the limiter,
 cache, tracing, and every test carried over untouched. Containing that blast
-radius is what M0 was for.
+radius is what M0 was for. The NIM backend was later deleted outright, once it
+was clear the account could never be verified from here -- a provider nobody can
+run is not a fallback, it is a claim the README cannot back.
 
 ## M1 — the corpus
 
@@ -366,7 +368,6 @@ src/filing/
 │   ├── limiter.py         sliding-window rate limiter
 │   ├── cache.py           content-addressed call cache
 │   ├── gemini.py          default backend
-│   ├── nvidia.py          NIM backend
 │   ├── fallback_ollama.py local backend
 │   ├── rerank_local.py    cross-encoder
 │   └── factory.py         backend selection
@@ -395,7 +396,7 @@ src/filing/
     └── depth.py           how far down the ranking the evidence actually sits
 
 scripts/eval_v1_0/   the authoring record — rebuilds the frozen set byte for byte
-tests/               568 tests, no network and no API key
+tests/               555 tests, no network and no API key
 results/             one committed JSON + markdown table per config
 docs/                build plan, corpus notes, the baseline write-up
 ```
@@ -410,7 +411,6 @@ the only place they live, and `filing probe` prints the live ones.
 | | chat | embed | rerank |
 |---|---|---|---|
 | **`gemini`** (default) | Gemini Flash | `gemini-embedding-001` | **local cross-encoder** |
-| `nvidia` | Llama 3.3 70B | `nv-embedqa-1b-v2` | `nv-rerankqa-1b-v2` (hosted) |
 | `ollama` | Llama 3.1 8B, local | `nomic-embed-text` | cosine stand-in — **degraded** |
 
 The Ollama row is honest about being worse: cosine "reranking" is the retriever's
@@ -432,9 +432,11 @@ produced that way.
 - **Rate limits are per model.** Gemini's free tier allows roughly 10 rpm for the
   chat model and 100 for embeddings. One shared limiter would drag indexing down
   to the speed of the slowest model in the registry.
-- **NVIDIA's reranker is not OpenAI-shaped at all**: different host, different
-  request body, different response. It gets its own code path and its own
-  hand-written span, since the OpenAI instrumentor cannot see it.
+- **Not every provider verb is OpenAI-shaped.** NVIDIA NIM's reranker used a
+  different host, body and response, so it needed its own code path and a
+  hand-written span the OpenAI instrumentor could not see. That backend is gone,
+  but the lesson set the interface: `rerank` is a verb on the backend, not an
+  OpenAI call the code assumes every provider serves.
 
 ### Installing torch
 

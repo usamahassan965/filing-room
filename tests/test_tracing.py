@@ -65,7 +65,7 @@ def _clean_tracing():
 
 def _cfg(endpoint: str, **kw) -> Settings:
     return Settings(
-        nvidia_api_key="test-key",
+        gemini_api_key="test-key",
         phoenix_endpoint=endpoint,
         phoenix_project="filing-room-tests",
         **kw,

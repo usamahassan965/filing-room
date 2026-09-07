@@ -17,10 +17,6 @@ def build_backend(cfg: Settings | None = None, backend: Backend | None = None) -
         from filing.llm.gemini import GeminiBackend
 
         return GeminiBackend(cfg)
-    if choice == "nvidia":
-        from filing.llm.nvidia import NvidiaBackend
-
-        return NvidiaBackend(cfg)
     if choice == "ollama":
         from filing.llm.fallback_ollama import OllamaBackend
 

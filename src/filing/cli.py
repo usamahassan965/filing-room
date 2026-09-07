@@ -183,8 +183,8 @@ def probe(
 ) -> None:
     """Check every model ID in the registry, primaries and alternates alike.
 
-    Run this when something 404s. NVIDIA is renaming its retriever models, so
-    the fix is to copy a live ID from this table into MODEL_REGISTRY.
+    Run this when something 404s. Providers rename and retire model IDs without
+    warning, so the fix is to copy a live ID from this table into MODEL_REGISTRY.
     """
     cfg = settings()
     chosen: Backend = backend or cfg.llm_backend  # type: ignore[assignment]

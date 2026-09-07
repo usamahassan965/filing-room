@@ -169,20 +169,6 @@ CONFIGS: dict[str, EvalConfig] = {
         k=max(metrics.KS),
         note="the baseline retriever alone: dense top-10, no LLM call at all",
     ),
-    # The same retrieval, a far larger generator. It exists to answer one
-    # question the baseline cannot: how much of the 7.5% numeric exact is the
-    # generator's ceiling and how much is the retriever's. meta/llama-3.3-70b
-    # sees exactly the chunks flash-lite saw, so the difference between the two
-    # tables is the generator's contribution and nothing else. Needs
-    # NVIDIA_API_KEY; the free tier is credit-based rather than 20-per-day,
-    # which is the only reason a 70B run over 150 questions is affordable here.
-    "baseline-nvidia": EvalConfig(
-        name="baseline-nvidia",
-        system="naive",
-        chat_backend="nvidia",
-        chat_role="chat",
-        note="the baseline retriever with a 70B generator -- the generator ablation",
-    ),
     # The generating half, run on this machine instead of on a quota. Two of
     # them, because the registry holds two local chat models that both fit in
     # memory and there is no way to know from the outside which one answers

@@ -46,16 +46,10 @@ def test_no_duplicate_candidates(backend):
         assert spec.candidates[0] == spec.id
 
 
-def test_every_nvidia_rerank_candidate_has_an_endpoint():
-    """Reranking URLs are per-model, so an alternate without one is a landmine."""
-    spec = MODEL_REGISTRY["nvidia"]["rerank"]
-    for candidate in spec.candidates:
-        assert spec.endpoint_for(candidate), candidate
-
 
 def test_unknown_role_names_the_known_ones():
     with pytest.raises(KeyError) as exc:
-        model_for("summariser", "nvidia")
+        model_for("summariser", "gemini")
     assert "chat" in str(exc.value)
 
 
@@ -66,13 +60,6 @@ def test_declared_rate_limits_are_sane(backend):
         if spec.rpm is not None:
             assert spec.rpm > 0, f"{backend}/{role} rpm={spec.rpm}"
 
-
-@pytest.mark.parametrize("backend", sorted(MODEL_REGISTRY))
-def test_local_models_are_not_given_endpoints(backend):
-    """`local` and `endpoint` are contradictory claims about where a model runs."""
-    for role, spec in MODEL_REGISTRY[backend].items():
-        if spec.local:
-            assert spec.endpoint is None and not spec.endpoints, f"{backend}/{role}"
 
 
 def test_embed_specs_declare_their_width():
@@ -85,7 +72,7 @@ def test_embed_specs_declare_their_width():
 # credentials
 # --------------------------------------------------------------------------
 
-SECRET_FIELDS = ("gemini_api_key", "nvidia_api_key")
+SECRET_FIELDS = ("gemini_api_key",)
 
 
 @pytest.mark.parametrize("field", SECRET_FIELDS)

@@ -8,9 +8,10 @@ class LLMError(RuntimeError):
 class ModelUnavailable(LLMError):
     """A registered model ID no longer resolves.
 
-    This is expected to happen: NVIDIA is renaming its retriever models. The fix
-    is one line in filing.config.MODEL_REGISTRY, which is the entire reason the
-    registry exists -- so this error names the candidates for you.
+    This is expected to happen: providers rename and retire model IDs, and a
+    free tier is where they do it first. The fix is one line in
+    filing.config.MODEL_REGISTRY, which is the entire reason the registry
+    exists -- so this error names the candidates for you.
     """
 
     def __init__(

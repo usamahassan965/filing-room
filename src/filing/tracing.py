@@ -95,8 +95,9 @@ def setup_tracing(cfg: Settings | None = None) -> bool:
         _attach_counter(provider, _counter)
         global _provider
         _provider = provider
-        # Instruments the OpenAI SDK, which is how chat and embed reach NIM.
-        # rerank is a raw httpx call, so nvidia.py spans it by hand.
+        # Instruments the OpenAI SDK, which is how chat and embed reach every
+        # hosted backend here. A verb a provider does not serve OpenAI-shaped
+        # has to span itself by hand -- see the rerank note in the README.
         OpenAIInstrumentor().instrument(tracer_provider=provider)
         _live = True
         log.info("tracing -> %s (project=%s)", cfg.phoenix_endpoint, cfg.phoenix_project)

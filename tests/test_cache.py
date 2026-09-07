@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from filing.config import Settings
 from filing.llm.cache import CallCache, make_key
-from filing.llm.nvidia import NvidiaBackend
+from filing.llm.gemini import GeminiBackend
 
-BASE = dict(backend="nvidia", model="m", kind="chat")
+BASE = dict(backend="gemini", model="m", kind="chat")
 MSG = [{"role": "user", "content": "x"}]
 
 
@@ -49,16 +49,16 @@ def test_repeated_prompt_issues_one_http_request(tmp_path):
     """The M0 definition of done, asserted offline.
 
     The network layer is stubbed so this is a statement about the cache, not
-    about NVIDIA -- and so CI can run it with no API key.
+    about Gemini -- and so CI can run it with no API key.
     """
     cfg = Settings(
-        nvidia_api_key="test-key",
+        gemini_api_key="test-key",
         cache_dir=tmp_path / "llm",
         tracing_enabled=False,
     )
-    backend = NvidiaBackend(cfg)
+    backend = GeminiBackend(cfg)
 
-    def fake_call(model_id, role, alternates, payload):
+    def fake_call(model_id, role, spec, payload):
         backend.http_calls += 1
         return "a 10-K is an annual report"
 
@@ -75,11 +75,11 @@ def test_repeated_prompt_issues_one_http_request(tmp_path):
 
 
 def test_embed_only_requests_the_texts_it_lacks(tmp_path):
-    cfg = Settings(nvidia_api_key="test-key", cache_dir=tmp_path / "llm", tracing_enabled=False)
-    backend = NvidiaBackend(cfg)
+    cfg = Settings(gemini_api_key="test-key", cache_dir=tmp_path / "llm", tracing_enabled=False)
+    backend = GeminiBackend(cfg)
     requested: list[list[str]] = []
 
-    def fake_embed(model_id, alternates, texts, input_type):
+    def fake_embed(model_id, spec, texts, input_type):
         requested.append(list(texts))
         backend.http_calls += 1
         return [[float(len(t))] * 4 for t in texts]

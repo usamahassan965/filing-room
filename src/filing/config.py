@@ -13,8 +13,7 @@ Two rules this module exists to enforce:
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -24,7 +23,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-Backend = Literal["gemini", "nvidia", "ollama", "local"]
+Backend = Literal["gemini", "ollama", "local"]
 Role = Literal["chat", "chat_fast", "embed", "rerank"]
 
 
@@ -41,9 +40,6 @@ class ModelSpec:
     id: str
     alternates: tuple[str, ...] = ()
     dim: int | None = None
-    endpoint: str | None = None  # set only when the call is not OpenAI-shaped
-    # Reranking URLs are per-model, so an alternate needs its own.
-    endpoints: Mapping[str, str] = field(default_factory=dict)
     asymmetric: bool = False  # needs input_type=query|passage
     # Rate limits are per-model, not per-provider: on Gemini's free tier the
     # chat model allows ~10 rpm while embeddings allow ~100. One shared limiter
@@ -56,19 +52,7 @@ class ModelSpec:
     def candidates(self) -> tuple[str, ...]:
         return (self.id, *self.alternates)
 
-    def endpoint_for(self, model_id: str | None = None) -> str | None:
-        return self.endpoints.get(model_id or self.id, self.endpoint)
 
-
-# NVIDIA's reranker is not an OpenAI-shaped call -- it has its own host and its
-# own request body -- so its URL travels with the spec rather than being derived
-# from the base URL.
-_NIM_RERANK_URLS = {
-    "nvidia/llama-3.2-nv-rerankqa-1b-v2": (
-        "https://ai.api.nvidia.com/v1/retrieval/nvidia/llama-3_2-nv-rerankqa-1b-v2/reranking"
-    ),
-    "nvidia/nv-rerankqa-mistral-4b-v3": ("https://ai.api.nvidia.com/v1/retrieval/nvidia/reranking"),
-}
 
 MODEL_REGISTRY: dict[Backend, dict[str, ModelSpec]] = {
     # Gemini free tier. The rpm figures are the documented free-tier limits at
@@ -115,38 +99,6 @@ MODEL_REGISTRY: dict[Backend, dict[str, ModelSpec]] = {
             ),
             local=True,
             note="local cross-encoder; no key, no quota, no rate limit",
-        ),
-    },
-    "nvidia": {
-        "chat": ModelSpec(
-            id="meta/llama-3.3-70b-instruct",
-            alternates=(
-                "nvidia/llama-3.3-nemotron-super-49b-v1.5",
-                "meta/llama-3.1-70b-instruct",
-            ),
-            note="synthesis and grading -- the calls whose quality shows up in eval",
-        ),
-        "chat_fast": ModelSpec(
-            id="meta/llama-3.1-8b-instruct",
-            alternates=("nvidia/nemotron-mini-4b-instruct",),
-            note="routing, planning, cheap classification",
-        ),
-        "embed": ModelSpec(
-            id="nvidia/llama-3.2-nv-embedqa-1b-v2",
-            alternates=(
-                "nvidia/llama-nemotron-embed-1b-v2",  # the rename target
-                "nvidia/nv-embedqa-e5-v5",  # 1024-dim, different family
-            ),
-            dim=2048,
-            asymmetric=True,
-            note="asymmetric: queries and passages are embedded differently",
-        ),
-        "rerank": ModelSpec(
-            id="nvidia/llama-3.2-nv-rerankqa-1b-v2",
-            alternates=("nvidia/nv-rerankqa-mistral-4b-v3",),
-            endpoint=_NIM_RERANK_URLS["nvidia/llama-3.2-nv-rerankqa-1b-v2"],
-            endpoints=_NIM_RERANK_URLS,
-            note="cross-encoder; the single biggest retrieval quality lever",
         ),
     },
     # Sized to the machine, not to the leaderboard. llama3.1:8b at q4 wants
@@ -226,8 +178,6 @@ class Settings(BaseSettings):
     gemini_base_url: str = "https://generativelanguage.googleapis.com/v1beta"
     gemini_openai_base_url: str = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
-    nvidia_api_key: SecretStr = SecretStr("")
-    nvidia_base_url: str = "https://integrate.api.nvidia.com/v1"
     ollama_base_url: str = "http://localhost:11434"
 
     # --- local models ---
