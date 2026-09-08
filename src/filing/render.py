@@ -285,13 +285,9 @@ def path_panel(payload: dict[str, Any]) -> str:
     for p in payload.get("plan") or []:
         arrow = esc(p.get("route", ""))
         out.append(f"<p style='margin:.2rem 0'><b>Planned</b> {arrow}</p>")
-        detail = [
-            esc(p[k]) for k in ("ticker", "concept", "period_end") if p.get(k)
-        ]
+        detail = [esc(p[k]) for k in ("ticker", "concept", "period_end") if p.get(k)]
         if detail:
-            out.append(
-                f"<div style='font-size:.82rem;opacity:.7'>{' · '.join(detail)}</div>"
-            )
+            out.append(f"<div style='font-size:.82rem;opacity:.7'>{' · '.join(detail)}</div>")
         if p.get("why"):
             out.append(
                 f"<div style='font-size:.82rem;opacity:.7'>&ldquo;{esc(p['why'])}&rdquo;</div>"
@@ -309,8 +305,7 @@ def path_panel(payload: dict[str, Any]) -> str:
         )
         if grade.get("missing"):
             out.append(
-                f"<div style='font-size:.82rem;opacity:.7'>missing: "
-                f"{esc(grade['missing'])}</div>"
+                f"<div style='font-size:.82rem;opacity:.7'>missing: {esc(grade['missing'])}</div>"
             )
     repairs = esc(payload.get("repairs", 0))
     out.append(f"<p style='margin:.4rem 0'><b>Repairs</b> {repairs} of 2</p>")

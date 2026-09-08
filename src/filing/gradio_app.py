@@ -10,11 +10,19 @@ design preference:
   edge of an OOM on every cold start.
 * A Hugging Face Docker Space would take the compose file unchanged, but Docker
   Spaces now require a paid plan to create.
-* A free personal account can host two ZeroGPU **Gradio** Spaces. That is the
-  one free door left, and it is a Gradio-shaped door.
+* A free Hugging Face **Gradio** Space on CPU basic gets 2 vCPU and 16 GB of
+  RAM, unmetered and unlimited in number. That is the one free door left, and
+  it is a Gradio-shaped door.
 
-Two differences from the Streamlit page follow from the same fact -- a Space
-runs one process:
+The hardware to ask for is CPU basic, not ZeroGPU. ZeroGPU is the more generous
+tier and the wrong one: it meters five GPU-minutes a day, which this would spend
+in about twenty questions, and it is gated on account age -- both prices paid for
+a device this workload never touches. The embedder is a 384-dimension bge-small
+over 32k points and the reranker is a MiniLM cross-encoder over five passages;
+neither is interesting to a GPU. Sixteen gigabytes of RAM is the resource that
+was actually scarce, and CPU basic is where it is.
+
+Two differences from the Streamlit page follow from a Space running one process:
 
 1. There is no HTTP hop. The page holds an :class:`~filing.api.AskEngine` and
    calls it directly. The constraint the Streamlit page is written under
@@ -25,12 +33,6 @@ runs one process:
    supported. It renders a document that was finished before it arrived.
 2. There is no Qdrant server. ``QDRANT_PATH`` points at a directory that
    ``qdrant-client`` opens in-process, written by ``filing pack``.
-
-The GPU is deliberately unused. ZeroGPU is how the Space is free, not something
-this workload wants: the embedder is a 384-dimension bge-small over 32k points,
-which is unremarkable on CPU, and ZeroGPU's five free GPU-minutes a day would
-be spent in about twenty questions. A visitor who arrives on minute six should
-get a slower answer, not an error.
 """
 
 from __future__ import annotations
@@ -78,8 +80,7 @@ be hiding half the design.
 
 def _placeholder() -> str:
     return (
-        "<div style='opacity:.6;padding:1.2rem 0'>Ask something, or pick one of "
-        "the examples.</div>"
+        "<div style='opacity:.6;padding:1.2rem 0'>Ask something, or pick one of the examples.</div>"
     )
 
 

@@ -1120,9 +1120,11 @@ worth writing down because they are what the deploy is shaped around.
 | Hugging Face **Docker** Spaces | now require a paid plan |
 | Qdrant Cloud free tier | suspends after a week idle, deleted after four — fatal for a link on a CV |
 
-What is left is a **Hugging Face ZeroGPU Gradio Space**: two of them per free
-personal account, gated on a verified email and an account older than 30 days.
-That constraint set produced three changes rather than a wrapper.
+What is left is a **Hugging Face Gradio Space on CPU basic**: free, unlimited in
+number, 2 vCPU and 16 GB of RAM. The RAM is the whole point — 16 GB against
+Streamlit's 1 GB is what makes the difference between a deploy and a deploy
+tuned to the edge of an OOM. That constraint set produced three changes rather
+than a wrapper.
 
 **The server had to go.** A Space runs one process, so `filing pack` reads every
 point out of Qdrant and writes it back into an embedded store — `QdrantClient(path=…)`,
@@ -1153,9 +1155,13 @@ got that for free, whereas a string built in `render.py` reaches the browser as
 written, and evidence bodies are spans of SEC filings that genuinely contain
 `<` and `&`.
 
-**The GPU is deliberately unused.** ZeroGPU gives 5 free GPU-minutes a day, which
-this spends in about twenty questions. A visitor arriving on minute six should
-get a slower answer, not an error, so the embedder and the reranker stay on CPU.
+**There is deliberately no GPU.** The obvious free tier to reach for is ZeroGPU,
+and it is the wrong one: it meters five GPU-minutes a day — about twenty
+questions — and gates on account age, both prices paid for a device this
+workload never touches. The embedder is a 384-dimension bge-small over 32k
+points and the reranker is a MiniLM cross-encoder over five passages. Neither is
+interesting to a GPU, and a visitor arriving on minute six should get a slower
+answer rather than an error.
 
 Then one command assembles the upload:
 

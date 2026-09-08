@@ -761,9 +761,9 @@ def index(
 
 @app.command()
 def pack(
-    dest: Annotated[
-        Path, typer.Option("--dest", help="Directory for the embedded store.")
-    ] = Path("data/qdrant"),
+    dest: Annotated[Path, typer.Option("--dest", help="Directory for the embedded store.")] = Path(
+        "data/qdrant"
+    ),
 ) -> None:
     """Write an embedded copy of the served collection, for a one-process deploy.
 
@@ -905,7 +905,9 @@ def space(
         console.print(f"  [yellow]not found, and skipped:[/yellow] {', '.join(missing)}")
         console.print("  [dim]`filing pack` writes data/qdrant; the rest come from ingest.[/dim]")
     console.print(
-        "\n  Create the Space on the site first (SDK: gradio, hardware: ZeroGPU),\n"
+        "\n  Create the Space on the site first: SDK gradio, hardware "
+        "[bold]CPU basic[/bold] -- free,\n"
+        "  2 vCPU and 16 GB, and this workload never touches a GPU.\n"
         "  set [cyan]QDRANT_PATH=data/qdrant[/cyan] and [cyan]TRACING_ENABLED=false[/cyan] "
         "as variables and [cyan]GEMINI_API_KEY[/cyan] as a secret, then from "
         f"[cyan]{dest}[/cyan]:\n"
