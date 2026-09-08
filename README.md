@@ -1078,7 +1078,12 @@ key, no corpus, no Qdrant and no socket.** The CI job installs four packages.
 The last part is the one the plan asks to be demonstrated rather than claimed:
 [`docs/gate-demo.md`](docs/gate-demo.md) is a transcript of the gate going red on
 a throwaway branch with one number edited, and `tests/test_gate.py` injects seven
-different regressions and asserts each one is caught.
+different regressions and asserts each one is caught. That branch is open as
+[PR #1](https://github.com/usamahassan965/filing-room/pull/1), where the
+[run](https://github.com/usamahassan965/filing-room/actions/runs/34203727067) is
+red in public: `ruff` green, because the damage is a number in a result file and
+no linter has an opinion about it; `pytest` and the gate red, because they
+re-derive the scorecard instead of trusting the figure written beside it.
 
 ### Running it from a clone
 
