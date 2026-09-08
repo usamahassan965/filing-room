@@ -6,7 +6,7 @@ branch."* A green check mark proves nothing on its own. A gate that has never
 been seen to fail is indistinguishable from a gate that cannot.
 
 This is the transcript. Branch `demo/gate-catches-a-regression`, commit
-`f89c890`, which is `main` plus one number moved by hand -- a one-character diff
+`cb2a223`, which is `main` plus one number moved by hand -- a one-character diff
 in one file, so that what turns the build red is not in doubt.
 
 ## The injection
@@ -74,7 +74,7 @@ $ python -m filing.eval gate
 | `agent` | floor | abstention 1.0000 >= 1.0000 | pass |
 | `agent` | floor | over_answered 0.0000 <= 0.0000 | pass |
 | `agent` | floor | citations_resolvable 1.0000 >= 1.0000 | pass |
-| `agent` | floor | router_accuracy 0.8333 >= 0.8000 | pass |
+| `agent` | floor | router_accuracy 0.9643 >= 0.9000 | pass |
 | `agent-guarded` | fingerprint | 0ccc7a4f38b3 | pass |
 | `agent-guarded` | rescore | 150 outcomes re-scored | pass |
 | `agent-guarded` | floor | exact_match 0.9875 >= 0.9500 | pass |
@@ -124,13 +124,25 @@ $ python -m pytest tests/test_gate.py
 ```
 
 ```
-E       AssertionError: agent rescore: 150 outcomes re-scored overall.exact_match: file 0.8 -> now 0.9875
-E         agent floor: exact_match 0.8000 >= 0.9500 the numeric slice is the headline claim
+___________________ test_the_markdown_marks_failures_loudly ___________________
 
+    def test_the_markdown_marks_failures_loudly(results_root):
+        report = gate.run_gate(results_root, DATA, configs=("agent",))
+>       assert "**FAIL**" not in gate.to_markdown(report)
+E       AssertionError: assert '**FAIL**' not in '| config | ...000 | pass |'
+E
+E         '**FAIL**' is contained here:
+E            0.9875 | **FAIL** |
+E         ?           ++++++++
+E           | `agent` | floor | exact_match 0.8000 >= 0.9500 -- the numeric slice is the headline claim | **FAIL** |
+
+[...the two gate assertions above it elided...]
+
+=========================== short test summary info ===========================
 FAILED tests/test_gate.py::test_the_gate_passes_on_the_committed_results
 FAILED tests/test_gate.py::test_the_gate_never_opens_a_socket
 FAILED tests/test_gate.py::test_the_markdown_marks_failures_loudly
-3 failed, 13 passed in 6.78s
+3 failed, 13 passed in 8.78s
 ```
 
 Two belts, and they are not the same belt. `test_the_gate_passes_on_the_committed_results`
