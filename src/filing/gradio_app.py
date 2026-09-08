@@ -269,7 +269,6 @@ def main() -> None:  # pragma: no cover - the entry point, not a tested path
         server_name="0.0.0.0",  # noqa: S104 - a container binds to its own network
         server_port=int(os.environ.get("PORT", "7860")),
         theme=gr.themes.Soft(),
-        show_api=False,
     )
 
 

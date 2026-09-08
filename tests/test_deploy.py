@@ -376,3 +376,46 @@ def test_the_space_is_built_as_docker_and_runs_the_gradio_page() -> None:
     # The CUDA wheels are the difference between this image and a 2.5 GB one.
     assert "https://download.pytorch.org/whl/cpu" in SPACE_DOCKERFILE
     assert "torchvision" in SPACE_DOCKERFILE
+
+
+def test_launch_is_called_with_arguments_this_gradio_still_has(monkeypatch) -> None:  # noqa: ANN001
+    """``main`` is the one function the Space runs and no test ran.
+
+    It was marked ``pragma: no cover`` as an entry point, which is the usual and
+    usually harmless call. It was not harmless here. ``launch(show_api=False)``
+    was correct when it was written and Gradio 6 removed the argument, so the
+    build succeeded, the image pushed, the stores warmed in thirteen seconds --
+    and the process then died on a ``TypeError`` one line before it would have
+    bound the port. Nothing local reproduced it, because nothing local called
+    the function.
+
+    So the assertion is about the signature rather than about the page: capture
+    what ``main`` passes, then ask the installed Gradio whether it would accept
+    it. That is the check that was missing, and it costs a stub.
+    """
+    import inspect
+
+    import gradio as gr
+
+    from filing import gradio_app
+
+    captured: dict = {}
+
+    class StubEngine:
+        def warm(self) -> None:
+            pass
+
+    class StubBlocks:
+        def queue(self, **kw):  # noqa: ANN003, ANN202
+            return self
+
+        def launch(self, **kw) -> None:  # noqa: ANN003
+            captured.update(kw)
+
+    monkeypatch.setattr(gradio_app, "build", lambda engine: StubBlocks())
+    monkeypatch.setattr("filing.api.AskEngine", StubEngine)
+    gradio_app.main()
+
+    assert captured, "main() never reached launch()"
+    # `self` is already bound on a real Blocks; bind_partial checks the rest.
+    inspect.signature(gr.Blocks.launch).bind_partial(**captured)
