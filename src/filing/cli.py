@@ -25,6 +25,7 @@ from __future__ import annotations
 import logging
 import sys
 import uuid
+from pathlib import Path
 from typing import Annotated
 
 import typer
@@ -755,6 +756,162 @@ def index(
     console.print(
         f"  {report.embed_http_calls:,} embedding HTTP calls  "
         f"{report.cache_hits:,} cache hits  [dim]{report.seconds / 60:.1f} minutes[/dim]"
+    )
+
+
+@app.command()
+def pack(
+    dest: Annotated[
+        Path, typer.Option("--dest", help="Directory for the embedded store.")
+    ] = Path("data/qdrant"),
+) -> None:
+    """Write an embedded copy of the served collection, for a one-process deploy.
+
+    A Qdrant server is a second service, and some hosts only run one. This
+    reads the points out of the server and writes them into a directory that
+    `qdrant-client` opens in-process, which is what `QDRANT_PATH` selects.
+    """
+    from filing.stores.index import pack_embedded
+
+    cfg = settings()
+    console.rule("[bold]filing pack[/bold]")
+    report = pack_embedded(cfg, dest)
+    console.print(f"  collection [cyan]{report.collection}[/cyan]  {report.dim}d")
+    console.print(f"  {report.points:,} points -> {report.dest}  [dim]{report.seconds:.1f}s[/dim]")
+    size = sum(f.stat().st_size for f in Path(report.dest).rglob("*") if f.is_file())
+    console.print(f"  [dim]{size / 1e6:.1f} MB on disk[/dim]")
+
+
+# The files a Space needs that a laptop does not: the frontmatter that
+# configures it, and the LFS rules without which a 168 MB SQLite file is
+# rejected at push time with a message about file size and no mention of LFS.
+SPACE_README = """---
+title: Filing Room
+emoji: 🗃️
+colorFrom: gray
+colorTo: indigo
+sdk: gradio
+sdk_version: "{sdk_version}"
+app_file: app.py
+pinned: false
+license: mit
+short_description: Agentic RAG over SEC filings, with the evidence attached.
+---
+
+{body}
+"""
+
+SPACE_GITATTRIBUTES = """\
+# The corpus. Without these the push is rejected on file size, and the message
+# it is rejected with talks about the limit rather than about LFS.
+*.duckdb    filter=lfs diff=lfs merge=lfs -text
+*.sqlite    filter=lfs diff=lfs merge=lfs -text
+*.jsonl     filter=lfs diff=lfs merge=lfs -text
+*.npz       filter=lfs diff=lfs merge=lfs -text
+*.npy       filter=lfs diff=lfs merge=lfs -text
+*.mmindex   filter=lfs diff=lfs merge=lfs -text
+"""
+
+#: What the serve path reads, and nothing else. `data/raw` is 1.1 GB of filing
+#: HTML with exactly two call sites, both in `ingest/corpus.py`, and neither
+#: runs after ingestion; `data/chunks_naive` belongs to one ablation row. A
+#: deploy that carried them would be thirteen times the size for no behaviour.
+SPACE_DATA = (
+    "data/chunks",
+    "data/index",
+    "data/graph",
+    "data/eval",
+    "data/qdrant",
+    "data/facts.duckdb",
+    "data/manifest.duckdb",
+)
+
+#: The code, the packaging, and the evidence the README points at.
+SPACE_CODE = ("src", "pyproject.toml", "app.py", "requirements.txt", "results", "docs")
+
+
+def _gradio_version() -> str:
+    """The version installed here, so the Space builds what was tested."""
+    from importlib.metadata import PackageNotFoundError, version
+
+    try:
+        return version("gradio")
+    except PackageNotFoundError:  # pragma: no cover - `space` without the extra
+        return "5.0.0"
+
+
+@app.command()
+def space(
+    dest: Annotated[
+        Path, typer.Option("--dest", help="Directory to assemble the upload in.")
+    ] = Path("build/space"),
+    force: Annotated[
+        bool, typer.Option("--force", help="Delete an existing --dest first.")
+    ] = False,
+) -> None:
+    """Assemble the directory to push to a Hugging Face Space.
+
+    A deploy that is a list of instructions is a deploy that is wrong by the
+    third time somebody follows it, so this is the list, executed. It copies the
+    code, the packaging, the served slice of the corpus and nothing else, writes
+    the frontmatter that configures the Space and the LFS rules that let the
+    corpus through, and prints what it made.
+
+    It does not push. Pushing needs an account and a token, which are the
+    operator's, and a command that silently published a corpus to the internet
+    on someone's behalf would be a worse tool than one that stops here.
+    """
+    import shutil
+
+    console.rule("[bold]filing space[/bold]")
+    if dest.exists():
+        if not force:
+            console.print(f"  [red]{dest} exists[/red]. Pass --force to replace it.")
+            raise typer.Exit(1)
+        shutil.rmtree(dest)
+    dest.mkdir(parents=True)
+
+    def size_of(p: Path) -> int:
+        if p.is_file():
+            return p.stat().st_size
+        return sum(f.stat().st_size for f in p.rglob("*") if f.is_file())
+
+    root = Path(__file__).resolve().parents[2]
+    total = 0
+    missing: list[str] = []
+    for rel in SPACE_CODE + SPACE_DATA:
+        src = root / rel
+        if not src.exists():
+            missing.append(rel)
+            continue
+        out = dest / rel
+        out.parent.mkdir(parents=True, exist_ok=True)
+        if src.is_dir():
+            shutil.copytree(src, out, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+        else:
+            shutil.copy2(src, out)
+        n = size_of(out)
+        total += n
+        console.print(f"  {n / 1e6:8.1f} MB  {rel}")
+
+    body = (root / "README.md").read_text(encoding="utf-8")
+    (dest / "README.md").write_text(
+        SPACE_README.format(sdk_version=_gradio_version(), body=body), encoding="utf-8"
+    )
+    (dest / ".gitattributes").write_text(SPACE_GITATTRIBUTES, encoding="utf-8")
+
+    console.print(f"\n  [bold]{total / 1e6:.0f} MB[/bold] in {dest}")
+    if missing:
+        console.print(f"  [yellow]not found, and skipped:[/yellow] {', '.join(missing)}")
+        console.print("  [dim]`filing pack` writes data/qdrant; the rest come from ingest.[/dim]")
+    console.print(
+        "\n  Create the Space on the site first (SDK: gradio, hardware: ZeroGPU),\n"
+        "  set [cyan]QDRANT_PATH=data/qdrant[/cyan] and [cyan]TRACING_ENABLED=false[/cyan] "
+        "as variables and [cyan]GEMINI_API_KEY[/cyan] as a secret, then from "
+        f"[cyan]{dest}[/cyan]:\n"
+        "    [cyan]git init -b main && git lfs install[/cyan]\n"
+        "    [cyan]git remote add origin https://huggingface.co/spaces/<user>/<name>[/cyan]\n"
+        "    [cyan]git add -A && git commit -m 'filing room' && git push -u origin main[/cyan]"
     )
 
 

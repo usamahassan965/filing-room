@@ -1,0 +1,23 @@
+# For Hugging Face Spaces, which installs this file and not pyproject.toml.
+#
+# `pyproject.toml` remains the source of truth for versions; this file exists
+# because a Space's build step is `pip install -r requirements.txt` and nothing
+# else. The first two lines are what makes that not a duplication: the CPU torch
+# index, then the project itself with its `space` extra, so every version below
+# the surface still comes from `pyproject.toml`.
+#
+# The torch index is not an optimisation here, it is the build. A default `pip
+# install torch` pulls the CUDA wheels -- past 2.5 GB of nvidia-* packages for a
+# GPU this Space does not use and would not need if it had one. Both torch *and*
+# torchvision have to come from it: a PyPI torchvision wheel is linked against
+# the CUDA build's ABI, and its compiled `torchvision::nms` fails to register
+# against a CPU torch, which surfaces three imports later as an unrelated-looking
+# "Could not import module 'PreTrainedModel'". The version pairing being correct
+# is not sufficient and is what makes that failure hard to read.
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+torch
+torchvision
+
+-e .[space]

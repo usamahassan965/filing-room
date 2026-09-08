@@ -52,6 +52,24 @@ from filing.tracing import get_tracer
 
 ROUTES: tuple[Route, ...] = ("sql", "text", "graph", "refuse")
 
+# The plan reply is about eighty tokens of JSON. This is not eighty.
+#
+# A reasoning model spends its output budget thinking before it writes, and it
+# is one budget: the thinking is drawn from the same allowance as the text. On
+# 2026-09-08 the chat model spent all but roughly ten tokens of a 256 budget on
+# this prompt and returned an opening fence, a route and half a key -- valid
+# JSON up to the cut, and worthless after it. Measured across seven eval
+# questions, 256 failed to parse seven times out of seven and 1024 parsed seven
+# out of seven, which is not a marginal call.
+#
+# The failure is silent by construction. `heuristic_plan` catches it and returns
+# route="text", so a dead planner is indistinguishable from a working one that
+# always chooses text: nothing raises, no route goes missing, and the only trace
+# is a `why` field nobody reads. That is why this is a named constant with a
+# comment rather than a literal -- the next model with a longer thinking habit
+# will reintroduce the bug, and it will not announce itself either.
+PLAN_MAX_TOKENS = 1024
+
 # The cross-encoder is a binary relevance classifier trained with a logistic
 # loss, so zero is its own decision boundary -- above it the model says
 # "relevant", below it "not". Using that rather than a percentile of this
@@ -234,7 +252,7 @@ class Nodes:
                 ],
                 role=self.t.chat_role,
                 temperature=self.t.temperature,
-                max_tokens=256,
+                max_tokens=PLAN_MAX_TOKENS,
             )
             calls = self.t.backend.usage().http_calls - before
             got = _json_object(reply)

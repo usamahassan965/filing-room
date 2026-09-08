@@ -263,6 +263,21 @@ class Settings(BaseSettings):
     # --- text index (M3) ---
     qdrant_url: str = "http://localhost:6333"
     qdrant_timeout_s: float = 60.0
+    # Empty for a local Qdrant, which listens without credentials; set for a
+    # managed one, which does not. SecretStr for the same reason the model keys
+    # are -- a Qdrant Cloud key is a bearer token for the whole cluster, and it
+    # would otherwise ride along in every settings repr.
+    qdrant_api_key: SecretStr = SecretStr("")
+    # Set this and the server is not used at all: qdrant-client runs the store
+    # in-process against a directory. It is the deployment mode for a single
+    # container that has to be self-contained -- a Hugging Face Space cannot
+    # run a second service, and a managed free cluster is worse than useless
+    # for a portfolio link because it suspends after a week of nobody visiting
+    # and is deleted after four.
+    #
+    # Not a drop-in for the server: the on-disk formats differ, so an embedded
+    # store is built from a server one by `filing pack`, not copied.
+    qdrant_path: Path | None = None
     # Measured, not chosen. On Gemini's free tier a batch of 32 chunks (~13.5k
     # tokens) is served in about two seconds; a batch of 100 (~42k tokens) is
     # answered 429 every time, and the retry costs more than the batch saved.

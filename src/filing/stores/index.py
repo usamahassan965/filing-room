@@ -164,7 +164,18 @@ class VectorIndex:
         if not self.dim:  # pragma: no cover - registry error
             raise ValueError(f"no dim registered for {self.backend} embed model {self.model}")
         self.name = collection_name(self.backend, self.model, self.dim, variant)
-        self.client = QdrantClient(url=cfg.qdrant_url, timeout=cfg.qdrant_timeout_s)
+        if cfg.qdrant_path is not None:
+            # Embedded: no server, no port, no credentials. Every method this
+            # class calls is implemented by QdrantLocal.
+            self.client = QdrantClient(path=str(cfg.qdrant_path))
+        else:
+            # ``api_key=None`` rather than "" -- qdrant-client sends the header
+            # whenever the value is not None, and a local Qdrant rejects an
+            # empty bearer token instead of ignoring it.
+            key = cfg.qdrant_api_key.get_secret_value() or None
+            self.client = QdrantClient(
+                url=cfg.qdrant_url, timeout=cfg.qdrant_timeout_s, api_key=key
+            )
 
     def exists(self) -> bool:
         return self.client.collection_exists(self.name)
@@ -471,4 +482,121 @@ def build_index(
         paced_seconds=paced,
         seconds=time.monotonic() - started,
         by_item=dict(sorted(by_item.items(), key=lambda kv: -kv[1])),
+    )
+
+
+# --------------------------------------------------------------------------
+# packing an embedded copy
+# --------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class PackReport:
+    """What `filing pack` moved."""
+
+    collection: str
+    points: int
+    dim: int
+    dest: str
+    seconds: float
+
+
+def pack_embedded(
+    cfg: Settings,
+    dest: Path,
+    *,
+    backend: str | None = None,
+    variant: str = "",
+    batch: int = 512,
+) -> PackReport:
+    """Copy the served collection out of a Qdrant server into an embedded store.
+
+    Not a file copy. The server keeps segments, a WAL and its own optimiser
+    state; the embedded client keeps a different format entirely, so the points
+    have to be read out and written back in. That is also why this is cheap to
+    do and safe to repeat -- it reads vectors and payloads, which is all the
+    search path needs, and leaves the segment overhead behind. The three
+    collections in a development Qdrant become the one that is actually served.
+
+    Measured, on the shipped corpus:
+
+    * 32,218 points, 384 dimensions, 334 s to move.
+    * 168 MB in one ``storage.sqlite``, against 1.3 GB for the server's
+      directory. Not the ~50 MB the raw float32 arithmetic suggests: local mode
+      pickles each point, so a 384-float vector costs about 3.5 KB rather than
+      1.5 KB. It is still an eighth of the server, which is the point.
+    * Top-10 results **identical** to the server's on every query tried, with
+      score differences at float32 epsilon (~2e-7), and filtered search agrees
+      too. Parity was worth checking rather than assuming: this swaps HNSW for
+      a brute-force scan, and a different neighbour list would have quietly
+      invalidated every number in the ablation.
+    * ~160-200 ms per search against the server's ~30-80 ms. Slower, and
+      irrelevant: the end-to-end run it sits inside is 2.4 s at its fastest.
+
+    qdrant-client warns above 20,000 points that local mode is not recommended.
+    The warning is about the scan, and the measurement above is what it costs
+    here.
+    """
+    from qdrant_client import QdrantClient, models
+
+    started = time.monotonic()
+    src = VectorIndex(cfg, backend=backend, variant=variant)
+    src.require()
+
+    dest.mkdir(parents=True, exist_ok=True)
+    # A stale embedded store would silently merge with the new points, so the
+    # destination collection is dropped rather than added to.
+    out = QdrantClient(path=str(dest))
+    try:
+        if out.collection_exists(src.name):
+            out.delete_collection(src.name)
+        out.create_collection(
+            src.name,
+            vectors_config=models.VectorParams(size=src.dim, distance=models.Distance.COSINE),
+        )
+        # No payload indexes here. The server builds them because it filters
+        # through an index; the embedded client evaluates the filter over the
+        # points it holds, so an index would buy nothing and qdrant-client warns
+        # once per field to say so. Filtering itself is unaffected -- which is
+        # the only property `VectorIndex.search` depends on.
+
+        moved = 0
+        offset = None
+        while True:
+            points, offset = src.client.scroll(
+                src.name,
+                limit=batch,
+                offset=offset,
+                with_payload=True,
+                with_vectors=True,
+            )
+            if not points:
+                break
+            out.upsert(
+                src.name,
+                points=[
+                    models.PointStruct(id=p.id, vector=p.vector, payload=p.payload)  # type: ignore[arg-type]
+                    for p in points
+                ],
+                wait=True,
+            )
+            moved += len(points)
+            if offset is None:
+                break
+    finally:
+        out.close()
+        # Both ends, not just the one being written. An embedded store takes
+        # an exclusive lock on its directory, and a client left open by a
+        # finished pack makes the *next* thing to open that directory fail
+        # with a message about concurrent access -- which is true, and
+        # describes this function rather than the caller. It has been working
+        # by refcount, which is not the same as working.
+        src.client.close()
+
+    return PackReport(
+        collection=src.name,
+        points=moved,
+        dim=src.dim,
+        dest=str(dest),
+        seconds=time.monotonic() - started,
     )

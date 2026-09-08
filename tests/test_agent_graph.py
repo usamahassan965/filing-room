@@ -20,7 +20,13 @@ from typing import Any
 import pytest
 
 from filing.agent.graph import build_graph, mermaid, run_question
-from filing.agent.nodes import Nodes, Tools, grade_evidence, heuristic_plan
+from filing.agent.nodes import (
+    PLAN_MAX_TOKENS,
+    Nodes,
+    Tools,
+    grade_evidence,
+    heuristic_plan,
+)
 from filing.agent.state import REPAIR_BUDGET, Evidence, Grade, SubQuestion
 from filing.eval.runner import REFUSAL
 
@@ -387,3 +393,29 @@ def test_the_grade_record_carries_what_the_repair_needs():
     grade = Grade(ok=False, reason="r", missing="company", detail={"top_score": 1.0})
     assert grade.missing == "company"
     assert grade.detail["top_score"] == 1.0
+
+
+def test_the_plan_call_leaves_a_reasoning_model_room_to_think():
+    """A regression guard on a number, because the bug it prevents is silent.
+
+    The plan node once asked for 256 output tokens, which is generous for eighty
+    tokens of JSON and far too little for a model that thinks first out of the
+    same budget. Measured on 2026-09-08 against the configured chat model, 256
+    truncated the reply seven times out of seven and 1024 did not truncate once.
+
+    Every one of those seven failures fell through to `heuristic_plan`, which
+    returns route="text" -- so the planner was dead and the system looked healthy.
+    Nothing here can catch that at runtime; the only place to catch it is the
+    budget, which is why the assertion is on the budget.
+    """
+    captured: dict[str, int] = {}
+
+    class Recording(StubBackend):
+        def chat(self, messages, *, role="chat", temperature=0.0, max_tokens=512, **kw):  # noqa: ANN001
+            captured.setdefault("max_tokens", max_tokens)
+            return super().chat(messages, role=role, temperature=temperature, **kw)
+
+    backend = Recording([plan_reply("text", ticker="TST")])
+    Nodes(Tools(backend=backend, retriever=FakeRetriever())).plan({"question": "q"})
+    assert captured["max_tokens"] == PLAN_MAX_TOKENS
+    assert PLAN_MAX_TOKENS >= 512

@@ -77,6 +77,14 @@ phoenix = [
 ui = [
     "streamlit>=1.40",
 ]
+# The deployed page. A second surface rather than a replacement: `ui` is what
+# runs locally against `filing serve`, and this is what runs on a host that
+# gives you one process and does not offer Streamlit. Both render the same
+# payload through `filing.render`, which is why there are two front ends and
+# not two opinions about what an abstention looks like.
+space = [
+    "gradio>=5.0",
+]
 
 [project.scripts]
 filing = "filing.cli:app"

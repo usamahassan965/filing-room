@@ -34,61 +34,21 @@ from typing import Any
 import httpx
 import streamlit as st
 
+# The judgements -- which outcomes exist, what each is called, what colour it
+# wears, what every figure status means -- live in :mod:`filing.render`, which
+# imports neither streamlit nor gradio. Two surfaces render this payload, and a
+# label or a colour that changed on one and not the other would be invisible
+# until someone opened both at once. The *layout* stays on each surface: a
+# metric row and an expander are better here than the HTML the other one needs.
+from filing.render import EXAMPLES, HOW, OUTCOMES, STATUS_COLOUR
+
 #: Overridable because ``filing serve`` takes a ``--port`` and the box running
 #: the page is not always the box running the model budget. The sidebar can
 #: still be pointed anywhere at runtime; this is only what it starts on.
 DEFAULT_API = os.environ.get("FILING_API", "http://127.0.0.1:8000")
 TIMEOUT = 300.0
 
-#: Questions that exercise different paths through the graph, so the first
-#: thing a visitor clicks is not necessarily the one branch that looks best.
-#: Every one of them names a company and a period this corpus actually holds:
-#: an example that abstains because the ticker was never ingested teaches the
-#: visitor nothing about the system and everything about the demo. The last one
-#: abstains on purpose -- it is the state the eval set rewards, and a surface
-#: that only ever showed answers would be hiding half the design.
-EXAMPLES = [
-    "What revenues did NVIDIA report for the fiscal year ended January 29, 2023?",
-    "Which costs does NVIDIA include in cost of revenue when it computes gross profit?",
-    "What did AMD point to in 2020 as evidence that it could sustain profitability "
-    "for purposes of its deferred tax assets?",
-    "What was the population of France in 1780?",
-]
-
-#: Outcome -> (badge, colour, what it means). The wording is deliberate: the
-#: abstention line says the system declined, not that it failed, because an
-#: abstention on an unanswerable question is the behaviour the eval set rewards
-#: and a UI that apologised for it would be lying about the design.
-OUTCOMES: dict[str, tuple[str, str, str]] = {
-    "answered": ("Answered", "#1a7f4b", "Every figure below was checked against the evidence."),
-    "abstained": (
-        "Abstained",
-        "#8a6d1f",
-        "The agent declined: the stores it searched did not carry the answer.",
-    ),
-    "blocked": (
-        "Blocked by the verifier",
-        "#a13d2d",
-        "The agent produced an answer and the verifier refused to ship it.",
-    ),
-    "error": ("Error", "#a13d2d", "The run did not finish. Nothing below is an answer."),
-}
-
-STATUS_COLOUR = {
-    "supported": "#1a7f4b",
-    "derived": "#2f6f9f",
-    "context": "#6b6b6b",
-    "unsupported": "#a13d2d",
-}
-
-HOW = {
-    "digits": "its digits are printed in the evidence",
-    "scaled": "a rescaled reading of it matches a value in the evidence",
-    "recomputed": "recomputed from two facts",
-    "question": "echoed from the question, not a claim of its own",
-    "period": "a period in the evidence, not a figure",
-    "": "nothing in the evidence carries it",
-}
+__all__ = ["EXAMPLES", "HOW", "OUTCOMES", "STATUS_COLOUR"]
 
 
 # --------------------------------------------------------------------------
