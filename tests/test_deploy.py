@@ -344,3 +344,35 @@ def test_every_large_file_in_the_payload_has_an_lfs_rule() -> None:
                 unmatched.append(f"{f.relative_to(root)} ({f.stat().st_size // 1024**2} MB)")
 
     assert not unmatched, "over 10 MB and not tracked by LFS: " + ", ".join(unmatched)
+
+
+def test_the_space_is_built_as_docker_and_runs_the_gradio_page() -> None:
+    """The frontmatter, the Dockerfile and the page have to agree on one story.
+
+    ``sdk: docker`` is not a preference. Hugging Face still runs CPU basic for
+    free, but creating a new Gradio *or* Docker Space on a free account answers
+    402 -- so the target is a Space that already exists, and the one available
+    is Docker. The risk that buys is a frontmatter and a Dockerfile that drift:
+    ``app_port`` naming a port nothing binds, or an image whose command starts
+    something other than the page. Both are silent until a build finishes and
+    the Space sits in a runtime error with a log nobody has read yet.
+    """
+    from filing.cli import SPACE_DOCKERFILE, SPACE_README
+
+    front = SPACE_README.format(body="")
+    assert "sdk: docker" in front
+    assert "app_port: 7860" in front
+    assert "sdk_version" not in front, "a docker Space has no SDK version to pin"
+
+    assert 'CMD ["python", "app.py"]' in SPACE_DOCKERFILE
+    assert "EXPOSE 7860" in SPACE_DOCKERFILE
+
+    # uid 1000 owns what it has to write to -- see the constant's comment.
+    assert "useradd -m -u 1000 user" in SPACE_DOCKERFILE
+    copies = [ln for ln in SPACE_DOCKERFILE.splitlines() if ln.startswith("COPY")]
+    assert copies, "the image has to carry the corpus; a Space has no mounts"
+    assert all("--chown=user" in ln for ln in copies), copies
+
+    # The CUDA wheels are the difference between this image and a 2.5 GB one.
+    assert "https://download.pytorch.org/whl/cpu" in SPACE_DOCKERFILE
+    assert "torchvision" in SPACE_DOCKERFILE

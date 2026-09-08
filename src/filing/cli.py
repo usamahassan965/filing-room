@@ -783,16 +783,29 @@ def pack(
 
 
 # The files a Space needs that a laptop does not: the frontmatter that
-# configures it, and the LFS rules without which a 168 MB SQLite file is
-# rejected at push time with a message about file size and no mention of LFS.
+# configures it, the Dockerfile that builds it, and the LFS rules without which
+# a 168 MB SQLite file is rejected at push time with a message about file size
+# and no mention of LFS.
+#
+# `sdk: docker` rather than `sdk: gradio`, and the reason is a policy rather
+# than a preference. Hugging Face still runs CPU basic for free -- 2 vCPU and
+# 16 GB, which is the whole reason this deploy is shaped the way it is -- but
+# `POST /api/repos/create` now answers 402 for a new Gradio *or* Docker Space
+# on a free account: "Static Spaces are free for everyone, but hosting Gradio
+# and Docker Spaces on free cpu-basic requires a PRO subscription." Compute
+# Spaces that already exist keep running. So the deploy target is an existing
+# Space, and the one available here was created as Docker. Reusing its SDK
+# means nothing re-enters a code path that checks the plan.
+#
+# The page is still `filing.gradio_app` and the container still runs `app.py`.
+# Docker here buys the image, not a different application.
 SPACE_README = """---
 title: Filing Room
 emoji: 🗃️
 colorFrom: gray
 colorTo: indigo
-sdk: gradio
-sdk_version: "{sdk_version}"
-app_file: app.py
+sdk: docker
+app_port: 7860
 pinned: false
 license: mit
 short_description: Agentic RAG over SEC filings, with the evidence attached.
@@ -831,14 +844,87 @@ SPACE_DATA = (
 SPACE_CODE = ("src", "pyproject.toml", "app.py", "requirements.txt", "results", "docs")
 
 
-def _gradio_version() -> str:
-    """The version installed here, so the Space builds what was tested."""
-    from importlib.metadata import PackageNotFoundError, version
+#: The build, which is the root `Dockerfile` with the two assumptions a laptop
+#: gets to make taken away from it.
+#:
+#: The laptop's image mounts the corpus and publishes an API on 8000 for a
+#: second container to read. A Space has neither: no volumes, one process, one
+#: port. So the data is copied in rather than mounted, and the command is
+#: `app.py` -- the Gradio page holding an `AskEngine` directly -- rather than
+#: `filing serve`.
+#:
+#: Three details are load-bearing and none of them are obvious from the root
+#: file:
+#:
+#: * The container runs as uid 1000. Every `COPY` therefore carries
+#:   `--chown=user`, because the embedded Qdrant store takes an exclusive lock
+#:   *inside* `data/qdrant` and a root-owned directory turns that into a
+#:   permission error tens of seconds after the page reports itself healthy.
+#:   A recursive `chown` afterwards would work and would also duplicate 266 MB
+#:   into a new layer, which is why the ownership is set on the way in.
+#: * The models are baked. A Space that downloads 227 MB of weights on its
+#:   first question is a Space whose first visitor sees a spinner, and one that
+#:   re-downloads them on every restart.
+#: * No BuildKit cache mounts. The root file uses them and they are worth it
+#:   there; here the builder is somebody else's and `--no-cache-dir` is the
+#:   portable spelling.
+SPACE_DOCKERFILE = """\
+# Built by `filing space`. The source of truth for the local image is the
+# Dockerfile at the repository root; this is that file minus the mount and
+# minus the second service. See SPACE_DOCKERFILE in src/filing/cli.py.
+FROM python:3.12-slim
 
-    try:
-        return version("gradio")
-    except PackageNotFoundError:  # pragma: no cover - `space` without the extra
-        return "5.0.0"
+ENV PYTHONUNBUFFERED=1 \\
+    PYTHONDONTWRITEBYTECODE=1 \\
+    QDRANT_PATH=data/qdrant \\
+    TRACING_ENABLED=false \\
+    HOME=/home/user \\
+    HF_HOME=/home/user/.cache/huggingface \\
+    PATH=/home/user/.local/bin:$PATH
+
+# git: docling asks for it at import time on some paths.
+RUN apt-get update \\
+ && apt-get install -y --no-install-recommends git \\
+ && rm -rf /var/lib/apt/lists/*
+
+# The app directory is created here, by root, and handed over. `WORKDIR` would
+# create it too, but whose it would then be depends on the builder's version,
+# and the answer matters: the embedded Qdrant store locks a file inside it.
+RUN useradd -m -u 1000 user \\
+ && mkdir -p /home/user/app \\
+ && chown user:user /home/user/app
+USER user
+WORKDIR /home/user/app
+
+# CPU torch first, from PyTorch's own index. A default `pip install torch`
+# resolves the CUDA build and drags ~2.5 GB of kernels onto a machine that has
+# no GPU and does not want one. torchvision has to come from the same index:
+# transformers imports `torchvision.io` eagerly, and a PyPI torchvision is
+# linked against the CUDA ABI, so its compiled `torchvision::nms` fails to
+# register and surfaces three imports later as an unrelated-looking
+# "Could not import module 'PreTrainedModel'".
+#
+# `--user` is spelled out rather than left to pip. Running as uid 1000 against
+# a root-owned site-packages, pip *usually* falls back to a user install on its
+# own, and a build that depends on "usually" fails at the twenty-minute mark.
+RUN pip install --user --no-cache-dir --index-url https://download.pytorch.org/whl/cpu \\
+    torch torchvision
+
+# Dependencies before source, so a code change does not reinstall docling.
+COPY --chown=user pyproject.toml README.md ./
+RUN mkdir -p src/filing && touch src/filing/__init__.py \\
+ && pip install --user --no-cache-dir -e ".[space]"
+
+# Baked, not fetched on first use.
+RUN python -c "from sentence_transformers import SentenceTransformer, CrossEncoder; \\
+SentenceTransformer('BAAI/bge-small-en-v1.5'); \\
+CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')"
+
+COPY --chown=user . .
+
+EXPOSE 7860
+CMD ["python", "app.py"]
+"""
 
 
 @app.command()
@@ -855,8 +941,8 @@ def space(
     A deploy that is a list of instructions is a deploy that is wrong by the
     third time somebody follows it, so this is the list, executed. It copies the
     code, the packaging, the served slice of the corpus and nothing else, writes
-    the frontmatter that configures the Space and the LFS rules that let the
-    corpus through, and prints what it made.
+    the frontmatter that configures the Space, the Dockerfile that builds it and
+    the LFS rules that let the corpus through, and prints what it made.
 
     It does not push. Pushing needs an account and a token, which are the
     operator's, and a command that silently published a corpus to the internet
@@ -896,21 +982,22 @@ def space(
         console.print(f"  {n / 1e6:8.1f} MB  {rel}")
 
     body = (root / "README.md").read_text(encoding="utf-8")
-    (dest / "README.md").write_text(
-        SPACE_README.format(sdk_version=_gradio_version(), body=body), encoding="utf-8"
-    )
+    (dest / "README.md").write_text(SPACE_README.format(body=body), encoding="utf-8")
     (dest / ".gitattributes").write_text(SPACE_GITATTRIBUTES, encoding="utf-8")
+    (dest / "Dockerfile").write_text(SPACE_DOCKERFILE, encoding="utf-8")
 
     console.print(f"\n  [bold]{total / 1e6:.0f} MB[/bold] in {dest}")
     if missing:
         console.print(f"  [yellow]not found, and skipped:[/yellow] {', '.join(missing)}")
         console.print("  [dim]`filing pack` writes data/qdrant; the rest come from ingest.[/dim]")
     console.print(
-        "\n  Create the Space on the site first: SDK gradio, hardware "
-        "[bold]CPU basic[/bold] -- free,\n"
-        "  2 vCPU and 16 GB, and this workload never touches a GPU.\n"
-        "  set [cyan]QDRANT_PATH=data/qdrant[/cyan] and [cyan]TRACING_ENABLED=false[/cyan] "
-        "as variables and [cyan]GEMINI_API_KEY[/cyan] as a secret, then from "
+        "\n  This pushes to a Space that already exists. A free account can no longer\n"
+        "  create a Gradio or Docker one -- the hardware is still free, the creation\n"
+        "  is what is gated -- so the target is an existing [bold]docker[/bold] Space on\n"
+        "  [bold]CPU basic[/bold]: 2 vCPU, 16 GB, and no GPU, which this never asks for.\n"
+        "\n  Set [cyan]GEMINI_API_KEY[/cyan] as a secret in the Space settings. "
+        "It is the one value\n"
+        "  this tool will not touch. Then from "
         f"[cyan]{dest}[/cyan]:\n"
         "    [cyan]git init -b main && git lfs install[/cyan]\n"
         "    [cyan]git remote add origin https://huggingface.co/spaces/<user>/<name>[/cyan]\n"

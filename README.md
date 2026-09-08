@@ -1117,14 +1117,25 @@ worth writing down because they are what the deploy is shaped around.
 |---|---|
 | GitHub Pages | static only; there is no process to run the graph in |
 | Streamlit Community Cloud | 1 GB of RAM per free app, against a measured 849 MiB for the API process alone |
-| Hugging Face **Docker** Spaces | now require a paid plan |
 | Qdrant Cloud free tier | suspends after a week idle, deleted after four — fatal for a link on a CV |
+| Hugging Face Spaces | CPU basic still *runs* free — 2 vCPU, 16 GB — but **creating** a new Gradio or Docker Space now needs a paid plan |
 
-What is left is a **Hugging Face Gradio Space on CPU basic**: free, unlimited in
-number, 2 vCPU and 16 GB of RAM. The RAM is the whole point — 16 GB against
-Streamlit's 1 GB is what makes the difference between a deploy and a deploy
-tuned to the edge of an OOM. That constraint set produced three changes rather
-than a wrapper.
+The target is a **Hugging Face Gradio Space on CPU basic**: 2 vCPU and 16 GB of
+RAM, and the RAM is the whole point — 16 GB against Streamlit's 1 GB is the
+difference between a deploy and a deploy tuned to the edge of an OOM.
+
+That last table row is a policy that moved under this gate, and it is worth
+being precise about because the obvious summary of it is wrong. The hardware is
+still free; `POST /api/repos/create` is what is gated, with a 402 that reads
+*"Static Spaces are free for everyone, but hosting Gradio and Docker Spaces on
+free cpu-basic requires a PRO subscription."* Compute Spaces that already exist
+keep running on the free tier. So the constraint is not "this cannot be hosted
+for nothing" — it is that a free account gets the Spaces it already had, and the
+deploy has to fit into one of them rather than claim a new one.
+
+None of that changes the design, because the design was shaped by the 16 GB and
+the single process, both of which still hold. Three changes rather than a
+wrapper: 
 
 **The server had to go.** A Space runs one process, so `filing pack` reads every
 point out of Qdrant and writes it back into an embedded store — `QdrantClient(path=…)`,
