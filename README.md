@@ -998,6 +998,7 @@ in six months.
 | the demo | [`docs/gate-demo.md`](docs/gate-demo.md) | the gate going red on an injected regression |
 | the image | [`Dockerfile`](Dockerfile), `docker compose --profile app up -d` | the API and the page, from a clone |
 | the picture | `scripts/render_trace.py` → [`docs/trace.svg`](docs/trace.svg) | a trace drawn from the trace, not screenshotted |
+| the space | `filing pack` + `filing space` → [`app.py`](app.py), [`src/filing/gradio_app.py`](src/filing/gradio_app.py) | the whole system in 266 MB, one process, no Qdrant server |
 
 ### The cache destroys its own cost measurement
 
@@ -1107,25 +1108,119 @@ python -m filing.eval run --config agent         # the run itself, ~30 min, 290 
 `--time` pass is the one that needs a key, Qdrant and about ten minutes, and it
 is the only source of the three cost columns.
 
+### Putting it on the internet, for nothing
+
+Every free host rejects this project for a different reason, and the reasons are
+worth writing down because they are what the deploy is shaped around.
+
+| host | why not |
+|---|---|
+| GitHub Pages | static only; there is no process to run the graph in |
+| Streamlit Community Cloud | 1 GB of RAM per free app, against a measured 849 MiB for the API process alone |
+| Hugging Face **Docker** Spaces | now require a paid plan |
+| Qdrant Cloud free tier | suspends after a week idle, deleted after four — fatal for a link on a CV |
+
+What is left is a **Hugging Face ZeroGPU Gradio Space**: two of them per free
+personal account, gated on a verified email and an account older than 30 days.
+That constraint set produced three changes rather than a wrapper.
+
+**The server had to go.** A Space runs one process, so `filing pack` reads every
+point out of Qdrant and writes it back into an embedded store — `QdrantClient(path=…)`,
+no port, no credentials. The on-disk formats differ, so this is a migration and
+not a copy. What it costs, measured rather than assumed:
+
+| | server | embedded |
+|---|---|---|
+| size | 1.3 GB | 168 MB (local mode pickles each point, so 384 floats cost ~3.5 KB, not 1.5) |
+| top-10 results | — | identical on every query tried |
+| score delta | — | ~2e-7, which is float32 epsilon |
+| filtered search | works | works, by scanning; local mode has no payload indexes |
+| latency | 30–80 ms | 160–200 ms |
+
+That last row is the real price and it is the one worth checking: embedded mode
+swaps HNSW for a brute-force scan, and a different neighbour list would have
+quietly invalidated every retrieval number in the ablation. It did not.
+
+**The page needed a second surface.** [`src/filing/render.py`](src/filing/render.py)
+holds the judgements — which outcomes exist, what each is called, what colour a
+figure's status wears, what every match method means — and imports neither
+Streamlit nor Gradio. Both pages read from it, and `tests/test_render.py` asserts
+*identity* rather than equality, because two copies that happen to agree today
+are exactly the state the module exists to prevent. The layout stays surface-native:
+`st.metric` and `st.expander` are better than the HTML the other one needs.
+One obligation is new — `st.markdown` escapes by default and the Streamlit page
+got that for free, whereas a string built in `render.py` reaches the browser as
+written, and evidence bodies are spans of SEC filings that genuinely contain
+`<` and `&`.
+
+**The GPU is deliberately unused.** ZeroGPU gives 5 free GPU-minutes a day, which
+this spends in about twenty questions. A visitor arriving on minute six should
+get a slower answer, not an error, so the embedder and the reranker stay on CPU.
+
+Then one command assembles the upload:
+
+```bash
+filing pack --dest data/qdrant     # the embedded store, ~6 min
+filing space --dest build/space    # 266 MB: code, packaging, and the served slice
+```
+
+266 MB of the 1.2 GB data directory. `data/raw` is 1.1 GB of filing HTML with two
+call sites, neither of which runs after ingestion; `data/chunks_naive` belongs to
+one ablation row. Carrying them would be five times the size for no behaviour.
+`filing space` also writes the Space frontmatter and the LFS rules — without which
+a 168 MB SQLite file is rejected at push time with a message about the size limit
+and no mention of LFS — and then stops. It does not push. Pushing needs an account
+and a token, and a command that silently published a corpus to the internet on
+someone's behalf would be a worse tool than one that stops there.
+
+The assembled directory has been run the way the Space runs it — no Qdrant server,
+no Phoenix, embedded store only — and that run is what found the bug below.
+
+### The planner had quietly stopped planning
+
+The plan node asked for 256 output tokens. That is generous for the eighty tokens
+of JSON it wants back, and far too little for a model that thinks before it writes
+out of the same budget. The reply came back as an opening fence, a route, and half
+a key: valid JSON up to the cut and worthless after it.
+
+Nothing broke. `heuristic_plan` exists precisely so a malformed reply costs one
+question's accuracy instead of the run — it reads a ticker and a date out of the
+question with regexes and returns `route="text"`. So a dead planner and a working
+planner that always chooses text are the same thing from outside: no exception, no
+missing route, and the only trace a `why` field nobody reads. Measured across seven
+eval questions, 256 failed to parse **seven times out of seven**; 1024 parsed seven
+out of seven.
+
+With the budget raised, `What did ABBV report for Revenues for the fiscal year
+ended 2018-12-31?` routes to `sql` and answers `32,753,000,000` with a citation,
+where before it took the text branch and abstained. `What was the population of
+France in 1780?` is now refused *by the model*, with a reason — "SEC filings do not
+contain historical population data for France" — rather than by the regex fallback.
+
+The recorded ablation is unaffected: those runs were served from the response cache
+and their replies predate the truncation, which is visible in the results as
+`llm_calls: 0` and in a `router_accuracy` of 0.833 that includes model-chosen
+`refuse` routes the heuristic cannot produce. The numbers describe a working
+planner and still stand. What was broken was live traffic, and it was broken
+silently, which is the part worth keeping the comment for.
+
 ### What this gate did not deliver
 
 Two of the plan's own criteria are not met, and neither is met by something that
 looks like it.
 
-**There is no public URL.** Deploying means creating an account on a host and
-attaching a payment method to it, which is the user's to do, not mine. The plan
-anticipated this — *"if hosted deployment stalls on cost or cold starts, ship a
-Docker Compose one-liner plus a recorded walkthrough"* — and the compose profile
-above is that bail-out. It is worth saying that the bail-out is not obviously the
-worse deal here: a free-tier container that cold-starts for forty seconds and
-then answers with an empty index, because the 1.2 GB corpus is not in the image,
-would be a URL that demonstrates nothing.
+**There is no public URL.** The deploy is built, assembled and tested; what is
+missing is an account, which is the user's to create and not mine. The plan
+anticipated a stall here — *"if hosted deployment stalls on cost or cold starts,
+ship a Docker Compose one-liner plus a recorded walkthrough"* — and the compose
+profile above is that bail-out, but the free path above is a better deal than the
+bail-out and it is one `git push` from live.
 
 **There is no recorded walkthrough.** I cannot record video. What stands in its
-place is the trace image above, `docs/trace_example.json` and
-`docs/trace_repair.json` (two complete span trees, one of them a repair loop),
-and the four-outcome tour in the M7 section — which is the same material a
-three-minute recording would have narrated, minus the narration.
+place is the trace image above, `docs/trace_example.json` and `docs/trace_repair.json`
+(two complete span trees, one of them a repair loop), and the four-outcome tour in
+the M7 section — which is the same material a three-minute recording would have
+narrated, minus the narration.
 
 ---
 
