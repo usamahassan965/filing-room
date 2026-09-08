@@ -1254,11 +1254,11 @@ wired to the nine outputs streams. Restoring either bug fails its test.
 
 ### What this gate did not deliver
 
-**There is no recorded walkthrough.** I cannot record video. What stands in its
-place is the trace image above, `docs/trace_example.json` and `docs/trace_repair.json`
-(two complete span trees, one of them a repair loop), and the four-outcome tour in
-the M7 section — which is the same material a three-minute recording would have
-narrated, minus the narration.
+**There is no recorded walkthrough.** What stands in its place is the trace image
+above, `docs/trace_example.json` and `docs/trace_repair.json` (two complete span
+trees, one of them a repair loop), and the four-outcome tour in the M7 section —
+which is the same material a three-minute recording would have narrated, minus
+the narration.
 
 ---
 
