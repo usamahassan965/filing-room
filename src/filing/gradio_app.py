@@ -239,7 +239,15 @@ def build(engine: Any = None) -> gr.Blocks:
         outs = [status, banner, answer, claims, verification, path, evidence, footer, raw]
 
         def handler(q: str) -> Iterator[tuple[Any, ...]]:
-            return run(engine, q)
+            # ``yield from``, not ``return``. Gradio decides whether an event
+            # streams by asking ``inspect.isgeneratorfunction`` of the function
+            # it was handed, and a plain function that returns a generator is
+            # not one. Written with ``return`` this passes every test of ``run``
+            # -- ``run`` is still a generator, still yields nine values -- and
+            # then fails in the browser only, with Gradio reporting one output
+            # value where nine were needed and naming the generator object as
+            # the value. The keyword is the wiring.
+            yield from run(engine, q)
 
         go.click(handler, inputs=[box], outputs=outs, concurrency_limit=CONCURRENCY)
         box.submit(handler, inputs=[box], outputs=outs, concurrency_limit=CONCURRENCY)

@@ -419,3 +419,31 @@ def test_launch_is_called_with_arguments_this_gradio_still_has(monkeypatch) -> N
     assert captured, "main() never reached launch()"
     # `self` is already bound on a real Blocks; bind_partial checks the rest.
     inspect.signature(gr.Blocks.launch).bind_partial(**captured)
+
+
+def test_what_is_wired_to_the_button_is_a_generator_function() -> None:
+    """The test that was missing when a streaming page shipped that did not stream.
+
+    ``run`` was a generator and every test above proves it. What ``.click`` was
+    handed was a plain function that *returned* that generator, and Gradio
+    decides whether to stream by asking ``inspect.isgeneratorfunction`` of the
+    function itself -- so it passed the generator object through as a single
+    output value and the page failed on its first question with "needed: 9,
+    returned: 1". Testing ``run`` could never have caught it. This tests the
+    wiring: whatever is registered against the nine outputs must stream.
+    """
+    import inspect
+
+    from filing import gradio_app
+
+    width = len(next(iter(gradio_app.run(FakeEngine(ANSWERED), "q"))))
+    page = gradio_app.build(FakeEngine(ANSWERED))
+
+    registered = page.fns.values() if isinstance(page.fns, dict) else page.fns
+    wired = [f for f in registered if len(f.outputs) == width]
+    assert len(wired) == 2, "the button and the textbox both answer questions"
+    for block_fn in wired:
+        assert inspect.isgeneratorfunction(block_fn.fn), (
+            f"{block_fn.fn.__name__} is wired to {width} outputs but is not a "
+            "generator function, so Gradio will not stream it"
+        )
