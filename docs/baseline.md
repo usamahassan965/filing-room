@@ -50,13 +50,20 @@ are different claims and a table that prints 0.0% for both is lying about one.
 
 ```
 | slice        |  n | exact | router | cite ok | cite gold | abstain |
-| numeric      | 80 |  7.5% |     -- |  100.0% |     22.2% |      -- |
-| narrative    | 60 |    -- |  51.7% |  100.0% |     12.9% |      -- |
-| unanswerable | 10 |    -- | 100.0% |      -- |        -- |  100.0% |
-| overall      |150 |  7.5% |  27.3% |  100.0% |     13.9% |  100.0% |
+| numeric      | 80 |  7.5% |   0.0% |  100.0% |     22.2% |      -- |
+| narrative    | 60 |    -- | 100.0% |  100.0% |     12.9% |      -- |
+| unanswerable | 10 |    -- |     -- |      -- |        -- |  100.0% |
+| overall      |150 |  7.5% |  42.9% |  100.0% |     13.9% |  100.0% |
 ```
 
-Three readings, in descending order of how much they should worry you.
+Three readings, in descending order of how much they should worry you — after
+one note on the column that is not a reading at all. **The router column here is
+arithmetic, not performance.** This system has no router; it sends every question
+to the text store. So it is right on all 60 narrative questions and wrong on all
+80 numeric ones, and 42.9% is 60/140 — unanswerable questions are outside the
+denominator, because there is no store to pick for a question with no answer and
+`abstain` already reports what happened to them. Read that row as the floor a
+router has to clear to be worth building, not as something this baseline earned.
 
 **The system always cites, and rarely cites right.** `cite ok` is 100% and
 `cite gold` is 13.9%: every answer resolves to a real chunk in the store, and

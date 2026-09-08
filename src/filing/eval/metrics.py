@@ -34,9 +34,25 @@ which questions each metric answers and which it does not:
     ``min(len(spans), k)`` hits at the top.
 
 ``router_accuracy``
-    Did the system send a numeric question to SQL, a narrative one to text, and
-    an unanswerable one to a refusal. The single number that says whether the
-    agentic part is doing anything.
+    Did the planner send a numeric question to SQL and a narrative one to text.
+    Answerable questions only, and it is the *planner's* choice, not where the
+    run ended up.
+
+    It used to be both, and the difference is 0.833 against 0.967. A results
+    file records ``route="refuse"`` for any run that abstained, overwriting the
+    store the planner actually chose -- so a narrative question that was routed
+    to text, retrieved five weak chunks and honestly declined to answer was
+    charged to the router, which had done its job. Twenty-three of the agent's
+    twenty-five "misroutes" were that. What they measure is narrative retrieval,
+    and ``hit@k`` already measures it.
+
+    The planned route is recovered rather than re-run: ``sql`` and ``graph``
+    carry no character spans (see ``SPANLESS_ROUTES``), so a refused run that
+    retrieved span-carrying chunks was routed to text and nothing else. A
+    refusal with no evidence at all is unrecoverable, counted as a miss, and
+    counted again in ``router_recovered`` so the number carries its own
+    footnote. Unanswerable questions are not in the denominator: there is no
+    store to pick, and ``abstention`` already says whether they were refused.
 
 ``abstention``
     Unanswerable only. The share of the ten that were refused. Reported beside
@@ -267,6 +283,15 @@ class SliceScore:
     recall: dict[int, float] = field(default_factory=dict)
     ndcg: dict[int, float] = field(default_factory=dict)
     router_accuracy: float | None = None
+    # The denominator, beside the number, for the reason `retrieval_n` is:
+    # router accuracy is scored over answerable questions only. `router_n`
+    # counts them; `router_recovered` counts how many had their planned route
+    # inferred from the evidence because an abstention had overwritten it; and
+    # `router_unrecoverable` counts the ones where even that was impossible,
+    # which are scored as misses.
+    router_n: int = 0
+    router_recovered: int = 0
+    router_unrecoverable: int = 0
     abstention: float | None = None
     over_answered: float | None = None
     citations_made: int = 0
@@ -316,6 +341,27 @@ class Scorecard:
 SPANLESS_ROUTES = frozenset({"sql", "graph"})
 
 
+def planned_route(o: Outcome) -> str | None:
+    """Which store the planner chose, or ``None`` when the record cannot say.
+
+    ``Outcome.route`` is the terminal state: the runner overwrites it with
+    ``"refuse"`` whenever a run abstained, which is the right record of what
+    happened and the wrong one for scoring a router. This reads the planner's
+    choice back out of the evidence, using the property that makes
+    ``SPANLESS_ROUTES`` necessary in the first place -- ``text`` is the only
+    route whose evidence carries character offsets.
+
+    The ambiguity is real and is not smoothed over: a run that refused without
+    retrieving anything could have been routed to SQL, or refused outright, and
+    this returns ``None`` rather than guess.
+    """
+    if o.route in ("sql", "text", "graph"):
+        return o.route
+    if o.route == "refuse" and any(c.char_start is not None for c in o.retrieved):
+        return "text"
+    return None
+
+
 def _mean(xs: list[float]) -> float:
     return sum(xs) / len(xs) if xs else 0.0
 
@@ -352,7 +398,18 @@ def _score_group(
         s.llm_calls += o.llm_calls
         s.seconds += o.seconds
         if generated:
-            routed.append(float(o.route == q.route))
+            if q.answerable:
+                got = planned_route(o)
+                if o.route == "refuse":
+                    # The record said `refuse` and the planner said something
+                    # else. Which of the two counters this lands in is the
+                    # difference between "inferred" and "unknowable", and they
+                    # are not the same admission.
+                    if got is None:
+                        s.router_unrecoverable += 1
+                    else:
+                        s.router_recovered += 1
+                routed.append(float(got == q.route))
             if q.slice == "numeric":
                 em.append(float(not o.refused and numeric_match(o.answer, q.value or 0.0)))
             if q.slice == "unanswerable":
@@ -399,6 +456,7 @@ def _score_group(
 
     if routed:
         s.router_accuracy = _mean(routed)
+        s.router_n = len(routed)
     if em:
         s.exact_match = _mean(em)
     if abstained:
@@ -473,13 +531,14 @@ def to_markdown(card: Scorecard, *, title: str = "") -> str:
     lines: list[str] = []
     if title:
         lines += [f"### {title}", ""]
-    head = ["slice", "n", "exact", "router", "ret n"]
+    head = ["slice", "n", "exact", "router", "rtr n", "ret n"]
     head += [f"hit@{k}" for k in KS] + [f"ndcg@{k}" for k in KS]
     head += ["abstain", "cite ok", "cite gold", "LLM calls"]
     lines.append("| " + " | ".join(head) + " |")
     lines.append("|" + "|".join(["---"] * len(head)) + "|")
     for r in rows:
         cells = [r.name, str(r.n), _pct(r.exact_match), _pct(r.router_accuracy)]
+        cells += [str(r.router_n) if r.router_n else "--"]
         cells += [str(r.retrieval_n) if r.retrieval_n else "--"]
         cells += [_pct(r.hit_rate.get(k)) if r.hit_rate else "--" for k in KS]
         cells += [f"{r.ndcg[k]:.3f}" if k in r.ndcg else "--" for k in KS]
