@@ -17,6 +17,10 @@ rather than merely bad.
 Filing Room is what it took to get that to **98.8%**, and — the harder half — to
 be able to show the work.
 
+**Try it: [usamahassan965-findociq-demo.hf.space](https://usamahassan965-findociq-demo.hf.space/)**
+— running on free CPU hardware, with the agent's plan, its repairs, its evidence
+and its verifier's ruling printed beside every answer.
+
 ## What each stage actually buys
 
 Six configurations, one question set, one command to rebuild
@@ -1221,17 +1225,34 @@ and their replies predate the truncation, which is visible in the results as
 planner and still stand. What was broken was live traffic, and it was broken
 silently, which is the part worth keeping the comment for.
 
+### The URL, and what it cost to get one
+
+**Live: [usamahassan965-findociq-demo.hf.space](https://usamahassan965-findociq-demo.hf.space/)**
+— the page above, on 2 vCPU and 16 GB, answering from the embedded store. Ask it
+for a figure and it routes to `sql` and returns in about three seconds; ask it
+something no filing contains and it abstains in about one and a half.
+
+Two things went wrong between "assembled and tested" and "live", and both are
+worth naming, because they are two instances of one bug.
+
+The first: Gradio 6 removed `launch(show_api=...)`. The call sat inside `main()`,
+the one function the deploy runs, marked `# pragma: no cover` — so no test had
+ever called it, and the argument list it hands a dependency that moves was
+unverified by construction.
+
+The second: every question failed with *"needed: 9, returned: 1"*. `run` is a
+generator and five tests said so. What was wired to the button was a plain
+function that *returned* it, and Gradio asks `inspect.isgeneratorfunction` of the
+function it was handed, not of what comes back. All five passed against a page that
+could not answer anything.
+
+Both bugs live in the seam between this code and the framework, and neither is
+reachable from inside. Both now have a test on the framework's side of the seam:
+one binds the captured `launch` kwargs against `inspect.signature(gr.Blocks.launch)`,
+the other reads the events off the built `Blocks` and asserts that whatever is
+wired to the nine outputs streams. Restoring either bug fails its test.
+
 ### What this gate did not deliver
-
-Two of the plan's own criteria are not met, and neither is met by something that
-looks like it.
-
-**There is no public URL.** The deploy is built, assembled and tested; what is
-missing is an account, which is the user's to create and not mine. The plan
-anticipated a stall here — *"if hosted deployment stalls on cost or cold starts,
-ship a Docker Compose one-liner plus a recorded walkthrough"* — and the compose
-profile above is that bail-out, but the free path above is a better deal than the
-bail-out and it is one `git push` from live.
 
 **There is no recorded walkthrough.** I cannot record video. What stands in its
 place is the trace image above, `docs/trace_example.json` and `docs/trace_repair.json`
