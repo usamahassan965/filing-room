@@ -422,3 +422,70 @@ def test_a_pre_m6_outcome_keeps_its_exact_shape():
     """Results files written before the verifier existed must not gain keys."""
     d = Outcome(qid="num-001", answer="a").to_json()
     assert "verdict" not in d and "blocked" not in d
+
+
+# ------------------------------------------------------- the router's own work
+
+
+def test_an_honest_abstention_is_not_charged_to_the_router():
+    """The bug that cost the agent 0.134 of router accuracy it had earned.
+
+    A results file records ``route="refuse"`` for anything that abstained, which
+    overwrites the store the planner picked. Scored naively, a narrative
+    question routed correctly to text, retrieved from text, and then declined
+    because the evidence was weak reads as a routing error -- and twenty-three
+    of the agent's twenty-five did. That is a retrieval result wearing a
+    router's name.
+    """
+    card = metrics.score(
+        [q_narrative(ONE_SPAN)],
+        [
+            Outcome(
+                qid="nar-001",
+                route="refuse",
+                answer="INSUFFICIENT EVIDENCE",
+                refused=True,
+                retrieved=(chunk(),),
+            )
+        ],
+    )
+    assert card.overall.router_accuracy == 1.0
+    assert card.overall.router_recovered == 1, "the route was inferred, and says so"
+    assert card.overall.router_unrecoverable == 0
+
+
+def test_a_refusal_with_no_evidence_is_a_miss_and_admits_it():
+    """``sql`` and ``graph`` leave no spans, so a refusal with nothing retrieved
+    could have been routed anywhere. It is scored against the router rather than
+    guessed in its favour, and counted where a reader can see the doubt."""
+    card = metrics.score(
+        [q_narrative(ONE_SPAN)],
+        [Outcome(qid="nar-001", route="refuse", answer="INSUFFICIENT EVIDENCE", refused=True)],
+    )
+    assert card.overall.router_accuracy == 0.0
+    assert card.overall.router_unrecoverable == 1
+    assert card.overall.router_recovered == 0
+
+
+def test_unanswerable_questions_are_not_in_the_router_denominator():
+    """There is no store to pick for a question no filing can answer, and
+    ``abstention`` already measures what happens to them. Counting them here
+    made one number mean two things."""
+    card = metrics.score(
+        [q_numeric(), q_unanswerable()],
+        [
+            Outcome(qid="num-001", route="sql", answer="$1,000"),
+            Outcome(qid="una-001", route="refuse", answer="INSUFFICIENT EVIDENCE", refused=True),
+        ],
+    )
+    assert card.overall.router_n == 1, "the numeric one, and not the unanswerable one"
+    assert card.overall.router_accuracy == 1.0
+    assert card.slices["unanswerable"].router_accuracy is None
+    assert card.slices["unanswerable"].abstention == 1.0
+
+
+def test_the_planned_route_is_read_from_the_evidence_not_the_verdict():
+    o = Outcome(qid="x", route="refuse", refused=True, retrieved=(chunk(),))
+    assert metrics.planned_route(o) == "text"
+    assert metrics.planned_route(Outcome(qid="x", route="refuse", refused=True)) is None
+    assert metrics.planned_route(Outcome(qid="x", route="sql")) == "sql"

@@ -42,7 +42,7 @@ class ModelSpec:
     dim: int | None = None
     asymmetric: bool = False  # needs input_type=query|passage
     # Rate limits are per-model, not per-provider: on Gemini's free tier the
-    # chat model allows ~10 rpm while embeddings allow ~100. One shared limiter
+    # chat model allows 5 rpm while embeddings allow ~100. One shared limiter
     # would throttle indexing to the speed of the slowest model in the registry.
     rpm: int | None = None
     local: bool = False  # runs on this machine; no key, no quota, no network
@@ -54,10 +54,12 @@ class ModelSpec:
 
 
 MODEL_REGISTRY: dict[Backend, dict[str, ModelSpec]] = {
-    # Gemini free tier. The rpm figures are the documented free-tier limits at
-    # the time of writing; they move, so they are overridable per-model here and
-    # globally via RATE_LIMIT_RPM. Daily caps (~250 requests for the big chat
-    # model) bind harder than rpm on an evaluation sweep -- budget accordingly.
+    # Gemini free tier. The rpm figures are what the endpoint actually enforces,
+    # which is not always what the docs say -- the chat model sat at 10 here for
+    # a month on the documented figure and 429s citing 5. They move, so they are
+    # overridable per-model here and globally via RATE_LIMIT_RPM. Daily caps
+    # (~250 requests for the big chat model) bind harder than rpm on an
+    # evaluation sweep -- budget accordingly.
     "gemini": {
         # Verified live against a fresh key on 2026-09-05. The 2.x IDs that were
         # here first are still returned by ListModels but 404 for new keys with
@@ -70,7 +72,10 @@ MODEL_REGISTRY: dict[Backend, dict[str, ModelSpec]] = {
         "chat": ModelSpec(
             id="gemini-3.5-flash",
             alternates=("gemini-3.6-flash", "gemini-3-flash-preview"),
-            rpm=10,
+            # 5, not the documented 10: a live key 429s with "limit: 5" well
+            # before the tenth call in a minute. A limiter set above the real
+            # ceiling is worse than none -- it converts a wait into an error.
+            rpm=5,
             note="synthesis and grading -- the calls whose quality shows up in eval",
         ),
         "chat_fast": ModelSpec(

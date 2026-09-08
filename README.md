@@ -76,7 +76,7 @@ below.
 | **M2** the numbers | 514,649 facts, 25 metrics, 0 duplicate keys | `filing numbers` — 5/5 |
 | **M3** the text | 58,844 chunks, 32,218 indexed, 2,986 graph edges | `filing text` — 6/6 |
 | **M4** the yardstick | 150 frozen questions, 260 gold spans, naive index of 48,934 chunks | `filing.eval run --config baseline` — 150/150, 4 live calls |
-| **M5** the agent | router + 3 stores + grader + repair(≤2), 98.8% numeric exact, router 0.833 | `filing.eval run --config agent` — 150/150, 0 errors, 290 calls |
+| **M5** the agent | router + 3 stores + grader + repair(≤2), 98.8% numeric exact, router 0.964 | `filing.eval run --config agent` — 150/150, 0 errors, 290 calls |
 | **M6** the guard | numeric verifier, citation resolver, abstention guard, 4-tag taxonomy | `filing.eval run --config agent-guarded` — 0 hallucinated / 133, 0 blocked |
 | **M7** the surface | `/ask` returning the evidence, SSE stages, a page that renders the payload | `filing serve` — plan, routing, evidence, verification and trace, all four outcomes |
 | **M8** the evidence pack | the ladder above, a rescore gate, an image, a compose file | `filing.eval gate` — 29 checks over 6 configs, offline, ~3s |
@@ -348,10 +348,17 @@ improvement gets argued about instead of attributed.
 
 | slice | n | exact | router | cite ok | cite gold | abstain |
 |---|---|---|---|---|---|---|
-| numeric | 80 | 7.5% | — | 100% | 22.2% | — |
-| narrative | 60 | — | 51.7% | 100% | 12.9% | — |
-| unanswerable | 10 | — | 100% | — | — | **100%** |
-| overall | 150 | 7.5% | 27.3% | 100% | 13.9% | 100% |
+| numeric | 80 | 7.5% | 0.0% | 100% | 22.2% | — |
+| narrative | 60 | — | 100% | 100% | 12.9% | — |
+| unanswerable | 10 | — | — | — | — | **100%** |
+| overall | 150 | 7.5% | 42.9% | 100% | 13.9% | 100% |
+
+The router column is the shape of the baseline rather than a score it earned.
+It has no router: every question goes to the text store, so it is right on all
+60 narrative questions and wrong on all 80 numeric ones, and 42.9% is 60/140.
+Unanswerable questions are not in the denominator — there is no store to pick
+for a question with no answer, and `abstain` already reports what happened to
+them. That row is the floor a router has to beat to be worth having.
 
 **It always cites, and it rarely cites right.** `cite ok` 100% against `cite
 gold` 13.9%: every answer resolves to a real chunk, and seven times in eight it
@@ -455,12 +462,15 @@ than asserted: every retrieval metric below is *byte-identical* to `baseline`.
 
 | config | generator | exact (num) | router | abstain | cite ok | cite gold | wall |
 |---|---|---|---|---|---|---|---|
-| `baseline` | `gemini-3.5-flash-lite` | 7.5% | 27.3% | 100% | 100% | **13.9%** | 0.9 min |
-| `baseline-cohere` | `command-a-03-2025` | **8.8%** | **31.3%** | 100% | 100% | 9.5% | 8.9 min |
+| `baseline` | `gemini-3.5-flash-lite` | 7.5% | 42.9% | 100% | 100% | **13.9%** | 0.9 min |
+| `baseline-cohere` | `command-a-03-2025` | **8.8%** | 42.9% | 100% | 100% | 9.5% | 8.9 min |
 
 A bigger model is a better reader and a worse citer: `command-a` gains 1.3 points
-of exact match and 4 of routing over flash-lite, and gives back 4.4 points of
-citation groundedness. Both refuse all ten unanswerables. Neither changes the
+of exact match over flash-lite and gives back 4.4 points of citation
+groundedness. Routing is identical to the decimal, and has to be — neither
+config routes anything, so both score the same 60/140, and the 4-point spread
+this table used to report was an artifact of the two models abstaining on
+different questions rather than of one of them routing better. Both refuse all ten unanswerables. Neither changes the
 picture M4 established — the retriever is the ceiling, and no generator argues
 its way past a passage it was never handed.
 
@@ -498,16 +508,18 @@ it up.
 
 | on the same 72 questions | exact (12 numeric) | router | cite ok | cite gold |
 |---|---|---|---|---|
-| `gemini-3.5-flash-lite` | 33.3% | 43.1% | 100% | 14.7% |
-| `command-a-03-2025` | 33.3% | **51.4%** | 100% | 9.9% |
-| `openai/gpt-oss-120b` | 33.3% | 48.6% | 100% | **15.6%** |
+| `gemini-3.5-flash-lite` | 33.3% | 83.3% | 100% | 14.7% |
+| `command-a-03-2025` | 33.3% | 83.3% | 100% | 9.9% |
+| `openai/gpt-oss-120b` | 33.3% | 83.3% | 100% | **15.6%** |
 
 **All three get the same four of twelve right.** Not similar rates — the same
 questions, and every retrieval column identical to the last digit across all
-three. A 111-billion-parameter open model, a frontier-adjacent commercial one
-and Google's cheapest tier are separated by 8 points of routing and 6 of
-citation groundedness, and by nothing at all on the metric the gate actually
-calls correctness. That is the M4 finding arriving from a second direction:
+three. Routing is identical for a structural reason: none of these configs has
+a router, all three send everything to the text store, and 83.3% is the 60
+narrative questions out of 72. So a 111-billion-parameter open model, a
+frontier-adjacent commercial one and Google's cheapest tier are separated by 6
+points of citation groundedness and by nothing at all on the metric the gate
+actually calls correctness. That is the M4 finding arriving from a second direction:
 when the evidence is not in the top 5, no generator reasons its way to it, and
 when it is, all of them read it. Swapping the model is not the lever. This is
 also why the bake-off was worth an afternoon and is not worth a week — the
@@ -600,7 +612,7 @@ restated, so one rule scores both systems.
 | narrative hit@5 | 15.0% | **40.7%** | +25.7 |
 | narrative cite-gold | 12.9% | **28.0%** | +15.1 |
 | unanswerable abstention | 100% | 100% | — |
-| overall router accuracy | 27.3% | 83.3% | +56.0 |
+| overall router accuracy | 42.9% | **96.4%** | +53.5 |
 | LLM calls | 4 | 290 | |
 
 That 98.8% read 97.5% until M6's verifier found a sign bug in the scorer, not
@@ -651,15 +663,39 @@ answers cite the accession the gold value came from. That is circular in the
 same way, but it does rule out the failure it was aimed at — returning a real
 number from the wrong filing.
 
-**The router gate is missed: 0.833 against a bar of 0.85.** Not rounded up and
-not sliced to a friendlier subset. The numeric slice is 98.8% and the
-unanswerable slice is 100%; the narrative slice at 60.0% is what holds the total
-under. Most of that 60% is not misrouting — the harness maps any
-`INSUFFICIENT EVIDENCE` answer to `route="refuse"`, so a question routed
-correctly to the text store, retrieved for, and then abstained on because the
-evidence was thin is scored as a routing failure. The baseline is scored by
-exactly the same rule, so the comparison is symmetric, but the metric is
-measuring the whole pipeline's confidence and calling it routing.
+**The router gate read 0.833 against a bar of 0.85, and the number was wrong.**
+The bar is met at 0.964. That correction is worth more space than the number,
+because the failure was in the ruler.
+
+A results file records `route="refuse"` for any run that abstained, which
+overwrites the store the planner actually chose. So a narrative question routed
+correctly to the text store, retrieved from it, and then honestly declined
+because the evidence was thin was scored as a *routing* error. Twenty of the
+agent's twenty-five misroutes were exactly that. What the metric was measuring
+is narrative retrieval, which `hit@k` already measures, under a name that says
+router.
+
+The fix re-reads the planner's choice out of the evidence instead of re-running
+anything: `sql` and `graph` carry no character offsets, so a refused run holding
+span-carrying chunks was routed to text and could not have been routed anywhere
+else. Three refusals retrieved nothing at all and are unrecoverable — they are
+scored as misses and counted in `router_unrecoverable`, so the number carries
+its own doubt. Five misses survive the correction: those three, plus two
+questions the router genuinely sent to the wrong store. Unanswerable questions left the denominator: there is no store to
+pick for them, and `abstention` already reports whether they were refused.
+
+The baseline moves under the same rule, 27.3% → 42.9%, and it moves for a reason
+worth stating: the baseline has no router, always reads text, and is therefore
+right on every narrative question and wrong on every numeric one. 42.9% is what
+"no router" actually scores. The delta shrinks from +56.0 to +53.5 and it now
+compares two things of the same kind.
+
+This was diagnosed before it was fixed. The paragraph that used to sit here said
+the metric was "measuring the whole pipeline's confidence and calling it
+routing" and then left the number alone, on the principle that a bar should not
+move after the fact. That principle was right about the bar and wrong about the
+metric: correcting a measurement is not moving a goalpost, and a known-wrong
+number left standing for tidiness is worse than either.
 
 ### The retrieval ablation
 
@@ -1067,7 +1103,7 @@ against them. Three checks per configuration:
    whose definition drifted, and a number edited by hand.
 3. **floors** — 17 named thresholds with a stated reason each: `agent` numeric
    exact ≥ 0.95, `agent-guarded` hallucinated ≤ 0.0, abstention = 1.0, citations
-   resolvable = 1.0, router accuracy ≥ 0.80. Catches a genuinely worse run
+   resolvable = 1.0, router accuracy ≥ 0.90. Catches a genuinely worse run
    committed on purpose.
 
 It checks all 150 questions rather than the 40-question subset the plan asked
@@ -1078,7 +1114,12 @@ key, no corpus, no Qdrant and no socket.** The CI job installs four packages.
 The last part is the one the plan asks to be demonstrated rather than claimed:
 [`docs/gate-demo.md`](docs/gate-demo.md) is a transcript of the gate going red on
 a throwaway branch with one number edited, and `tests/test_gate.py` injects seven
-different regressions and asserts each one is caught.
+different regressions and asserts each one is caught. That branch is open as
+[PR #1](https://github.com/usamahassan965/filing-room/pull/1), where the
+[run](https://github.com/usamahassan965/filing-room/actions/runs/34203727067) is
+red in public: `ruff` green, because the damage is a number in a result file and
+no linter has an opinion about it; `pytest` and the gate red, because they
+re-derive the scorecard instead of trusting the figure written beside it.
 
 ### Running it from a clone
 
@@ -1220,7 +1261,7 @@ contain historical population data for France" — rather than by the regex fall
 
 The recorded ablation is unaffected: those runs were served from the response cache
 and their replies predate the truncation, which is visible in the results as
-`llm_calls: 0` and in a `router_accuracy` of 0.833 that includes model-chosen
+`llm_calls: 0` and in a `router_accuracy` of 0.964 that includes model-chosen
 `refuse` routes the heuristic cannot produce. The numbers describe a working
 planner and still stand. What was broken was live traffic, and it was broken
 silently, which is the part worth keeping the comment for.

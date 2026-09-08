@@ -6,7 +6,8 @@ branch."* A green check mark proves nothing on its own. A gate that has never
 been seen to fail is indistinguishable from a gate that cannot.
 
 This is the transcript. Branch `demo/gate-catches-a-regression`, commit
-`6764753`, which carries the whole M8 change set plus one number moved by hand.
+`f89c890`, which is `main` plus one number moved by hand -- a one-character diff
+in one file, so that what turns the build red is not in doubt.
 
 ## The injection
 
@@ -168,14 +169,29 @@ lets this job run on a pull request from a fork with no key, no corpus and no
 Qdrant — and the property that would silently rot the first time someone made
 the gate "just fetch one thing".
 
-## Why there is no Actions run to link
+## The Actions run
 
-This repository has no remote, so `.github/workflows/ci.yml` has never been
-executed by GitHub. What is demonstrated above is the workflow's own command —
-the `gate` job runs exactly `python -m filing.eval gate`, and CI fails on its
-non-zero exit the same way this terminal did. When the repository is pushed, the
-`demo/gate-catches-a-regression` branch is a ready-made red build; it is kept
-unmerged for that purpose.
+The same branch was opened as pull request
+[#1](https://github.com/usamahassan965/filing-room/pull/1) rather than merged,
+because the point of it is the red check. [Run
+34203727067](https://github.com/usamahassan965/filing-room/actions/runs/34203727067)
+finished in 110 seconds:
+
+| job | result | where |
+| --- | --- | --- |
+| `ruff` | pass | nothing is wrong with the code |
+| `pytest` | **fail** | three cases in `tests/test_gate.py` |
+| `eval gate (no secrets, no network)` | **fail** | the step `re-score the committed runs` |
+
+`ruff` staying green is the part worth reading. The regression is a number in a
+committed result file; no linter has an opinion about it, and neither would a
+reviewer skimming a one-line diff. The two jobs that do have an opinion are the
+ones that re-derive the scorecard from the outcomes instead of trusting the
+figure written beside them.
+
+The gate job's second step — regenerate the ablation table and `git diff
+--exit-code` — shows as skipped, because a job stops at its first failing step.
+The pull request is kept open and unmerged so the red run stays linkable.
 
 ## Cleaning up
 

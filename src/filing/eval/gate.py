@@ -100,7 +100,12 @@ FLOORS: dict[str, tuple[Floor, ...]] = {
         Floor("abstention", ">=", 1.0, "M5's whole point: it declines when it should"),
         Floor("over_answered", "<=", 0.0, "no answer to a question with no answer in the corpus"),
         Floor("citations_resolvable", ">=", 1.0, "no bracket pointing at nothing"),
-        Floor("router_accuracy", ">=", 0.80, "the router picks the intended store"),
+        # 0.80 was set when this metric charged the router for every honest
+        # abstention and read 0.833 -- a floor two points under the number
+        # it guards is not a floor. Measured on the planner's own choice
+        # it is 0.964, and 0.90 is the level below which the routing, not
+        # the retrieval, has regressed.
+        Floor("router_accuracy", ">=", 0.90, "the router picks the intended store"),
     ),
     "agent-guarded": (
         Floor("exact_match", ">=", 0.95, "the verifier must not cost accuracy"),
