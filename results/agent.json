@@ -43,7 +43,7 @@
    "name": "overall",
    "n": 150,
    "retrieval_n": 60,
-   "exact_match": 0.9875,
+   "exact_match": 0.8,
    "hit_rate": {
     "1": 0.15,
     "5": 0.4,
