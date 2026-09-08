@@ -806,6 +806,7 @@ SPACE_GITATTRIBUTES = """\
 # it is rejected with talks about the limit rather than about LFS.
 *.duckdb    filter=lfs diff=lfs merge=lfs -text
 *.sqlite    filter=lfs diff=lfs merge=lfs -text
+*.parquet   filter=lfs diff=lfs merge=lfs -text
 *.jsonl     filter=lfs diff=lfs merge=lfs -text
 *.npz       filter=lfs diff=lfs merge=lfs -text
 *.npy       filter=lfs diff=lfs merge=lfs -text

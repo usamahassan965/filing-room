@@ -294,3 +294,53 @@ def test_a_stream_that_ends_without_a_payload_is_an_error_too() -> None:
     final = list(gradio_app.run(Silent(), "q"))[-1]
     assert "Error" in final[1]
     assert "without producing a payload" in final[2]
+
+
+# --------------------------------------------------------------------------
+# the push is not rejected on file size
+# --------------------------------------------------------------------------
+
+
+def test_every_large_file_in_the_payload_has_an_lfs_rule() -> None:
+    """The LFS patterns are checked against the payload, not against memory.
+
+    A Hugging Face repository refuses a plain-git file over 10 MB, and the
+    rejection names the size limit rather than LFS -- so the fix looks like
+    "carry less" when it is actually "write one line". ``.gitattributes`` is
+    written by ``filing space`` from a fixed list of extensions, which means the
+    list is only correct until the pipeline writes a format nobody added to it.
+    It already was not: ``data/chunks/chunks.parquet`` is 44 MB and ``*.parquet``
+    was missing, so the very first push would have been rejected on a file the
+    deploy cannot run without.
+
+    So the assertion walks what would actually be uploaded. It skips where the
+    corpus is absent, which is CI -- and that is the honest arrangement rather
+    than a gap, because the failure it guards is a push, and a push happens on a
+    machine that has the corpus.
+    """
+    import fnmatch
+
+    from filing.cli import SPACE_DATA, SPACE_GITATTRIBUTES
+
+    root = Path(__file__).resolve().parents[1]
+    present = [root / rel for rel in SPACE_DATA if (root / rel).exists()]
+    if not present:
+        pytest.skip("no built corpus here; this guards the machine that pushes")
+
+    patterns = [
+        line.split()[0]
+        for line in SPACE_GITATTRIBUTES.splitlines()
+        if line and not line.startswith("#")
+    ]
+    limit = 10 * 1024 * 1024
+
+    unmatched = []
+    for path in present:
+        files = [path] if path.is_file() else [p for p in path.rglob("*") if p.is_file()]
+        for f in files:
+            if f.stat().st_size <= limit:
+                continue
+            if not any(fnmatch.fnmatch(f.name, pat) for pat in patterns):
+                unmatched.append(f"{f.relative_to(root)} ({f.stat().st_size // 1024**2} MB)")
+
+    assert not unmatched, "over 10 MB and not tracked by LFS: " + ", ".join(unmatched)
