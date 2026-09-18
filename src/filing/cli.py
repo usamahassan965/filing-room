@@ -806,7 +806,7 @@ colorFrom: gray
 colorTo: indigo
 sdk: docker
 app_port: 7860
-pinned: false
+pinned: true
 license: mit
 short_description: Agentic RAG over SEC filings, with the evidence attached.
 ---

@@ -141,6 +141,26 @@ class EvidenceRecord(BaseModel):
     tag: str = ""
     period_end: str = ""
     ticker: str = ""
+    #: The filing's own document on sec.gov, or empty when the manifest does
+    #: not know the accession. The primary source, not a copy of it: a reader
+    #: checking the answer should be able to land on the page the SEC serves.
+    source_url: str = ""
+
+
+def sec_url(cik: str, accn: str, primary_doc: str) -> str:
+    """The EDGAR archive address of one filing's primary document.
+
+    EDGAR files a document under the *company's* CIK with the accession's
+    dashes removed. The accession's own prefix is the filer's CIK, which is the
+    company only when it filed for itself -- an agent-filed 10-K would resolve
+    to the agent's directory -- so the CIK comes from the manifest, never from
+    the accession.
+    """
+    if not (cik and accn and primary_doc):
+        return ""
+    return (
+        f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{accn.replace('-', '')}/{primary_doc}"
+    )
 
 
 class NumberCheck(BaseModel):
@@ -317,13 +337,17 @@ def payload_for(
     guard: str = "",
     trace_id: str = "",
     cfg: Settings | None = None,
+    sources: dict[str, str] | None = None,
 ) -> Answer:
     """Everything the run decided, in one value. No model, no network.
 
     Pure over the finished state, which is what makes it testable without a
     corpus: every test of this surface hands it a hand-built state and asserts
     on the payload, and the four outcome states are reachable that way.
+    ``sources`` maps an accession to its document on sec.gov; the engine reads
+    it from the manifest once, so this stays a function of its arguments.
     """
+    sources = sources or {}
     cfg = cfg or settings()
     answer = str(state.get("answer") or "")
     blocked = bool(state.get("blocked"))
@@ -354,6 +378,7 @@ def payload_for(
                 tag=getattr(e, "tag", ""),
                 period_end=str(getattr(e, "period_end", "") or ""),
                 ticker=getattr(e, "ticker", ""),
+                source_url=sources.get(getattr(e, "accn", ""), ""),
             )
         )
 
@@ -445,6 +470,27 @@ class AskEngine:
     tools: Any = None
     graph: Any = None
     resolved: Any = None
+    _sources: dict[str, str] | None = None
+
+    @property
+    def sources(self) -> dict[str, str]:
+        """Accession -> primary document on sec.gov, read from the manifest once.
+
+        A manifest that cannot be read costs the links and nothing else: every
+        record still carries its accession, which is enough to find the filing
+        by hand, and an answer is worth more than a hyperlink.
+        """
+        if self._sources is None:
+            self._sources = {}
+            try:
+                import duckdb
+
+                with duckdb.connect(str(self.cfg.manifest_path), read_only=True) as con:
+                    rows = con.execute("SELECT accn, cik, primary_doc FROM filings").fetchall()
+                self._sources = {a: sec_url(c, a, d) for a, c, d in rows if sec_url(c, a, d)}
+            except Exception:  # noqa: BLE001 - see above
+                self._sources = {}
+        return self._sources
 
     @property
     def ready(self) -> bool:
@@ -514,6 +560,7 @@ class AskEngine:
             guard=self.guard,
             trace_id=trace_id,
             cfg=self.cfg,
+            sources=self.sources,
         )
 
     def stream(self, question: str, *, qid: str = "") -> Iterator[dict[str, Any]]:
@@ -600,6 +647,7 @@ class AskEngine:
             guard=self.guard,
             trace_id=str(box["trace_id"]),
             cfg=self.cfg,
+            sources=self.sources,
         )
         yield {"event": "answer", "data": payload.model_dump()}
 

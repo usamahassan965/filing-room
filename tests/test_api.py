@@ -460,3 +460,27 @@ def test_the_span_is_opened_and_closed_on_one_thread():
         pass
     assert len(seen) == 2
     assert seen[0] == seen[1] != th.get_ident()
+
+
+def test_a_record_links_to_its_filing_on_sec_gov() -> None:
+    from filing.api import sec_url
+
+    url = sec_url("0001045810", "0001045810-24-000029", "nvda-20240128.htm")
+    assert url == (
+        "https://www.sec.gov/Archives/edgar/data/1045810/000104581024000029/nvda-20240128.htm"
+    )
+    p = payload_for(
+        state_for("NVDA reported Revenues of 60,922,000,000 USD [1].", [FACT, ROOTLESS]),
+        question=QUESTION,
+        qid="t",
+        sources={FACT.accn: url},
+    )
+    assert p.evidence[0].source_url == url
+    assert p.evidence[1].source_url == ""  # no accession, so nothing to link
+
+
+def test_a_filing_without_a_manifest_row_gets_no_link_rather_than_a_guess() -> None:
+    from filing.api import sec_url
+
+    assert sec_url("", "0001045810-24-000029", "x.htm") == ""
+    assert sec_url("0001045810", "0001045810-24-000029", "") == ""

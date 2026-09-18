@@ -215,3 +215,68 @@ def test_the_renderers_accept_what_the_api_actually_builds() -> None:
     for panel in PANELS:
         assert isinstance(panel(payload), str)
     assert payload["outcome"] in render.OUTCOMES
+
+
+URL = "https://www.sec.gov/Archives/edgar/data/1045810/000104581024000029/nvda-20240128.htm"
+
+
+def test_a_fact_is_drawn_as_a_table_with_a_link_to_the_filing() -> None:
+    html = render.evidence_panel(
+        {
+            "evidence": [
+                {
+                    "marker": 1,
+                    "kind": "fact",
+                    "cited": True,
+                    "locatable": True,
+                    "citation": "NVDA 10-K 2024-01-28 [0001045810-24-000029 Revenues]",
+                    "accn": "0001045810-24-000029",
+                    "value": 60_922_000_000.0,
+                    "unit": "USD",
+                    "tag": "Revenues",
+                    "period_end": "2024-01-28",
+                    "ticker": "NVDA",
+                    "source_url": URL,
+                }
+            ]
+        }
+    )
+    assert "<table" in html
+    assert "60,922,000,000 USD" in html and "$60.92 billion" in html
+    assert f"href='{URL}'" in html
+
+
+def test_a_passage_highlights_the_figure_the_answer_took_and_links_to_the_sentence() -> None:
+    html = render.evidence_panel(
+        {
+            "verification": {"numbers": [{"text": "$60,922", "status": "supported", "marker": 1}]},
+            "evidence": [
+                {
+                    "marker": 1,
+                    "kind": "text",
+                    "cited": True,
+                    "locatable": True,
+                    "citation": "NVDA 10-K 2024-01-28 Item 7",
+                    "body": "Revenue for fiscal year 2024 was $60,922 million, up 126%.",
+                    "char_start": 10,
+                    "char_end": 90,
+                    "source_url": URL,
+                }
+            ],
+        }
+    )
+    assert "<mark" in html and ">$60,922</mark>" in html
+    assert "#:~:text=Revenue%20for%20fiscal%20year%202024%20was%20%2460%2C922" in html
+    assert "Find this passage on SEC.gov" in html
+
+
+def test_uncited_records_fold_away_under_the_cited_ones() -> None:
+    html = render.evidence_panel(
+        {
+            "evidence": [
+                {"marker": 1, "cited": False, "locatable": True, "citation": "b", "body": "x"},
+                {"marker": 2, "cited": True, "locatable": True, "citation": "a", "body": "y"},
+            ]
+        }
+    )
+    assert html.index("[2]") < html.index("Also retrieved, not cited (1)") < html.index("[1]")

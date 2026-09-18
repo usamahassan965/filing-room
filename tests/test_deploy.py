@@ -441,9 +441,35 @@ def test_what_is_wired_to_the_button_is_a_generator_function() -> None:
 
     registered = page.fns.values() if isinstance(page.fns, dict) else page.fns
     wired = [f for f in registered if len(f.outputs) == width]
-    assert len(wired) == 2, "the button and the textbox both answer questions"
+    # The button, the textbox, and the second half of each example's click.
+    assert len(wired) == 2 + len(gradio_app.EXAMPLES)
     for block_fn in wired:
         assert inspect.isgeneratorfunction(block_fn.fn), (
             f"{block_fn.fn.__name__} is wired to {width} outputs but is not a "
             "generator function, so Gradio will not stream it"
         )
+
+
+def test_the_coverage_panel_lists_exactly_the_universe() -> None:
+    """The Space does not ship universe.yaml, so the page carries a copy. A
+    ticker added to the corpus and missing from the page is a company visitors
+    are told they cannot ask about."""
+    import yaml
+
+    from filing import gradio_app
+
+    root = Path(__file__).resolve().parents[1]
+    universe = yaml.safe_load((root / "universe.yaml").read_text(encoding="utf-8"))
+    declared = {c["ticker"] for sector in universe["sectors"].values() for c in sector}
+    shown = {t for tickers in gradio_app.COVERAGE.values() for t in tickers}
+    assert shown == declared
+
+
+def test_the_tracker_folds_retrievers_and_marks_untouched_steps_skipped() -> None:
+    from filing import gradio_app
+
+    html = gradio_app._track(["plan", "route", "refuse"], ["a", "b", "c"], done="3 step(s)")
+    assert "refused" in html
+    assert html.count("fr-step done") == 3
+    assert html.count("fr-step skip") == len(gradio_app.STEPS) - 3
+    assert "fr-step live" not in html

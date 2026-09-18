@@ -31,7 +31,9 @@ from __future__ import annotations
 
 import html
 import json
+import re
 from typing import Any
+from urllib.parse import quote
 
 #: Outcome -> (badge, colour, what it means). The wording is deliberate: the
 #: abstention line says the system declined, not that it failed, because an
@@ -231,10 +233,147 @@ def verification_panel(payload: dict[str, Any]) -> str:
     return "".join(out)
 
 
+_FORM = re.compile(r"\b(10-K|10-Q|8-K|20-F)(/A)?\b")
+_PLAIN = re.compile(r"^[A-Za-z0-9$%,.;:'()]+$")
+
+_MARK = "background:rgba(234,179,8,.32);color:inherit;border-radius:3px;padding:0 2px"
+_LINK = "font-size:.85rem;font-weight:600;text-decoration:none"
+_ROW = "padding:.3rem .6rem;border-top:1px solid rgba(128,128,128,.2);vertical-align:top"
+_KICKER = (
+    "font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;opacity:.7;margin:.6rem 0 .3rem"
+)
+
+
+def _human(value: float, unit: str) -> str:
+    """26,974,000,000 USD as a reader says it: $26.97 billion."""
+    if unit != "USD":
+        return ""
+    for size, word in ((1e12, "trillion"), (1e9, "billion"), (1e6, "million")):
+        if abs(value) >= size:
+            return f"${value / size:,.2f} {word}"
+    return ""
+
+
+def _fragment(body: str, figures: list[str]) -> str:
+    """A text fragment that lands the reader on the cited sentence.
+
+    ``#:~:text=`` scrolls a browser to the first match and highlights it; a
+    browser that does not support it, or a fragment the page does not match,
+    just opens the document at the top, so a miss costs nothing. The start of
+    the sentence carrying a cited figure is used rather than the figure
+    itself: "60,922" appears in a filing a dozen times, the words leading into
+    it once. Only plain words go in -- a stray symbol from the text extraction
+    is enough to make the match fail.
+    """
+    sentences = re.split(r"(?<=[.;])\s+", body)
+    chosen = next((s for s in sentences if any(f and f in s for f in figures)), "") or body
+    words: list[str] = []
+    for word in chosen.split():
+        if not _PLAIN.match(word):
+            break
+        words.append(word.rstrip(".,;:"))
+        if len(words) == 8:
+            break
+    if len(words) < 4:
+        return ""
+    return "#:~:text=" + quote(" ".join(words), safe="").replace("-", "%2D")
+
+
+def _mark(body: str, figures: list[str]) -> str:
+    """The escaped body with every cited figure highlighted where it appears."""
+    out = esc(body)
+    for fig in sorted({esc(f) for f in figures if f}, key=len, reverse=True):
+        out = out.replace(fig, f"<mark style='{_MARK}'>{fig}</mark>")
+    return out
+
+
+def _source(e: dict[str, Any], figures: list[str]) -> str:
+    """One reference, drawn as what it is: a fact table or a filing excerpt."""
+    citation = e.get("citation") or "(no citation)"
+    form = _FORM.search(citation)
+    url = e.get("source_url") or ""
+    state = "cited in the answer" if e.get("cited") else "retrieved, not cited"
+    head = (
+        "<div style='display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;"
+        "align-items:baseline'><span style='font-family:monospace;font-size:.85rem'>"
+        f"<b>[{esc(e.get('marker', ''))}]</b> {esc(citation)}</span>"
+        f"<span style='font-size:.78rem;opacity:.7'>{state} · "
+        f"score {float(e.get('score') or 0):.3f}</span></div>"
+    )
+    warn = (
+        ""
+        if e.get("locatable")
+        else (
+            "<div style='border-left:4px solid #a13d2d;background:rgba(161,61,45,.08);"
+            "padding:.4rem .7rem;margin:.4rem 0'>This record carries nothing a reader "
+            "could look up.</div>"
+        )
+    )
+
+    if e.get("kind") == "fact" and e.get("value") is not None:
+        value = float(e["value"])
+        unit = e.get("unit", "")
+        human = _human(value, unit)
+        filing = " ".join(x for x in (form.group(0) if form else "", e.get("accn", "")) if x)
+        rows = (
+            ("Company", e.get("ticker", "")),
+            ("Reported line item", e.get("tag", "")),
+            ("Value", f"{value:,.0f} {unit}" + (f"  ({human})" if human else "")),
+            ("Period ending", e.get("period_end", "")),
+            ("Filing", filing),
+        )
+        cells = "".join(
+            f"<tr><td style='{_ROW};opacity:.7;white-space:nowrap'>{esc(k)}</td>"
+            f"<td style='{_ROW};font-family:monospace'>{esc(v)}</td></tr>"
+            for k, v in rows
+            if v
+        )
+        body = (
+            f"<div style='{_KICKER}'>XBRL fact, as tagged in the filing</div>"
+            "<table style='border-collapse:collapse;width:100%;font-size:.88rem;"
+            f"font-variant-numeric:tabular-nums'>{cells}</table>"
+        )
+        href, link_text = url, "Open the filing on SEC.gov ↗"
+    else:
+        span = ""
+        if e.get("char_end", 0) > e.get("char_start", 0):
+            span = (
+                f"<div style='font-size:.75rem;opacity:.6;margin-top:.35rem'>characters "
+                f"{int(e['char_start']):,}–{int(e['char_end']):,} of the filing's text</div>"
+            )
+        body = (
+            f"<div style='{_KICKER}'>Excerpt from the filing</div>"
+            "<div style='border-left:3px solid rgba(128,128,128,.45);padding:.5rem .8rem;"
+            "background:rgba(128,128,128,.07);border-radius:0 6px 6px 0;font-size:.9rem;"
+            f"line-height:1.55;white-space:pre-wrap'>{_mark(e.get('body', ''), figures)}</div>"
+            f"{span}"
+        )
+        fragment = _fragment(e.get("body", ""), figures) if url else ""
+        href = url + fragment
+        link_text = "Find this passage on SEC.gov ↗" if fragment else "Open the filing on SEC.gov ↗"
+    link = (
+        f"<div style='margin-top:.5rem'><a href='{esc(href)}' target='_blank' "
+        f"rel='noopener' style='{_LINK}'>{esc(link_text)}</a></div>"
+        if href
+        else ""
+    )
+    return (
+        "<div style='border:1px solid rgba(128,128,128,.28);border-radius:8px;"
+        f"padding:.6rem .8rem;margin:.5rem 0'>{head}{warn}{body}{link}</div>"
+    )
+
+
 def evidence_panel(payload: dict[str, Any]) -> str:
+    """The references: every record the writer was shown, cited ones first.
+
+    Each is drawn as the kind of thing it is -- an XBRL fact as the rows of a
+    table, a passage as an excerpt with the figures the answer took from it
+    highlighted -- and linked to the filing on sec.gov, so a reader can check
+    the answer against the primary source rather than against this page.
+    """
     records = payload.get("evidence") or []
     out = [
-        "<h5>Evidence</h5>",
+        "<h5>Sources</h5>",
         f"<div style='font-size:.82rem;opacity:.7'>{len(records)} record(s) "
         f"shown to the writer.</div>",
     ]
@@ -244,37 +383,21 @@ def evidence_panel(payload: dict[str, Any]) -> str:
             "which is why there is nothing to cite.</div>"
         )
         return "".join(out)
-    for e in records:
-        cited = "cited" if e.get("cited") else "not cited"
-        head = f"[{esc(e.get('marker', ''))}]  {esc(e.get('citation') or '(no citation)')}"
-        meta = [f"<b>{esc(e.get('kind', ''))}</b>", f"score <code>{e.get('score', 0):.3f}</code>"]
-        if e.get("value") is not None:
-            meta.append(f"value <code>{e['value']:,.0f} {esc(e.get('unit', ''))}</code>")
-        if e.get("tag"):
-            meta.append(f"tag <code>{esc(e['tag'])}</code>")
-        if e.get("char_end", 0) > e.get("char_start", 0):
-            meta.append(f"chars <code>{esc(e['char_start'])}:{esc(e['char_end'])}</code>")
-        if e.get("accn"):
-            meta.append(f"accession <code>{esc(e['accn'])}</code>")
-        warn = (
-            ""
-            if e.get("locatable")
-            else (
-                "<div style='border-left:4px solid #a13d2d;background:rgba(161,61,45,.08);"
-                "padding:.4rem .7rem;margin:.3rem 0'>This record carries nothing a reader "
-                "could look up.</div>"
-            )
-        )
+
+    figures: dict[Any, list[str]] = {}
+    for n in (payload.get("verification") or {}).get("numbers") or []:
+        if n.get("marker") and n.get("status") in ("supported", "derived"):
+            figures.setdefault(n["marker"], []).append(str(n.get("text", "")))
+
+    cited = [e for e in records if e.get("cited")]
+    rest = [e for e in records if not e.get("cited")]
+    out += [_source(e, figures.get(e.get("marker"), [])) for e in cited]
+    if rest:
+        inner = "".join(_source(e, []) for e in rest)
         out.append(
-            f"<details {'open' if e.get('cited') else ''} "
-            f"style='border:1px solid rgba(128,128,128,.25);border-radius:6px;"
-            f"padding:.4rem .7rem;margin:.4rem 0'>"
-            f"<summary style='cursor:pointer'>{head} &nbsp;·&nbsp; "
-            f"<span style='opacity:.7'>{esc(cited)}</span></summary>"
-            f"{warn}"
-            f"<div style='font-size:.85rem;margin:.3rem 0'>{' · '.join(meta)}</div>"
-            f"<div style='font-size:.88rem;white-space:pre-wrap'>{esc(e.get('body', ''))}</div>"
-            f"</details>"
+            f"<details {'' if cited else 'open'} style='margin-top:.4rem'>"
+            "<summary style='cursor:pointer;font-size:.85rem;opacity:.8'>"
+            f"Also retrieved, not cited ({len(rest)})</summary>{inner}</details>"
         )
     return "".join(out)
 
