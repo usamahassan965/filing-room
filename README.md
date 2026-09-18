@@ -17,7 +17,7 @@ rather than merely bad.
 Filing Room is what it took to get that to **98.8%**, and — the harder half — to
 be able to show the work.
 
-**Try it: [usamahassan965-findociq-demo.hf.space](https://usamahassan965-findociq-demo.hf.space/)**
+**Try it: [usamahassan965-filing-room.hf.space](https://usamahassan965-filing-room.hf.space/)**
 — running on free CPU hardware, with the agent's plan, its repairs, its evidence
 and its verifier's ruling printed beside every answer.
 
@@ -1268,7 +1268,7 @@ silently, which is the part worth keeping the comment for.
 
 ### The URL, and what it cost to get one
 
-**Live: [usamahassan965-findociq-demo.hf.space](https://usamahassan965-findociq-demo.hf.space/)**
+**Live: [usamahassan965-filing-room.hf.space](https://usamahassan965-filing-room.hf.space/)**
 — the page above, on 2 vCPU and 16 GB, answering from the embedded store. Ask it
 for a figure and it routes to `sql` and returns in about three seconds; ask it
 something no filing contains and it abstains in about one and a half.
